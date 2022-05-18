@@ -1,3 +1,4 @@
+import 'package:app/screens/app_frame.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,18 +14,14 @@ class App extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         brightness: Brightness.light,
-        primarySwatch: Colors.yellow,
+        primarySwatch: Colors.amber,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: Colors.yellow,
+        primarySwatch: Colors.amber,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Scrum for Fun"),
-        ),
-        body: const Center(child: Text("home")),
-      ),
+      themeMode: ThemeMode.light,
+      home: const AppFrame(),
     );
   }
 }
