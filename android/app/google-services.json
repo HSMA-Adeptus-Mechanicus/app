@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "860263269238",
+    "firebase_url": "https://scrum-for-fun-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "scrum-for-fun",
+    "storage_bucket": "scrum-for-fun.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860263269238:android:d212d16c2d36b4a896f057",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "860263269238-abu1f4f0mc9iejb872lapfca4qt71p1h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVa7gVURMM7ZM1FubTKp1Rg4-ZR3xNNA8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "860263269238-abu1f4f0mc9iejb872lapfca4qt71p1h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
