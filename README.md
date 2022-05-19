@@ -1,16 +1,26 @@
-# app
+# App
 
-A new Flutter project.
+## Setup
+Install vscode and the `Flutter` extension.  
+Install git.  
+In your desired directory run:
+```
+git clone https://github.com/HSMA-Adeptus-Mechanicus/app.git
+cd app
+```
+This will clone the repository into the app directory and navigate into it.
 
-## Getting Started
+On Windows run `explorer .` to open the directory in the explorer.  
+If vscode is in your `PATH` you can also use `code .` to open the directory directly in vscode.
 
-This project is a starting point for a Flutter application.
+## Rules
+- Do not push into the branch `main`.
+- When committing or pushing first check if the current branch is correct.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Merge to main checklist
+- The code has to be commented
+- The code has to be tested
+- Merge `main` into the other branch
+- Create pull request into `main` branch
+- All checks have to pass
+- Review by another person
