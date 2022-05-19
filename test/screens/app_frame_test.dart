@@ -1,6 +1,5 @@
 import 'package:app/screens/avatar_screen.dart';
 import 'package:app/screens/equip_screen.dart';
-import 'package:app/screens/task_screen.dart';
 import 'package:app/screens/team_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
