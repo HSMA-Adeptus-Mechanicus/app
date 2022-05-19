@@ -15,7 +15,7 @@ void main() {
 
     await tester.tap(find.byTooltip("Tasks"));
     await tester.pumpAndSettle();
-    expect(find.byType(TaskScreen), findsOneWidget);
+    expect(find.byType(TeamScreen), findsOneWidget);
 
     await tester.tap(find.byTooltip("Equip"));
     await tester.pumpAndSettle();
