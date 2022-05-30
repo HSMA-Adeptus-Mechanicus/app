@@ -4,28 +4,30 @@ import 'package:flutter/material.dart';
 final Size prefSize = AppBar().preferredSize;
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({Key? key}) : super(key: key);
+  const CustomAppBar({Key? key, this.settingsButton = true}) : super(key: key);
+
+  final bool settingsButton;
 
   @override
   Size get preferredSize => prefSize;
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {
-              Navigator.of(context).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return const SettingsScreen();
-                  },
-                ),
-              );
+    Widget button = IconButton(
+      icon: const Icon(Icons.account_circle),
+      onPressed: () {
+        Navigator.of(context).push<void>(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return const SettingsScreen();
             },
           ),
-        ],
+        );
+      },
+    );
+
+    return AppBar(
+      actions: settingsButton ? [button] : null,
       title: const Text("Scrum for Fun"),
     );
   }
