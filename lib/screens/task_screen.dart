@@ -6,7 +6,7 @@ class TaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseReference ref = FirebaseDatabase.instance.ref("counter");
+    DatabaseReference ref = FirebaseDatabase.instance.ref("tickets");
 
     return StreamBuilder(
       stream: ref.onValue,
@@ -16,10 +16,25 @@ class TaskScreen extends StatelessWidget {
         }
         if (snapshot.hasData) {
           var event = snapshot.data as DatabaseEvent;
-          double data = event.snapshot.value as double;
-          return Center(
-            child: Text("test: $data"),
-          );
+          if (event.snapshot.value is Map<String, dynamic>) {
+            var data = event.snapshot.value as Map<String, dynamic>;
+            var tickets = data.values.toList();
+            return ListView.builder(
+              itemCount: tickets.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: Column(
+                    children: [
+                      Text(tickets[index]["name"]),
+                      Text(tickets[index]["duration"].toString()),
+                    ],
+                  ),
+                );
+              },
+            );
+          } else {
+            return const Center(child: Text("No Tickets"));
+          }
         }
         return const Center(child: CircularProgressIndicator());
       },
