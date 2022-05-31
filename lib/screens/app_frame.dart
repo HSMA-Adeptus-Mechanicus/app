@@ -1,7 +1,7 @@
-import 'package:app/screens/avatar_screen.dart';
-import 'package:app/screens/equip_screen.dart';
-import 'package:app/screens/task_screen.dart';
-import 'package:app/screens/team_screen.dart';
+import 'package:app/screens/pages/avatar_screen.dart';
+import 'package:app/screens/pages/equip_screen.dart';
+import 'package:app/screens/pages/task_screen.dart';
+import 'package:app/screens/pages/team_screen.dart';
 import 'package:app/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 

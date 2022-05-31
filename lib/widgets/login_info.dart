@@ -1,8 +1,9 @@
 import 'package:app/data/api/user_authentication.dart';
-import 'package:app/screens/login_screen.dart';
+import 'package:app/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+/// Provides information about the login status, like time until the session expires (and maybe more in the future), and a logout button
 class LoginInfo extends StatelessWidget {
   const LoginInfo({
     Key? key,

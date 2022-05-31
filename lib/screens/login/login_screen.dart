@@ -1,6 +1,6 @@
 import 'package:app/data/api/user_authentication.dart';
 import 'package:app/screens/app_frame.dart';
-import 'package:app/screens/register_screen.dart';
+import 'package:app/screens/login/register_screen.dart';
 import 'package:app/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
 
@@ -17,8 +17,7 @@ class LoginScreen extends StatelessWidget {
           if (snapshot.hasData) {
             LoginState state = snapshot.data as LoginState;
             if (state == LoginState.loggedIn) {
-              Future.delayed(
-                const Duration(seconds: 1),
+              Future.microtask(
                 () {
                   Navigator.pushReplacement(
                     context,
@@ -26,9 +25,7 @@ class LoginScreen extends StatelessWidget {
                   );
                 },
               );
-              return const Center(
-                child: Text("logged in"),
-              );
+              return const Center(child: CircularProgressIndicator());
             } else if (state == LoginState.loggedOut) {
               return const Scaffold(
                 body: LoginWidget(),

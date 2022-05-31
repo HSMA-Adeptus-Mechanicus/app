@@ -1,8 +1,9 @@
-import 'package:app/screens/settings_screen.dart';
+import 'package:app/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 final Size prefSize = AppBar().preferredSize;
 
+/// The app bar used throughout the app including a title and optional settings button
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({Key? key, this.settingsButton = true}) : super(key: key);
 

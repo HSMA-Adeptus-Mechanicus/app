@@ -13,6 +13,7 @@ enum LoginState {
   loggingOut,
 }
 
+/// Handles authentication with the API and storing the access token
 class UserAuthentication {
   static UserAuthentication? _authentication;
 
@@ -22,7 +23,7 @@ class UserAuthentication {
   }
 
   UserAuthentication() {
-    broadcastStream = _streamController.stream.asBroadcastStream();
+    _broadcastStream = _streamController.stream.asBroadcastStream();
     loadStorage();
   }
 
@@ -41,7 +42,7 @@ class UserAuthentication {
   DateTime? _expirationTime;
 
   final StreamController<LoginState> _streamController = StreamController();
-  late final Stream<LoginState> broadcastStream;
+  late final Stream<LoginState> _broadcastStream;
 
   bool get authenticated {
     return _token != null;
@@ -63,6 +64,7 @@ class UserAuthentication {
     return _expirationTime;
   }
 
+  /// Create a new account with the given username and password
   register(String username, String password) async {
     if (_state != LoginState.loggedOut) {
       throw ErrorDescription("Unable to register while not logged out");
@@ -82,6 +84,7 @@ class UserAuthentication {
     await login(username, password);
   }
 
+  /// Uses the username and password to get an authentication token to authenticate api requests
   login(String username, String password) async {
     await _updateState(LoginState.loggingIn);
     try {
@@ -102,6 +105,7 @@ class UserAuthentication {
     await _updateState(LoginState.loggedIn);
   }
 
+  /// Confirm that the current authentication token is valid
   checkLogin() async {
     if (!authenticated) {
       throw ErrorDescription("Currently not logged in");
@@ -117,6 +121,7 @@ class UserAuthentication {
     return authenticated;
   }
 
+  /// Logout and revoke the access token through the API
   logout() async {
     await _updateState(LoginState.loggingOut);
     if (_token == null) {
@@ -134,11 +139,12 @@ class UserAuthentication {
     }
   }
 
+  /// Providing a stream that fires an event when the login status changes with the current login state
   Stream<LoginState> getStateStream() {
     late StreamController<LoginState> controller;
     onListen() {
       controller.add(state);
-      controller.addStream(broadcastStream);
+      controller.addStream(_broadcastStream);
     }
 
     onCancel() {
