@@ -68,14 +68,17 @@ class UserAuthentication {
       throw ErrorDescription("Unable to register while not logged out");
     }
     await _updateState(LoginState.registering);
-    await api.post(
-      "auth/register",
-      {
-        "username": username,
-        "password": password,
-      },
-    );
-    await _updateState(LoginState.loggedOut);
+    try {
+      await api.post(
+        "auth/register",
+        {
+          "username": username,
+          "password": password,
+        },
+      );
+    } finally {
+      await _updateState(LoginState.loggedOut);
+    }
     await login(username, password);
   }
 
@@ -106,11 +109,10 @@ class UserAuthentication {
     try {
       Map<String, dynamic> result = await api.get("/auth/check-token");
       _expirationTime = result["expirationTime"];
-    } catch (e) {
+    } finally {
       _token = null;
       _expirationTime = null;
       await _updateState(LoginState.loggedOut);
-      // rethrow;
     }
     return authenticated;
   }
@@ -125,10 +127,11 @@ class UserAuthentication {
       await api.delete(
         "auth/revoke-token?token=${Uri.encodeComponent(_token!)}",
       );
-    } catch (e) {}
-    _token = null;
-    _expirationTime = null;
-    await _updateState(LoginState.loggedOut);
+    } finally {
+      _token = null;
+      _expirationTime = null;
+      await _updateState(LoginState.loggedOut);
+    }
   }
 
   Stream<LoginState> getStateStream() {
