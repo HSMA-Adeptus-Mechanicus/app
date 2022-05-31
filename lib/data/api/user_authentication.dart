@@ -30,8 +30,11 @@ class UserAuthentication {
   loadStorage() async {
     await _storage.initStorage;
     _token = _storage.read<String>("token");
-    await _updateState(
-        _token != null ? LoginState.loggedIn : LoginState.loggedOut);
+    if (_token != null) {
+      await checkLogin();
+    } else {
+      await _updateState(LoginState.loggedOut);
+    }
   }
 
   final GetStorage _storage = GetStorage("login");
@@ -91,6 +94,7 @@ class UserAuthentication {
       Map<String, dynamic> result = await apiWrapper.get(
         "auth/login?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
       );
+      _username = username;
       _token = result["token"];
       _expirationTime = DateTime.fromMillisecondsSinceEpoch(
         result["expirationTime"] * 1000,
@@ -111,9 +115,17 @@ class UserAuthentication {
       throw ErrorDescription("Currently not logged in");
     }
     try {
-      Map<String, dynamic> result = await apiWrapper.get("/auth/check-token");
-      _expirationTime = result["expirationTime"];
-    } finally {
+      Map<String, dynamic> result = await apiWrapper.get(
+        "/auth/check-token?token=${Uri.encodeComponent(_token!)}",
+      );
+      _expirationTime = DateTime.fromMillisecondsSinceEpoch(
+        result["expirationTime"] * 1000,
+        isUtc: true,
+      );
+      _username = result["username"];
+      await _updateState(LoginState.loggedIn);
+    } catch (e) {
+      print(e);
       _token = null;
       _expirationTime = null;
       await _updateState(LoginState.loggedOut);
@@ -137,6 +149,23 @@ class UserAuthentication {
       _expirationTime = null;
       await _updateState(LoginState.loggedOut);
     }
+  }
+
+  editPassword(String username, String password, String newPassword) async {
+    await apiWrapper.patch(
+      "auth/edit-password?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
+      {"password": newPassword},
+    );
+    _token = null;
+    _expirationTime = null;
+    await _updateState(LoginState.loggedOut);
+  }
+
+  editUsername(String username, String password, String newUsername) async {
+    await apiWrapper.patch(
+      "auth/edit-username?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
+      {"username": newUsername},
+    );
   }
 
   /// Providing a stream that fires an event when the login status changes with the current login state

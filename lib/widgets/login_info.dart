@@ -17,6 +17,7 @@ class LoginInfo extends StatelessWidget {
       child: IntrinsicHeight(
         child: Column(
           children: [
+            Text("Logged in as ${UserAuthentication.getInstance().username}"),
             Text(
                 "Session expires at: ${expirationTime != null ? DateFormat("H:m:s MMM d yyyy").format(expirationTime) : "unknown"}"),
             const SizedBox(height: 10),
