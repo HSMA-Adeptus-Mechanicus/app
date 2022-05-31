@@ -101,9 +101,7 @@ class UserAuthentication {
         isUtc: true,
       );
     } catch (e) {
-      _token = null;
-      _expirationTime = null;
-      await _updateState(LoginState.loggedOut);
+      await _logoutClientSide();
       rethrow;
     }
     await _updateState(LoginState.loggedIn);
@@ -125,10 +123,7 @@ class UserAuthentication {
       _username = result["username"];
       await _updateState(LoginState.loggedIn);
     } catch (e) {
-      print(e);
-      _token = null;
-      _expirationTime = null;
-      await _updateState(LoginState.loggedOut);
+      await _logoutClientSide();
     }
     return authenticated;
   }
@@ -145,27 +140,45 @@ class UserAuthentication {
         "auth/revoke-token?token=${Uri.encodeComponent(_token!)}",
       );
     } finally {
-      _token = null;
-      _expirationTime = null;
-      await _updateState(LoginState.loggedOut);
+      await _logoutClientSide();
     }
   }
-
-  editPassword(String username, String password, String newPassword) async {
-    await apiWrapper.patch(
-      "auth/edit-password?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
-      {"password": newPassword},
-    );
-    _token = null;
-    _expirationTime = null;
-    await _updateState(LoginState.loggedOut);
+  _logoutClientSide() async {
+      _token = null;
+      _username = null;
+      _expirationTime = null;
+      await _updateState(LoginState.loggedOut);
   }
 
-  editUsername(String username, String password, String newUsername) async {
+  editPassword(String password, String newPassword) async {
+    if (_username == null) {
+      throw ErrorDescription("Unable to edit password when not logged in");
+    }
     await apiWrapper.patch(
-      "auth/edit-username?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
+      "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+      {"password": newPassword},
+    );
+    await _logoutClientSide();
+  }
+
+  editUsername(String password, String newUsername) async {
+    if (_username == null) {
+      throw ErrorDescription("Unable to edit username when not logged in");
+    }
+    await apiWrapper.patch(
+      "auth/edit-username?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
       {"username": newUsername},
     );
+  }
+
+  deleteAccount(String password) async {
+    if (_username == null) {
+      throw ErrorDescription("Unable to edit username when not logged in");
+    }
+    await apiWrapper.delete(
+      "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+    );
+    await _logoutClientSide();
   }
 
   /// Providing a stream that fires an event when the login status changes with the current login state
