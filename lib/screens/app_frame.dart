@@ -1,6 +1,6 @@
 import 'package:app/screens/pages/avatar_screen.dart';
 import 'package:app/screens/pages/equip_screen.dart';
-import 'package:app/screens/pages/task_screen.dart';
+import 'package:app/screens/pages/ticket_screen.dart';
 import 'package:app/screens/pages/team_screen.dart';
 import 'package:app/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +47,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
         controller: _controller,
         children: const [
           TeamScreen(),
-          TaskScreen(),
+          TicketScreen(),
           EquipScreen(),
           AvatarScreen(),
         ],
@@ -64,7 +64,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.takeout_dining),
-            label: "Tasks",
+            label: "Tickets",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.checkroom),
