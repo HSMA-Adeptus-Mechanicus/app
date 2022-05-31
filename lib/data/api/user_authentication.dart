@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'api_wrapper.dart' as api;
+import 'api_wrapper.dart';
 
 enum LoginState {
   registering,
@@ -71,7 +71,7 @@ class UserAuthentication {
     }
     await _updateState(LoginState.registering);
     try {
-      await api.post(
+      await apiWrapper.post(
         "auth/register",
         {
           "username": username,
@@ -88,7 +88,7 @@ class UserAuthentication {
   login(String username, String password) async {
     await _updateState(LoginState.loggingIn);
     try {
-      Map<String, dynamic> result = await api.get(
+      Map<String, dynamic> result = await apiWrapper.get(
         "auth/login?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
       );
       _token = result["token"];
@@ -111,7 +111,7 @@ class UserAuthentication {
       throw ErrorDescription("Currently not logged in");
     }
     try {
-      Map<String, dynamic> result = await api.get("/auth/check-token");
+      Map<String, dynamic> result = await apiWrapper.get("/auth/check-token");
       _expirationTime = result["expirationTime"];
     } finally {
       _token = null;
@@ -129,7 +129,7 @@ class UserAuthentication {
       return;
     }
     try {
-      await api.delete(
+      await apiWrapper.delete(
         "auth/revoke-token?token=${Uri.encodeComponent(_token!)}",
       );
     } finally {
