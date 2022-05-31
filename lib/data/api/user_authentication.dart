@@ -139,15 +139,18 @@ class UserAuthentication {
       await apiWrapper.delete(
         "auth/revoke-token?token=${Uri.encodeComponent(_token!)}",
       );
+    } catch (e) {
+      return;
     } finally {
       await _logoutClientSide();
     }
   }
+
   _logoutClientSide() async {
-      _token = null;
-      _username = null;
-      _expirationTime = null;
-      await _updateState(LoginState.loggedOut);
+    _token = null;
+    _username = null;
+    _expirationTime = null;
+    await _updateState(LoginState.loggedOut);
   }
 
   editPassword(String password, String newPassword) async {
@@ -210,6 +213,7 @@ class UserAuthentication {
   }
 
   _save() async {
+    await _storage.initStorage;
     if (!authenticated) {
       await _storage.erase();
     } else {
