@@ -117,6 +117,15 @@ class UserAuthentication {
 
   logout() async {
     await _updateState(LoginState.loggingOut);
+    if (_token == null) {
+      await _updateState(LoginState.loggedOut);
+      return;
+    }
+    try {
+      await api.delete(
+        "auth/revoke-token?token=${Uri.encodeComponent(_token!)}",
+      );
+    } catch (e) {}
     _token = null;
     _expirationTime = null;
     await _updateState(LoginState.loggedOut);
