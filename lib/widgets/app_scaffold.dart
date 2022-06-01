@@ -1,15 +1,20 @@
 import 'package:app/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 
+/// Provides a scaffold including the app bar
 class AppScaffold extends StatelessWidget {
-  const AppScaffold({Key? key, required this.body}) : super(key: key);
+  const AppScaffold({Key? key, required this.body, this.settingsButton = true})
+      : super(key: key);
 
   final Widget body;
+  final bool settingsButton;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(
+        settingsButton: settingsButton,
+      ),
       body: body,
     );
   }

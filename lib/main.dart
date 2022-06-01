@@ -1,7 +1,10 @@
-import 'package:app/screens/app_frame.dart';
+import 'package:app/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const App());
 }
 
@@ -21,7 +24,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.amber,
       ),
       themeMode: ThemeMode.light,
-      home: const AppFrame(),
+      home: const LoginScreen(),
     );
   }
 }
