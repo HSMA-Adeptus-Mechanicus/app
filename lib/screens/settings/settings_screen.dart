@@ -1,5 +1,5 @@
-import 'package:app/widgets/app_scaffold.dart';
-import 'package:app/widgets/login_info.dart';
+import 'package:sff/widgets/app_scaffold.dart';
+import 'package:sff/widgets/login_info.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {

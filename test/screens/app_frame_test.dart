@@ -1,8 +1,8 @@
-import 'package:app/screens/app_frame.dart';
-import 'package:app/screens/pages/avatar_screen.dart';
-import 'package:app/screens/pages/equip_screen.dart';
-import 'package:app/screens/pages/ticket_screen.dart';
-import 'package:app/screens/pages/team_screen.dart';
+import 'package:sff/screens/app_frame.dart';
+import 'package:sff/screens/pages/avatar_screen.dart';
+import 'package:sff/screens/pages/equip_screen.dart';
+import 'package:sff/screens/pages/ticket_screen.dart';
+import 'package:sff/screens/pages/team_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:app/data/api/authenticated_api.dart';
+import 'package:sff/data/api/authenticated_api.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 

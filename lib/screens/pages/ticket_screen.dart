@@ -1,5 +1,5 @@
-import 'package:app/data/data.dart';
-import 'package:app/data/ticket.dart';
+import 'package:sff/data/data.dart';
+import 'package:sff/data/ticket.dart';
 import 'package:flutter/material.dart';
 
 class TicketScreen extends StatelessWidget {
