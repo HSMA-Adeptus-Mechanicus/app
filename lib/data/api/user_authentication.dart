@@ -30,8 +30,11 @@ class UserAuthentication {
   loadStorage() async {
     await _storage.initStorage;
     _token = _storage.read<String>("token");
-    await _updateState(
-        _token != null ? LoginState.loggedIn : LoginState.loggedOut);
+    if (_token != null) {
+      await checkLogin();
+    } else {
+      await _updateState(LoginState.loggedOut);
+    }
   }
 
   final GetStorage _storage = GetStorage("login");
@@ -91,15 +94,14 @@ class UserAuthentication {
       Map<String, dynamic> result = await apiWrapper.get(
         "auth/login?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
       );
+      _username = username;
       _token = result["token"];
       _expirationTime = DateTime.fromMillisecondsSinceEpoch(
         result["expirationTime"] * 1000,
         isUtc: true,
       );
     } catch (e) {
-      _token = null;
-      _expirationTime = null;
-      await _updateState(LoginState.loggedOut);
+      await _logoutClientSide();
       rethrow;
     }
     await _updateState(LoginState.loggedIn);
@@ -111,12 +113,17 @@ class UserAuthentication {
       throw ErrorDescription("Currently not logged in");
     }
     try {
-      Map<String, dynamic> result = await apiWrapper.get("/auth/check-token");
-      _expirationTime = result["expirationTime"];
-    } finally {
-      _token = null;
-      _expirationTime = null;
-      await _updateState(LoginState.loggedOut);
+      Map<String, dynamic> result = await apiWrapper.get(
+        "/auth/check-token?token=${Uri.encodeComponent(_token!)}",
+      );
+      _expirationTime = DateTime.fromMillisecondsSinceEpoch(
+        result["expirationTime"] * 1000,
+        isUtc: true,
+      );
+      _username = result["username"];
+      await _updateState(LoginState.loggedIn);
+    } catch (e) {
+      await _logoutClientSide();
     }
     return authenticated;
   }
@@ -132,11 +139,49 @@ class UserAuthentication {
       await apiWrapper.delete(
         "auth/revoke-token?token=${Uri.encodeComponent(_token!)}",
       );
+    } catch (e) {
+      return;
     } finally {
-      _token = null;
-      _expirationTime = null;
-      await _updateState(LoginState.loggedOut);
+      await _logoutClientSide();
     }
+  }
+
+  _logoutClientSide() async {
+    _token = null;
+    _username = null;
+    _expirationTime = null;
+    await _updateState(LoginState.loggedOut);
+  }
+
+  editPassword(String password, String newPassword) async {
+    if (_username == null) {
+      throw ErrorDescription("Unable to edit password when not logged in");
+    }
+    await apiWrapper.patch(
+      "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+      {"password": newPassword},
+    );
+    await _logoutClientSide();
+  }
+
+  editUsername(String password, String newUsername) async {
+    if (_username == null) {
+      throw ErrorDescription("Unable to edit username when not logged in");
+    }
+    await apiWrapper.patch(
+      "auth/edit-username?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+      {"username": newUsername},
+    );
+  }
+
+  deleteAccount(String password) async {
+    if (_username == null) {
+      throw ErrorDescription("Unable to edit username when not logged in");
+    }
+    await apiWrapper.delete(
+      "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+    );
+    await _logoutClientSide();
   }
 
   /// Providing a stream that fires an event when the login status changes with the current login state
@@ -168,6 +213,7 @@ class UserAuthentication {
   }
 
   _save() async {
+    await _storage.initStorage;
     if (!authenticated) {
       await _storage.erase();
     } else {
