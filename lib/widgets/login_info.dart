@@ -1,6 +1,6 @@
-import 'package:app/data/api/user_authentication.dart';
-import 'package:app/screens/login/login_screen.dart';
-import 'package:app/widgets/password_confirm.dart';
+import 'package:sff/widgets/password_confirm.dart';
+import 'package:sff/screens/login/login_screen.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

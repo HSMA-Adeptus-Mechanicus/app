@@ -1,5 +1,5 @@
-import 'package:app/data/api/api_wrapper.dart';
-import 'package:app/data/api/user_authentication.dart';
+import 'package:sff/data/api/api_wrapper.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter/material.dart';
 
 const authAPI = AuthenticatedAPI();

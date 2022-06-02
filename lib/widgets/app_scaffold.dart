@@ -1,4 +1,4 @@
-import 'package:app/widgets/custom_app_bar.dart';
+import 'package:sff/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 
 /// Provides a scaffold including the app bar

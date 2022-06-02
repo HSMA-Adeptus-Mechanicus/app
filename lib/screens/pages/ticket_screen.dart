@@ -1,23 +1,22 @@
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/ticket.dart';
 import 'package:flutter/material.dart';
 
-
-class TeamScreen extends StatelessWidget {
-  const TeamScreen({Key? key}) : super(key: key);
+class TicketScreen extends StatelessWidget {
+  const TicketScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: data.getUsersStream(),
+      stream: data.getTicketsStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<User> users = snapshot.data as List<User>;
+          List<Ticket> tickets = snapshot.data as List<Ticket>;
           return ListView.separated(
             padding: const EdgeInsets.all(15),
-            itemCount: users.length,
+            itemCount: tickets.length,
             itemBuilder: (context, index) {
-              return UserItem(users[index]);
+              return TicketItem(tickets[index]);
             },
             separatorBuilder: (context, int) {
               return const SizedBox(
@@ -35,10 +34,10 @@ class TeamScreen extends StatelessWidget {
   }
 }
 
-class UserItem extends StatelessWidget {
-  const UserItem(this._user, {Key? key}) : super(key: key);
+class TicketItem extends StatelessWidget {
+  const TicketItem(this._ticket, {Key? key}) : super(key: key);
 
-  final User _user;
+  final Ticket _ticket;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +48,15 @@ class UserItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(_user.name),
+            Text(_ticket.name),
+            Text(_ticket.description),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(_ticket.storyPoints.toString()),
+                Text(_ticket.done ? "done" : "in progress"),
+              ],
+            )
           ],
         ),
       ),

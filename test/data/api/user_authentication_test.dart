@@ -1,4 +1,4 @@
-import 'package:app/data/api/user_authentication.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/get_storage.dart';
 

@@ -1,7 +1,7 @@
-import 'package:app/data/api/user_authentication.dart';
-import 'package:app/screens/app_frame.dart';
-import 'package:app/screens/login/register_screen.dart';
-import 'package:app/widgets/app_scaffold.dart';
+import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/screens/app_frame.dart';
+import 'package:sff/screens/login/register_screen.dart';
+import 'package:sff/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {

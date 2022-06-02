@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.app">
+    package="com.adeptus_mechanicus.sff">
    <application
-        android:label="app"
+        android:label="Scrum for Fun"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
