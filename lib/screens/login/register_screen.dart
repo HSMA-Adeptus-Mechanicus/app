@@ -1,5 +1,5 @@
-import 'package:app/data/api/user_authentication.dart';
-import 'package:app/widgets/app_scaffold.dart';
+import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {

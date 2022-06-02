@@ -1,4 +1,4 @@
-import 'package:app/screens/settings/settings_screen.dart';
+import 'package:sff/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 final Size prefSize = AppBar().preferredSize;

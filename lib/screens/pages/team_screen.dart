@@ -1,5 +1,5 @@
-import 'package:app/data/data.dart';
-import 'package:app/data/user.dart';
+import 'package:sff/data/data.dart';
+import 'package:sff/data/user.dart';
 import 'package:flutter/material.dart';
 
 
@@ -19,7 +19,7 @@ class TeamScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               return UserItem(users[index]);
             },
-            separatorBuilder: (context, int) {
+            separatorBuilder: (context, index) {
               return const SizedBox(
                 height: 7,
               );

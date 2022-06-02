@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:app/data/api/authenticated_api.dart';
-import 'package:app/data/api/user_authentication.dart';
+import 'package:sff/data/api/authenticated_api.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:get_storage/get_storage.dart';
 
 class CachedAPI {
@@ -33,7 +33,9 @@ class CachedAPI {
     onUpdate() {
       if (state != _storage.listenable.state?[path]) {
         state = _storage.listenable.state?[path];
-        controller.add(jsonDecode(state));
+        if (state != null) {
+          controller.add(jsonDecode(state));
+        }
       }
     }
 

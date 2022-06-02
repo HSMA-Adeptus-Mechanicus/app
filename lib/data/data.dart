@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:app/data/api/cached_api.dart';
-import 'package:app/data/ticket.dart';
-import 'package:app/data/user.dart';
+import 'package:sff/data/api/cached_api.dart';
+import 'package:sff/data/ticket.dart';
+import 'package:sff/data/user.dart';
 
 const data = Data();
 

@@ -1,5 +1,6 @@
-import 'package:app/data/api/user_authentication.dart';
-import 'package:app/screens/login/login_screen.dart';
+import 'package:sff/widgets/password_confirm.dart';
+import 'package:sff/screens/login/login_screen.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -31,6 +32,32 @@ class LoginInfo extends StatelessWidget {
                 );
               },
               child: const Text("Logout"),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return PasswordConfirm(
+                      action: "Delete Account",
+                      callback: (password) async {
+                        UserAuthentication.getInstance()
+                            .deleteAccount(password);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                          (route) => false,
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+              child: const Text("Delete Account"),
             ),
           ],
         ),

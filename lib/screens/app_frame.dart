@@ -1,8 +1,8 @@
-import 'package:app/screens/pages/avatar_screen.dart';
-import 'package:app/screens/pages/equip_screen.dart';
-import 'package:app/screens/pages/ticket_screen.dart';
-import 'package:app/screens/pages/team_screen.dart';
-import 'package:app/widgets/custom_app_bar.dart';
+import 'package:sff/screens/pages/avatar_screen.dart';
+import 'package:sff/screens/pages/equip_screen.dart';
+import 'package:sff/screens/pages/ticket_screen.dart';
+import 'package:sff/screens/pages/team_screen.dart';
+import 'package:sff/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class AppFrame extends StatefulWidget {

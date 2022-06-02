@@ -1,5 +1,5 @@
-import 'package:app/data/data.dart';
-import 'package:app/data/ticket.dart';
+import 'package:sff/data/data.dart';
+import 'package:sff/data/ticket.dart';
 import 'package:flutter/material.dart';
 
 class TicketScreen extends StatelessWidget {
@@ -18,7 +18,7 @@ class TicketScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               return TicketItem(tickets[index]);
             },
-            separatorBuilder: (context, int) {
+            separatorBuilder: (context, index) {
               return const SizedBox(
                 height: 7,
               );

@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'api_wrapper.dart';
@@ -70,7 +68,7 @@ class UserAuthentication {
   /// Create a new account with the given username and password
   register(String username, String password) async {
     if (_state != LoginState.loggedOut) {
-      throw ErrorDescription("Unable to register while not logged out");
+      throw Exception("Unable to register while not logged out");
     }
     await _updateState(LoginState.registering);
     try {
@@ -110,7 +108,7 @@ class UserAuthentication {
   /// Confirm that the current authentication token is valid
   checkLogin() async {
     if (!authenticated) {
-      throw ErrorDescription("Currently not logged in");
+      throw Exception("Currently not logged in");
     }
     try {
       Map<String, dynamic> result = await apiWrapper.get(
@@ -122,8 +120,10 @@ class UserAuthentication {
       );
       _username = result["username"];
       await _updateState(LoginState.loggedIn);
-    } catch (e) {
+    } on ErrorResponseException {
       await _logoutClientSide();
+    } catch (e) {
+      await _updateState(LoginState.loggedIn);
     }
     return authenticated;
   }
@@ -155,7 +155,7 @@ class UserAuthentication {
 
   editPassword(String password, String newPassword) async {
     if (_username == null) {
-      throw ErrorDescription("Unable to edit password when not logged in");
+      throw Exception("Unable to edit password when not logged in");
     }
     await apiWrapper.patch(
       "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
@@ -166,7 +166,7 @@ class UserAuthentication {
 
   editUsername(String password, String newUsername) async {
     if (_username == null) {
-      throw ErrorDescription("Unable to edit username when not logged in");
+      throw Exception("Unable to edit username when not logged in");
     }
     await apiWrapper.patch(
       "auth/edit-username?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
@@ -175,13 +175,18 @@ class UserAuthentication {
   }
 
   deleteAccount(String password) async {
+    await _updateState(LoginState.loggingOut);
     if (_username == null) {
-      throw ErrorDescription("Unable to edit username when not logged in");
+      throw Exception("Unable to edit username when not logged in");
     }
-    await apiWrapper.delete(
-      "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
-    );
-    await _logoutClientSide();
+    try {
+      await apiWrapper.delete(
+        "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+      );
+      await _logoutClientSide();
+    } on ErrorResponseException {
+      await _logoutClientSide();
+    }
   }
 
   /// Providing a stream that fires an event when the login status changes with the current login state

@@ -1,6 +1,5 @@
-import 'package:app/data/api/api_wrapper.dart';
-import 'package:app/data/api/user_authentication.dart';
-import 'package:flutter/material.dart';
+import 'package:sff/data/api/api_wrapper.dart';
+import 'package:sff/data/api/user_authentication.dart';
 
 const authAPI = AuthenticatedAPI();
 
@@ -10,7 +9,7 @@ class AuthenticatedAPI {
 
   String addTokenToPath(String path) {
     if (!UserAuthentication.getInstance().authenticated) {
-      throw ErrorDescription(
+      throw Exception(
         "Unable to add authentication token to request because the user is not authenticated",
       );
     }
