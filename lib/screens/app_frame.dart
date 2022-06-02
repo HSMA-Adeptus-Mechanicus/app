@@ -54,25 +54,25 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         fixedColor: itemColor,
-        unselectedItemColor: itemColor?.withAlpha(100),
+        unselectedItemColor: itemColor?.withAlpha(140),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.takeout_dining),
-            label: "Tickets",
+            icon: Icon(Icons.flag),
+            label: "Quests",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.checkroom),
-            label: "Equip",
+            label: "Inventar",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: "Avatar",
+            icon: Icon(Icons.star),
+            label: "Belohnungen",
           ),
         ],
         currentIndex: _selectedIndex,

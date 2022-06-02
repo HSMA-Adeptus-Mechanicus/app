@@ -20,10 +20,22 @@ class App extends StatelessWidget {
         primarySwatch: Colors.amber,
       ),
       darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.amber,
-      ),
-      themeMode: ThemeMode.light,
+          brightness: Brightness.dark,
+          primarySwatch: Colors.deepPurple,
+          colorScheme: const ColorScheme(
+            brightness: Brightness.dark,
+            primary: Colors.deepPurple,
+            onPrimary: Colors.white,
+            secondary: Color.fromARGB(255, 63, 63, 63),
+            onSecondary: Colors.white,
+            error: Colors.red,
+            onError: Colors.black,
+            background: Color.fromARGB(255, 63, 63, 63),
+            onBackground: Colors.white,
+            surface: Color.fromARGB(255, 85, 58, 183),
+            onSurface: Colors.white,
+          )),
+      themeMode: ThemeMode.dark,
       home: const LoginScreen(),
     );
   }
