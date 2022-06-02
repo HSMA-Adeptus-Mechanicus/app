@@ -175,13 +175,17 @@ class UserAuthentication {
   }
 
   deleteAccount(String password) async {
+    await _updateState(LoginState.loggingOut);
     if (_username == null) {
       throw ErrorDescription("Unable to edit username when not logged in");
     }
-    await apiWrapper.delete(
-      "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
-    );
-    await _logoutClientSide();
+    try {
+      await apiWrapper.delete(
+        "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+      );
+    } finally {
+      await _logoutClientSide();
+    }
   }
 
   /// Providing a stream that fires an event when the login status changes with the current login state
