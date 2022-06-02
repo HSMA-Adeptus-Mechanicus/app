@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:sff/data/api/authenticated_api.dart';
-import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
 Future<T> firstSuccess<T>(List<Future<T>> futures) {
@@ -81,7 +80,7 @@ class CachedAPI {
     await _storage.initStorage;
     final result = _storage.read<String>(path);
     if (result == null) {
-      throw ErrorDescription("The data is not cached");
+      throw Exception("The data is not cached");
     }
     return jsonDecode(result);
   }
