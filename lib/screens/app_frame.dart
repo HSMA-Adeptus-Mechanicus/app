@@ -39,7 +39,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     _controller.index = _selectedIndex;
 
-    Color? itemColor = Theme.of(context).textTheme.bodyMedium?.color;
+    Color? itemColor = Theme.of(context).colorScheme.onSurface;
 
     return Scaffold(
       appBar: const CustomAppBar(),
@@ -54,9 +54,9 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         fixedColor: itemColor,
-        unselectedItemColor: itemColor?.withAlpha(140),
+        unselectedItemColor: itemColor.withAlpha(140),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
