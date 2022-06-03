@@ -18,7 +18,7 @@ class TicketScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               return TicketItem(tickets[index]);
             },
-            separatorBuilder: (context, int) {
+            separatorBuilder: (context, index) {
               return const SizedBox(
                 height: 7,
               );

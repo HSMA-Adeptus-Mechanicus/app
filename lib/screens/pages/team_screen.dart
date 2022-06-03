@@ -19,7 +19,7 @@ class TeamScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               return UserItem(users[index]);
             },
-            separatorBuilder: (context, int) {
+            separatorBuilder: (context, index) {
               return const SizedBox(
                 height: 7,
               );

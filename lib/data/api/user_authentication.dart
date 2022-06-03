@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'api_wrapper.dart';
@@ -11,6 +9,13 @@ enum LoginState {
   loggingIn,
   loggedOut,
   loggingOut,
+}
+
+class LoginStateChangeEvent {
+  final LoginState previous;
+  final LoginState state;
+
+  LoginStateChangeEvent(this.previous, this.state);
 }
 
 /// Handles authentication with the API and storing the access token
@@ -29,10 +34,20 @@ class UserAuthentication {
 
   loadStorage() async {
     await _storage.initStorage;
-    _token = _storage.read<String>("token");
-    if (_token != null) {
+    try {
+      var data = _storage.read<Map<String, dynamic>>("token");
+      if (data!["token"] is String) {
+        _token = data["token"];
+        if (data["expirationTime"] is int) {
+          _expirationTime =
+              DateTime.fromMillisecondsSinceEpoch(data["expirationTime"]);
+        }
+        if (data["username"] is String) {
+          _username = data["username"];
+        }
+      }
       await checkLogin();
-    } else {
+    } catch (e) {
       await _updateState(LoginState.loggedOut);
     }
   }
@@ -70,7 +85,7 @@ class UserAuthentication {
   /// Create a new account with the given username and password
   register(String username, String password) async {
     if (_state != LoginState.loggedOut) {
-      throw ErrorDescription("Unable to register while not logged out");
+      throw Exception("Unable to register while not logged out");
     }
     await _updateState(LoginState.registering);
     try {
@@ -110,7 +125,8 @@ class UserAuthentication {
   /// Confirm that the current authentication token is valid
   checkLogin() async {
     if (!authenticated) {
-      throw ErrorDescription("Currently not logged in");
+      _updateState(LoginState.loggedOut);
+      return;
     }
     try {
       Map<String, dynamic> result = await apiWrapper.get(
@@ -122,8 +138,12 @@ class UserAuthentication {
       );
       _username = result["username"];
       await _updateState(LoginState.loggedIn);
-    } catch (e) {
+    } on ErrorResponseException {
       await _logoutClientSide();
+    } catch (e) {
+      // The server did not respond with a proper error
+      // (this means there was an internal server error or there is not even an internet connection)
+      await _updateState(LoginState.loggedIn);
     }
     return authenticated;
   }
@@ -155,18 +175,22 @@ class UserAuthentication {
 
   editPassword(String password, String newPassword) async {
     if (_username == null) {
-      throw ErrorDescription("Unable to edit password when not logged in");
+      throw Exception("Unable to edit password when not logged in");
     }
-    await apiWrapper.patch(
-      "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
-      {"password": newPassword},
-    );
-    await _logoutClientSide();
+    try {
+      await apiWrapper.patch(
+        "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+        {"password": newPassword},
+      );
+      await _logoutClientSide();
+    } finally {
+      await checkLogin();
+    }
   }
 
   editUsername(String password, String newUsername) async {
     if (_username == null) {
-      throw ErrorDescription("Unable to edit username when not logged in");
+      throw Exception("Unable to edit username when not logged in");
     }
     await apiWrapper.patch(
       "auth/edit-username?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
@@ -177,14 +201,15 @@ class UserAuthentication {
   deleteAccount(String password) async {
     await _updateState(LoginState.loggingOut);
     if (_username == null) {
-      throw ErrorDescription("Unable to edit username when not logged in");
+      throw Exception("Unable to edit username when not logged in");
     }
     try {
       await apiWrapper.delete(
         "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
       );
-    } finally {
       await _logoutClientSide();
+    } finally {
+      await checkLogin();
     }
   }
 
@@ -194,6 +219,29 @@ class UserAuthentication {
     onListen() {
       controller.add(state);
       controller.addStream(_broadcastStream);
+    }
+
+    onCancel() {
+      controller.close();
+    }
+
+    controller = StreamController(
+      onListen: onListen,
+      onCancel: onCancel,
+    );
+    return controller.stream;
+  }
+
+  /// Providing a stream that fires an event when the login status changes with the previous and current login state
+  Stream<LoginStateChangeEvent> getChangeStateStream() {
+    late StreamController<LoginStateChangeEvent> controller;
+    onListen() {
+      LoginState previous = state;
+      controller.addStream(_broadcastStream.map((state) {
+        var change = LoginStateChangeEvent(previous, state);
+        previous = state;
+        return change;
+      }));
     }
 
     onCancel() {
@@ -221,7 +269,11 @@ class UserAuthentication {
     if (!authenticated) {
       await _storage.erase();
     } else {
-      await _storage.write("token", _token);
+      await _storage.write("token", {
+        "token": _token,
+        "expirationTime": expirationTime?.millisecondsSinceEpoch,
+        "username": _username,
+      });
     }
   }
 }

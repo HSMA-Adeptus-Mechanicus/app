@@ -2,25 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:sff/data/api/authenticated_api.dart';
-import 'package:flutter/material.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:get_storage/get_storage.dart';
-
-Future<T> firstSuccess<T>(List<Future<T>> futures) {
-  Completer<T> completer = Completer();
-  int resolved = 0;
-  for (var future in futures) {
-    future.then((value) {
-      completer.complete(value);
-    }).whenComplete(() {
-      resolved++;
-    }).onError((error, stackTrace) {
-      if (resolved == futures.length) {
-        completer.completeError(error ?? Error());
-      }
-    });
-  }
-  return completer.future;
-}
 
 class CachedAPI {
   static CachedAPI? _cachedAPI;
@@ -32,13 +15,27 @@ class CachedAPI {
 
   final GetStorage _storage = GetStorage("APICache");
 
+  CachedAPI() {
+    // When logging out, delete information stored from requests authorized by the user.
+    UserAuthentication.getInstance()
+        .getStateStream()
+        .where((state) => state == LoginState.loggedOut)
+        .listen((state) => _storage.erase());
+  }
+
+  /// Get stream to the data requested at the specified path.
+  /// When listening initially the cached data (if available) is added to the stream.
+  /// Whenever a new data has been requested at this path a new event is added to the stream.
+  /// Also a request is triggered when listening to the stream.
   Stream<dynamic> getStream(String path) {
     late StreamController<dynamic> controller;
     dynamic state;
     onUpdate() {
       if (state != _storage.listenable.state?[path]) {
         state = _storage.listenable.state?[path];
-        controller.add(jsonDecode(state));
+        if (state != null) {
+          controller.add(jsonDecode(state));
+        }
       }
     }
 
@@ -69,6 +66,7 @@ class CachedAPI {
     return controller.stream;
   }
 
+  /// Gets the the data at path, first trying the API and falling back to the cache.
   Future<dynamic> get(String path) async {
     try {
       return await request(path);
@@ -77,15 +75,17 @@ class CachedAPI {
     }
   }
 
+  /// Gets the data from the cache only.
   Future<dynamic> getCached(String path) async {
     await _storage.initStorage;
     final result = _storage.read<String>(path);
     if (result == null) {
-      throw ErrorDescription("The data is not cached");
+      throw Exception("The data is not cached");
     }
     return jsonDecode(result);
   }
 
+  /// Requests the data from the API and caches it.
   Future<dynamic> request(String path) async {
     final value = await authAPI.get(path);
     await _storage.write(path, jsonEncode(value));

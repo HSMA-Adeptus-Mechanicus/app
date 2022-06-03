@@ -1,6 +1,6 @@
-import 'package:sff/data/api/user_authentication.dart';
-import 'package:sff/screens/login/login_screen.dart';
+import 'package:sff/widgets/display_error.dart';
 import 'package:sff/widgets/password_confirm.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,13 +23,8 @@ class LoginInfo extends StatelessWidget {
                 "Session expires at: ${expirationTime != null ? DateFormat("H:m:s MMM d yyyy").format(expirationTime) : "unknown"}"),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 UserAuthentication.getInstance().logout();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
-                );
               },
               child: const Text("Logout"),
             ),
@@ -40,18 +35,14 @@ class LoginInfo extends StatelessWidget {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) {
+                  builder: (dialogContext) {
                     return PasswordConfirm(
                       action: "Delete Account",
                       callback: (password) async {
-                        UserAuthentication.getInstance()
-                            .deleteAccount(password);
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                          (route) => false,
-                        );
+                        displayError(() async {
+                          await UserAuthentication.getInstance()
+                              .deleteAccount(password);
+                        });
                       },
                     );
                   },

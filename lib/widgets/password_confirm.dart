@@ -19,7 +19,7 @@ class _PasswordConfirmState extends State<PasswordConfirm> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Enter password to confirm: ${widget.action}"),
+      title: const Text("Enter password to confirm"),
       content: TextFormField(
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
