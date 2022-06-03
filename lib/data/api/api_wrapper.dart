@@ -15,9 +15,9 @@ class ErrorResponseException implements Exception {
   @override
   String toString() {
     if (data is Map<String, dynamic> && data["error"] is String) {
-      return "status: $code, ${data["error"]}";
+      return "Status: $code, ${data["error"]}";
     }
-    return super.toString();
+    return "Status: $code, ${super.toString()}";
   }
 }
 

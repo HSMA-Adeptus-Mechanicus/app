@@ -11,6 +11,13 @@ enum LoginState {
   loggingOut,
 }
 
+class LoginStateChangeEvent {
+  final LoginState previous;
+  final LoginState state;
+
+  LoginStateChangeEvent(this.previous, this.state);
+}
+
 /// Handles authentication with the API and storing the access token
 class UserAuthentication {
   static UserAuthentication? _authentication;
@@ -27,10 +34,20 @@ class UserAuthentication {
 
   loadStorage() async {
     await _storage.initStorage;
-    _token = _storage.read<String>("token");
-    if (_token != null) {
+    try {
+      var data = _storage.read<Map<String, dynamic>>("token");
+      if (data!["token"] is String) {
+        _token = data["token"];
+        if (data["expirationTime"] is int) {
+          _expirationTime =
+              DateTime.fromMillisecondsSinceEpoch(data["expirationTime"]);
+        }
+        if (data["username"] is String) {
+          _username = data["username"];
+        }
+      }
       await checkLogin();
-    } else {
+    } catch (e) {
       await _updateState(LoginState.loggedOut);
     }
   }
@@ -108,7 +125,8 @@ class UserAuthentication {
   /// Confirm that the current authentication token is valid
   checkLogin() async {
     if (!authenticated) {
-      throw Exception("Currently not logged in");
+      _updateState(LoginState.loggedOut);
+      return;
     }
     try {
       Map<String, dynamic> result = await apiWrapper.get(
@@ -123,6 +141,8 @@ class UserAuthentication {
     } on ErrorResponseException {
       await _logoutClientSide();
     } catch (e) {
+      // The server did not respond with a proper error
+      // (this means there was an internal server error or there is not even an internet connection)
       await _updateState(LoginState.loggedIn);
     }
     return authenticated;
@@ -157,11 +177,15 @@ class UserAuthentication {
     if (_username == null) {
       throw Exception("Unable to edit password when not logged in");
     }
-    await apiWrapper.patch(
-      "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
-      {"password": newPassword},
-    );
-    await _logoutClientSide();
+    try {
+      await apiWrapper.patch(
+        "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
+        {"password": newPassword},
+      );
+      await _logoutClientSide();
+    } finally {
+      await checkLogin();
+    }
   }
 
   editUsername(String password, String newUsername) async {
@@ -184,8 +208,8 @@ class UserAuthentication {
         "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
       );
       await _logoutClientSide();
-    } on ErrorResponseException {
-      await _logoutClientSide();
+    } finally {
+      await checkLogin();
     }
   }
 
@@ -195,6 +219,29 @@ class UserAuthentication {
     onListen() {
       controller.add(state);
       controller.addStream(_broadcastStream);
+    }
+
+    onCancel() {
+      controller.close();
+    }
+
+    controller = StreamController(
+      onListen: onListen,
+      onCancel: onCancel,
+    );
+    return controller.stream;
+  }
+
+  /// Providing a stream that fires an event when the login status changes with the previous and current login state
+  Stream<LoginStateChangeEvent> getChangeStateStream() {
+    late StreamController<LoginStateChangeEvent> controller;
+    onListen() {
+      LoginState previous = state;
+      controller.addStream(_broadcastStream.map((state) {
+        var change = LoginStateChangeEvent(previous, state);
+        previous = state;
+        return change;
+      }));
     }
 
     onCancel() {
@@ -222,7 +269,11 @@ class UserAuthentication {
     if (!authenticated) {
       await _storage.erase();
     } else {
-      await _storage.write("token", _token);
+      await _storage.write("token", {
+        "token": _token,
+        "expirationTime": expirationTime?.millisecondsSinceEpoch,
+        "username": _username,
+      });
     }
   }
 }
