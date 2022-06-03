@@ -1,5 +1,5 @@
 import 'package:sff/widgets/display_error.dart';
-import 'package:sff/widgets/password_confirm.dart';
+import 'package:sff/widgets/settings/password_confirm.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
