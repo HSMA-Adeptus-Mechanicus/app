@@ -1,6 +1,7 @@
-import 'package:app/data/api/user_authentication.dart';
-import 'package:app/widgets/app_scaffold.dart';
+import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:sff/widgets/display_error.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -60,8 +61,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        UserAuthentication.getInstance().register(
-                            _usernameController.text, _passwordController.text);
+                        displayError(() async {
+                          await UserAuthentication.getInstance().register(
+                            _usernameController.text,
+                            _passwordController.text,
+                          );
+                        });
                         Navigator.pop(context);
                       }
                     },

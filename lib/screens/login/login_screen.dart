@@ -1,8 +1,9 @@
-import 'package:app/data/api/user_authentication.dart';
-import 'package:app/screens/app_frame.dart';
-import 'package:app/screens/login/register_screen.dart';
-import 'package:app/widgets/app_scaffold.dart';
+import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/screens/app_frame.dart';
+import 'package:sff/screens/login/register_screen.dart';
+import 'package:sff/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:sff/widgets/display_error.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -95,8 +96,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      await UserAuthentication.getInstance().login(
-                          _usernameController.text, _passwordController.text);
+                      await displayError(() async {
+                        await UserAuthentication.getInstance().login(
+                            _usernameController.text, _passwordController.text);
+                      });
                     }
                   },
                   child: const Text("Login"),
@@ -110,10 +113,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                 ElevatedButton(
                   onPressed: () async {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterScreen(),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterScreen(),
+                      ),
+                    );
                   },
                   child: const Text("Sign up"),
                 ),
