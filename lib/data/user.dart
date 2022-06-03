@@ -1,7 +1,24 @@
+import 'dart:async';
+
+import 'package:sff/data/avatar.dart';
+import 'package:sff/data/data.dart';
+import 'package:sff/data/item.dart';
+
 class User {
-  const User(this.name);
+  const User(this.id, this.name, this.avatar);
+  final String id;
   final String name;
-  static User fromJSON(Map<String, dynamic> json) {
-    return User(json["name"]);
+  final Avatar avatar;
+  static Future<User> fromJSON(Map<String, dynamic> json) async {
+    List<Item> items = await first(data.getItemsStream());
+    Map<String, Item> equippedItems = {};
+    Map<String, dynamic> avatar = json["avatar"];
+    for (var entry in avatar.entries) {
+      if (entry.value is String) {
+        equippedItems[entry.key] =
+            items.firstWhere((item) => item.id == entry.value);
+      }
+    }
+    return User(json["_id"], json["name"], Avatar(equippedItems));
   }
 }

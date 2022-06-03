@@ -8,11 +8,11 @@ class TeamScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<List<User>>(
       stream: data.getUsersStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<User> users = snapshot.data as List<User>;
+          List<User> users = snapshot.data!;
           return ListView.separated(
             padding: const EdgeInsets.all(15),
             itemCount: users.length,

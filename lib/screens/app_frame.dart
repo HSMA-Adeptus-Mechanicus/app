@@ -1,4 +1,4 @@
-import 'package:sff/screens/pages/avatar_screen.dart';
+import 'package:sff/screens/pages/reward_screen.dart';
 import 'package:sff/screens/pages/equip_screen.dart';
 import 'package:sff/screens/pages/ticket_screen.dart';
 import 'package:sff/screens/pages/team_screen.dart';
@@ -49,7 +49,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
           TeamScreen(),
           TicketScreen(),
           EquipScreen(),
-          AvatarScreen(),
+          RewardScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

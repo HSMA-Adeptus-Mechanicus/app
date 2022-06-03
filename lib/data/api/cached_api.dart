@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:sff/data/api/authenticated_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
@@ -31,21 +30,20 @@ class CachedAPI {
     late StreamController<dynamic> controller;
     dynamic state;
     onUpdate() {
-      if (state != _storage.listenable.state?[path]) {
-        state = _storage.listenable.state?[path];
-        if (state != null) {
-          controller.add(jsonDecode(state));
-        }
+      final value = _storage.read<Map<String, dynamic>>(path)?["data"];
+      if (value != state) {
+        state = value;
+        controller.add(value);
       }
     }
 
     onListen() {
       _storage.listenable.addListener(onUpdate);
-      final value = _storage.read(path);
+      final value = _storage.read<Map<String, dynamic>>(path);
       if (value != null) {
-        controller.add(jsonDecode(value));
+        controller.add(value["data"]);
       }
-      request(path);
+      requestIfOutdated(path);
     }
 
     onResume() {
@@ -62,12 +60,21 @@ class CachedAPI {
       onResume: onResume,
       onCancel: onStopListen,
     );
-    onUpdate();
     return controller.stream;
   }
 
-  /// Gets the the data at path, first trying the API and falling back to the cache.
+  /// Gets the data at path, first trying the cache, but if it does not exist or is outdated trying the API.
+  /// If the API fails it goes back to the cache.
   Future<dynamic> get(String path) async {
+    try {
+      return await requestIfOutdated(path);
+    } catch (e) {
+      return await getCached(path);
+    }
+  }
+
+  /// Gets the data at path, first trying the API and falling back to the cache.
+  Future<dynamic> getAPIFirst(String path) async {
     try {
       return await request(path);
     } catch (e) {
@@ -75,20 +82,52 @@ class CachedAPI {
     }
   }
 
+  /// Gets the data at path, first trying the cache and falling back to the API.
+  Future<dynamic> getCacheFirst(String path) async {
+    try {
+      return await getCached(path);
+    } catch (e) {
+      return await request(path);
+    }
+  }
+
   /// Gets the data from the cache only.
   Future<dynamic> getCached(String path) async {
     await _storage.initStorage;
-    final result = _storage.read<String>(path);
+    final result = _storage.read<Map<String, dynamic>>(path);
     if (result == null) {
       throw Exception("The data is not cached");
     }
-    return jsonDecode(result);
+    return result["data"];
   }
+
+  Future<dynamic> requestIfOutdated(String path,
+      {int maxMillisecondsAge = 30 * 1000}) async {
+    await _storage.initStorage;
+    final result = _storage.read<Map<String, dynamic>>(path);
+    if (result == null ||
+        result["time"] <
+            DateTime.now().millisecondsSinceEpoch - maxMillisecondsAge) {
+      return await request(path);
+    }
+    return result["data"];
+  }
+
+  Set<String> requestsInProgress = {};
 
   /// Requests the data from the API and caches it.
   Future<dynamic> request(String path) async {
-    final value = await authAPI.get(path);
-    await _storage.write(path, jsonEncode(value));
-    return value;
+    if (requestsInProgress.contains(path)) {
+      throw Exception("Concurrent requests to the same data ($path) are not allowed");
+    }
+    requestsInProgress.add(path);
+    try {
+      final value = await authAPI.get(path);
+      await _storage.write(
+          path, {"data": value, "time": DateTime.now().millisecondsSinceEpoch});
+      return value;
+    } finally {
+      requestsInProgress.remove(path);
+    }
   }
 }
