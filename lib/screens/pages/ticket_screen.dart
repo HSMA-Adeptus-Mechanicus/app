@@ -42,6 +42,11 @@ class TicketItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: _ticket.done
+          ? _ticket.rewardClaimed
+              ? Colors.grey
+              : Colors.green
+          : Colors.white,
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
