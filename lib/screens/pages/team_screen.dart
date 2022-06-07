@@ -1,7 +1,7 @@
 import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
 import 'package:flutter/material.dart';
-
+import 'package:sff/widgets/avatar.dart';
 
 class TeamScreen extends StatelessWidget {
   const TeamScreen({Key? key}) : super(key: key);
@@ -13,16 +13,18 @@ class TeamScreen extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<User> users = snapshot.data!;
-          return ListView.separated(
-            padding: const EdgeInsets.all(15),
+          return GridView.builder(
+            scrollDirection: Axis.vertical,
+            padding: const EdgeInsets.all(10),
             itemCount: users.length,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 300,
+              childAspectRatio: 2 / 3,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+            ),
             itemBuilder: (context, index) {
               return UserItem(users[index]);
-            },
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: 7,
-              );
             },
           );
         }
@@ -49,7 +51,14 @@ class UserItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(_user.name),
+            Center(
+              child: Text(_user.name),
+            ),
+            Expanded(
+              child: Center(
+                child: AvatarWidget(avatar: _user.avatar),
+              ),
+            ),
           ],
         ),
       ),

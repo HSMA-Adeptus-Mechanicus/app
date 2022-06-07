@@ -43,7 +43,7 @@ class CachedAPI {
       if (value != null) {
         controller.add(value["data"]);
       }
-      requestIfOutdated(path);
+      requestIfOutdated(path).ignore();
     }
 
     onResume() {

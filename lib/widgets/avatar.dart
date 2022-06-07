@@ -5,12 +5,14 @@ import 'package:sff/data/item.dart';
 // order from back to front
 const categoryOrder = [
   "skin",
-  "eyes",
+  "face",
   "hair",
-  "shirt",
+  "head-cover",
+  "weapon",
+  "hand",
   "pants",
   "boots",
-  "weapon",
+  "shirt",
 ];
 
 class AvatarWidget extends StatelessWidget {
