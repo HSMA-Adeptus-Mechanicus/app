@@ -1,4 +1,4 @@
-import 'package:sff/screens/pages/avatar_screen.dart';
+import 'package:sff/screens/pages/reward_screen.dart';
 import 'package:sff/screens/pages/equip_screen.dart';
 import 'package:sff/screens/pages/ticket_screen.dart';
 import 'package:sff/screens/pages/team_screen.dart';
@@ -39,7 +39,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     _controller.index = _selectedIndex;
 
-    Color? itemColor = Theme.of(context).textTheme.bodyMedium?.color;
+    Color? itemColor = Theme.of(context).colorScheme.onSurface;
 
     return Scaffold(
       appBar: const CustomAppBar(),
@@ -49,30 +49,30 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
           TeamScreen(),
           TicketScreen(),
           EquipScreen(),
-          AvatarScreen(),
+          RewardScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         fixedColor: itemColor,
-        unselectedItemColor: itemColor?.withAlpha(100),
+        unselectedItemColor: itemColor.withAlpha(140),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.takeout_dining),
-            label: "Tickets",
+            icon: Icon(Icons.flag),
+            label: "Quests",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.checkroom),
-            label: "Equip",
+            label: "Inventar",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: "Avatar",
+            icon: Icon(Icons.star),
+            label: "Belohnungen",
           ),
         ],
         currentIndex: _selectedIndex,

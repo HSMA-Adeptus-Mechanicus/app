@@ -12,11 +12,11 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScaffold(
       settingsButton: false,
-      body: StreamBuilder(
+      body: StreamBuilder<LoginState>(
         stream: UserAuthentication.getInstance().getStateStream(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            LoginState state = snapshot.data as LoginState;
+            LoginState state = snapshot.data!;
             if (state == LoginState.loggedIn) {
               Future.microtask(
                 () {
@@ -57,7 +57,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     return Center(
       child: IntrinsicHeight(
-        child: Form(
+        child: Form( // TODO: Add autofill hints
           key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(20),
