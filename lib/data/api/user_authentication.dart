@@ -122,6 +122,7 @@ class UserAuthentication {
     await _updateState(LoginState.loggedIn);
   }
 
+  // TODO: Add automatic token refreshing (and token refreshing in general)
   /// Confirm that the current authentication token is valid
   checkLogin() async {
     if (!authenticated) {

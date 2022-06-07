@@ -7,7 +7,7 @@ import 'package:sff/data/user.dart';
 
 const data = Data();
 
-
+// TODO: Delete once it has been solved
 /// This is a workaround for stream.first that should (hopefully)
 /// no longer be necessary in the next release of dart
 /// more information: https://github.com/dart-lang/sdk/issues/34775
