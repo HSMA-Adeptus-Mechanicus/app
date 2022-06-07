@@ -41,28 +41,37 @@ class TicketItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: _ticket.done
-          ? _ticket.rewardClaimed
-              ? Colors.grey
-              : Colors.green
-          : Colors.white,
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(_ticket.name),
-            Text(_ticket.description),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(_ticket.storyPoints.toString()),
-                Text(_ticket.done ? "done" : "in progress"),
-              ],
-            )
-          ],
+    return GestureDetector(
+      onTap: (() {
+        if (_ticket.done && _ticket.rewardClaimed) {
+          //ticket reward claimed now true
+          //get reward and add it to account
+        }
+        //else do nothing
+      }()),
+      child: Card(
+        color: _ticket.done
+            ? _ticket.rewardClaimed
+                ? Colors.grey
+                : Colors.green
+            : Colors.white,
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(_ticket.name),
+              Text(_ticket.description),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_ticket.storyPoints.toString()),
+                  Text(_ticket.done ? "done" : "in progress"),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
