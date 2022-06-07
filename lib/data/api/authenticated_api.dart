@@ -3,7 +3,7 @@ import 'package:sff/data/api/user_authentication.dart';
 
 const authAPI = AuthenticatedAPI();
 
-/// Provides functions to call the API and abstracts the api url and json parsing away like APIWrapper. Additionally it adds the authentication token 
+/// Provides functions to call the API and abstracts the api url and json parsing away like APIWrapper. Additionally it adds the authentication token
 class AuthenticatedAPI {
   const AuthenticatedAPI();
 
