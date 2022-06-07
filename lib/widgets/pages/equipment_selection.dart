@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/data/avatar.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/item.dart';
 import 'package:http/http.dart' as http;
+import 'package:sff/data/user.dart';
 import 'package:sff/utils/image_tools.dart';
 
 class EquipmentSelection extends StatelessWidget {
@@ -9,47 +12,83 @@ class EquipmentSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Item>>(
-        future: first(data.getItemsStream()),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<Item> items = snapshot.data!;
-            Map<String, List<Item>> byCategory = {};
-            for (var item in items) {
-              byCategory[item.category] ??= [];
-              byCategory[item.category]?.add(item);
-            }
-            var categories = byCategory.entries;
-            return DefaultTabController(
-              length: categories.length,
-              child: Scaffold(
-                appBar: TabBar(
-                  isScrollable: true,
-                  tabs: categories.map((e) => Tab(child: Text(e.key))).toList(),
-                ),
-                body: TabBarView(
-                  children: categories
-                      .map((e) => ItemSelection(e.value))
-                      .toList(),
-                ),
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            return ErrorWidget(snapshot.error!);
-          }
-          return const Center(child: CircularProgressIndicator());
-        });
+    final userFuture = () async {
+      final user = (await first(data.getUsersStream())).firstWhere(
+          (user) => user.name == UserAuthentication.getInstance().username);
+      return user;
+    }();
+    return FutureBuilder<User>(
+      future: userFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final user = snapshot.data!;
+          return StreamBuilder<List<Item>>(
+            stream: data.getItemsStream(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                List<Item> items = snapshot.data!;
+                return ItemCategorySelector(
+                  user: user,
+                  items: items,
+                );
+              }
+              if (snapshot.hasError) {
+                return ErrorWidget(snapshot.error!);
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
+          );
+        }
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error!);
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+}
+
+class ItemCategorySelector extends StatelessWidget {
+  final User user;
+  final List<Item> items;
+
+  const ItemCategorySelector(
+      {super.key, required this.user, required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    Map<String, List<Item>> byCategory = {};
+    for (var item in items) {
+      byCategory[item.category] ??= [];
+      byCategory[item.category]?.add(item);
+    }
+    var categories = byCategory.entries;
+    return DefaultTabController(
+      length: categories.length,
+      child: Scaffold(
+        appBar: TabBar(
+          isScrollable: true,
+          tabs: categories.map((e) => Tab(child: Text(e.key))).toList(),
+        ),
+        body: TabBarView(
+          children: categories
+              .map((e) => ItemSelection(user: user, items: e.value))
+              .toList(),
+        ),
+      ),
+    );
   }
 }
 
 class ItemSelection extends StatelessWidget {
-  const ItemSelection(
-    this._items, {
+  const ItemSelection({
     Key? key,
+    required this.user,
+    required this.items,
   }) : super(key: key);
 
-  final List<Item> _items;
+  final User user;
+  final List<Item> items;
 
   @override
   Widget build(BuildContext context) {
@@ -62,26 +101,28 @@ class ItemSelection extends StatelessWidget {
         crossAxisSpacing: 5,
         mainAxisSpacing: 5,
       ),
-      itemCount: _items.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        return ItemButton(_items[index]);
+        return ItemButton(
+          item: items[index],
+        );
       },
     );
   }
 }
 
 class ItemButton extends StatelessWidget {
-  const ItemButton(
-    this._item, {
+  const ItemButton({
     Key? key,
+    required this.item,
   }) : super(key: key);
 
-  final Item _item;
+  final Item item;
 
   @override
   Widget build(BuildContext context) {
     var image = () async {
-      var response = await http.get(Uri.parse(_item.url));
+      var response = await http.get(Uri.parse(item.url));
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw Exception();
       }
@@ -99,7 +140,9 @@ class ItemButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             vertical: 8 + padding, horizontal: padding),
       ),
-      onPressed: () {},
+      onPressed: () {
+        Avatar.equip(item);
+      },
       child: FutureBuilder<Image?>(
         future: image,
         builder: (context, snapshot) {

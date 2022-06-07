@@ -37,8 +37,8 @@ class _APIWrapper {
   }
 
   Future<dynamic> post(String path, dynamic body) async {
-    var response =
-        await http.post(Uri.parse(_basePath + path), body: jsonEncode(body));
+    var response = await http.post(Uri.parse(_basePath + path),
+        body: body != null ? jsonEncode(body) : null);
     var result = jsonDecode(response.body);
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw ErrorResponseException(response.statusCode, result);
@@ -47,8 +47,8 @@ class _APIWrapper {
   }
 
   Future<dynamic> patch(String path, dynamic body) async {
-    var response =
-        await http.patch(Uri.parse(_basePath + path), body: jsonEncode(body));
+    var response = await http.patch(Uri.parse(_basePath + path),
+        body: body != null ? jsonEncode(body) : null);
     var result = jsonDecode(response.body);
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw ErrorResponseException(response.statusCode, result);
