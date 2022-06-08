@@ -17,13 +17,12 @@ class Ticket {
         json["name"],
         json["description"],
         json["storyPoints"],
-        (json["duration"]).toDouble(),
+        json["duration"].toDouble(),
         json["done"],
         json["rewardClaimed"]);
   }
 
   Future<void> claimReward() async {
-    print("____________________:${id}");
     await authAPI.patch("db/tickets/claim-reward/$id", null);
     CachedAPI.getInstance().request("db/tickets").ignore();
   }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:sff/data/api/authenticated_api.dart';
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/item.dart';
 import 'package:sff/data/ticket.dart';
