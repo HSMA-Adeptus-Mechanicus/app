@@ -12,31 +12,13 @@ class EquipmentSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userFuture = () async {
-      final user = (await first(data.getUsersStream())).firstWhere(
-          (user) => user.name == UserAuthentication.getInstance().username);
-      return user;
-    }();
-    return FutureBuilder<User>(
-      future: userFuture,
+    return StreamBuilder<List<Item>>(
+      stream: data.getItemsStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final user = snapshot.data!;
-          return StreamBuilder<List<Item>>(
-            stream: data.getItemsStream(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<Item> items = snapshot.data!;
-                return ItemCategorySelector(
-                  user: user,
-                  items: items,
-                );
-              }
-              if (snapshot.hasError) {
-                return ErrorWidget(snapshot.error!);
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
+          List<Item> items = snapshot.data!;
+          return ItemCategorySelector(
+            items: items,
           );
         }
         if (snapshot.hasError) {
@@ -49,11 +31,9 @@ class EquipmentSelection extends StatelessWidget {
 }
 
 class ItemCategorySelector extends StatelessWidget {
-  final User user;
   final List<Item> items;
 
-  const ItemCategorySelector(
-      {super.key, required this.user, required this.items});
+  const ItemCategorySelector({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +51,8 @@ class ItemCategorySelector extends StatelessWidget {
           tabs: categories.map((e) => Tab(child: Text(e.key))).toList(),
         ),
         body: TabBarView(
-          children: categories
-              .map((e) => ItemSelection(user: user, items: e.value))
-              .toList(),
+          children:
+              categories.map((e) => ItemSelection(items: e.value)).toList(),
         ),
       ),
     );
@@ -83,40 +62,53 @@ class ItemCategorySelector extends StatelessWidget {
 class ItemSelection extends StatelessWidget {
   const ItemSelection({
     Key? key,
-    required this.user,
     required this.items,
   }) : super(key: key);
 
-  final User user;
   final List<Item> items;
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      scrollDirection: Axis.vertical,
-      padding: const EdgeInsets.all(10),
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 100,
-        childAspectRatio: 1 / 1,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        return ItemButton(
-          item: items[index],
-        );
-      },
-    );
+    return StreamBuilder<List<User>>(
+        stream: data.getUsersStream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final user = snapshot.data!.firstWhere((user) =>
+                user.name == UserAuthentication.getInstance().username);
+            return GridView.builder(
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.all(10),
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 100,
+                childAspectRatio: 1 / 1,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+              ),
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return ItemButton(
+                  user: user,
+                  item: items[index],
+                );
+              },
+            );
+          }
+          if (snapshot.hasError) {
+            return ErrorWidget(snapshot.error!);
+          }
+          return const Center(child: CircularProgressIndicator());
+        });
   }
 }
 
 class ItemButton extends StatelessWidget {
   const ItemButton({
     Key? key,
+    required this.user,
     required this.item,
   }) : super(key: key);
 
+  final User user;
   final Item item;
 
   @override
@@ -135,26 +127,47 @@ class ItemButton extends StatelessWidget {
     }();
 
     const double padding = 10;
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(
-            vertical: 8 + padding, horizontal: padding),
-      ),
-      onPressed: () {
-        Avatar.equip(item);
+
+    final imageWidget = FutureBuilder<Image?>(
+      future: image,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return snapshot.data!;
+        }
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error!);
+        }
+        return const CircularProgressIndicator();
       },
-      child: FutureBuilder<Image?>(
-        future: image,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          }
-          if (snapshot.hasError) {
-            return ErrorWidget(snapshot.error!);
-          }
-          return const CircularProgressIndicator();
-        },
-      ),
     );
+
+    const paddingStyle =
+        EdgeInsets.symmetric(vertical: 8 + padding, horizontal: padding);
+
+    onPressed() {
+      if (user.avatar.isEquipped(item)) {
+        Avatar.unequip(item);
+      } else {
+        Avatar.equip(item);
+      }
+    }
+
+    if (user.avatar.isEquipped(item)) {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          padding: paddingStyle,
+        ),
+        onPressed: onPressed,
+        child: imageWidget,
+      );
+    } else {
+      return OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          padding: paddingStyle,
+        ),
+        onPressed: onPressed,
+        child: imageWidget,
+      );
+    }
   }
 }

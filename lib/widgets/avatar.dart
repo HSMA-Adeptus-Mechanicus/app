@@ -7,12 +7,12 @@ const categoryOrder = [
   "skin",
   "face",
   "hair",
-  "head-cover",
+  "hat",
   "weapon",
   "hand",
   "pants",
-  "boots",
-  "shirt",
+  "shoes",
+  "torso",
 ];
 
 class AvatarWidget extends StatelessWidget {

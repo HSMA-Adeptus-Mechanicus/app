@@ -8,6 +8,10 @@ class Avatar {
     await authAPI.patch("db/avatar/equip/${item.id}", null);
     CachedAPI.getInstance().request("db/users").ignore(); // trigger update of users (which will automatically cause an update to all streams)
   }
+  static unequip(Item item) async {
+    await authAPI.delete("db/avatar/equip/${item.id}");
+    CachedAPI.getInstance().request("db/users").ignore(); // trigger update of users (which will automatically cause an update to all streams)
+  }
 
   final Map<String, Item> equippedItems;
   Iterable<Item> get equipped {
@@ -15,4 +19,8 @@ class Avatar {
   }
 
   const Avatar(this.equippedItems);
+
+  bool isEquipped(Item item) {
+    return equippedItems[item.category]?.id == item.id;
+  }
 }
