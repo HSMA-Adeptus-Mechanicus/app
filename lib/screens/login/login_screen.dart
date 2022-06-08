@@ -12,11 +12,11 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScaffold(
       settingsButton: false,
-      body: StreamBuilder(
+      body: StreamBuilder<LoginState>(
         stream: UserAuthentication.getInstance().getStateStream(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            LoginState state = snapshot.data as LoginState;
+            LoginState state = snapshot.data!;
             if (state == LoginState.loggedIn) {
               Future.microtask(
                 () {
@@ -57,40 +57,48 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     return Center(
       child: IntrinsicHeight(
-        child: Form(
+        child: Form( // TODO: Add autofill hints
           key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextFormField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Username",
+                AutofillGroup(
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Username",
+                        ),
+                        autofillHints: const [AutofillHints.username],
+                        controller: _usernameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please provide a username";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Password",
+                        ),
+                        autofillHints: const [AutofillHints.password],
+                        obscureText: true,
+                        controller: _passwordController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please provide a password";
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
                   ),
-                  controller: _usernameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please provide a username";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Password",
-                  ),
-                  obscureText: true,
-                  controller: _passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please provide a password";
-                    }
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(

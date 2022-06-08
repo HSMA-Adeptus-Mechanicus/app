@@ -7,11 +7,11 @@ class TicketScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<List<Ticket>>(
       stream: data.getTicketsStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<Ticket> tickets = snapshot.data as List<Ticket>;
+          List<Ticket> tickets = snapshot.data!;
           return ListView.separated(
             padding: const EdgeInsets.all(15),
             itemCount: tickets.length,
