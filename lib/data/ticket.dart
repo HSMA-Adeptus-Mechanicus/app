@@ -1,4 +1,5 @@
 import 'package:sff/data/api/authenticated_api.dart';
+import 'package:sff/data/api/cached_api.dart';
 
 class Ticket {
   const Ticket(this.id, this.name, this.description, this.storyPoints,
@@ -24,5 +25,6 @@ class Ticket {
   Future<void> claimReward() async {
     print("____________________:${id}");
     await authAPI.patch("db/tickets/claim-reward/$id", null);
+    CachedAPI.getInstance().request("db/tickets").ignore();
   }
 }
