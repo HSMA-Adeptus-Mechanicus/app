@@ -42,13 +42,7 @@ class TicketItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (() {
-        if (_ticket.done && _ticket.rewardClaimed) {
-          //ticket reward claimed now true
-          //get reward and add it to account
-        }
-        //else do nothing
-      }()),
+      onTap: () => _ticket.claimReward(),
       child: Card(
         color: _ticket.done
             ? _ticket.rewardClaimed
@@ -69,7 +63,7 @@ class TicketItem extends StatelessWidget {
                   Text(_ticket.storyPoints.toString()),
                   Text(_ticket.done ? "done" : "in progress"),
                 ],
-              )
+              ),
             ],
           ),
         ),
