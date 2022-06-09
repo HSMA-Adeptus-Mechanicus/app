@@ -41,6 +41,7 @@ class TicketItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: -> more feedback for pressing the ticket
     return GestureDetector(
       onTap: () => _ticket.claimReward(),
       child: Card(
