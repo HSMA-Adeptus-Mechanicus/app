@@ -25,6 +25,7 @@ class _PasswordConfirmState extends State<PasswordConfirm> {
           border: OutlineInputBorder(),
           labelText: "Password",
         ),
+        autofillHints: const [AutofillHints.password],
         obscureText: true,
         controller: _passwordController,
         validator: (value) {

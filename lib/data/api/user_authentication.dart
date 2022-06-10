@@ -45,6 +45,9 @@ class UserAuthentication {
         if (data["username"] is String) {
           _username = data["username"];
         }
+        if (data["userId"] is String) {
+          _userId = data["userId"];
+        }
       }
       await checkLogin();
     } catch (e) {
@@ -58,6 +61,7 @@ class UserAuthentication {
   String? _username;
   String? _token;
   DateTime? _expirationTime;
+  String? _userId;
 
   final StreamController<LoginState> _streamController = StreamController();
   late final Stream<LoginState> _broadcastStream;
@@ -72,6 +76,10 @@ class UserAuthentication {
 
   String? get username {
     return _username;
+  }
+
+  String? get userId {
+    return _userId;
   }
 
   String? get token {
@@ -110,6 +118,7 @@ class UserAuthentication {
         "auth/login?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
       );
       _username = username;
+      _userId = result["userId"];
       _token = result["token"];
       _expirationTime = DateTime.fromMillisecondsSinceEpoch(
         result["expirationTime"] * 1000,
@@ -120,6 +129,35 @@ class UserAuthentication {
       rethrow;
     }
     await _updateState(LoginState.loggedIn);
+  }
+
+  refreshToken() async {
+    if (!authenticated) {
+      throw Exception("There is no token to be refreshed");
+    }
+    _updateState(LoginState.loggingIn);
+    try {
+      String oldToken = _token!;
+
+      Map<String, dynamic> result = await apiWrapper.get(
+        "/auth/refresh-token?token=${Uri.encodeComponent(_token!)}",
+      );
+      _username = username;
+      _userId = result["userId"];
+      _token = result["token"];
+      _expirationTime = DateTime.fromMillisecondsSinceEpoch(
+        result["expirationTime"] * 1000,
+        isUtc: true,
+      );
+      await _updateState(LoginState.loggedIn);
+
+      apiWrapper
+          .delete("auth/revoke-token?token=${Uri.encodeComponent(oldToken)}")
+          .ignore();
+    } catch (e) {
+      await checkLogin();
+    }
+    return authenticated;
   }
 
   // TODO: Add automatic token refreshing (and token refreshing in general)
@@ -133,11 +171,12 @@ class UserAuthentication {
       Map<String, dynamic> result = await apiWrapper.get(
         "/auth/check-token?token=${Uri.encodeComponent(_token!)}",
       );
+      _username = result["username"];
+      _userId = result["userId"];
       _expirationTime = DateTime.fromMillisecondsSinceEpoch(
         result["expirationTime"] * 1000,
         isUtc: true,
       );
-      _username = result["username"];
       await _updateState(LoginState.loggedIn);
     } on ErrorResponseException {
       await _logoutClientSide();
@@ -170,6 +209,7 @@ class UserAuthentication {
   _logoutClientSide() async {
     _token = null;
     _username = null;
+    _userId = null;
     _expirationTime = null;
     await _updateState(LoginState.loggedOut);
   }
@@ -190,6 +230,7 @@ class UserAuthentication {
   }
 
   editUsername(String password, String newUsername) async {
+    // TODO: add stream that allows detecting the change of the username to automatically update it in the UI
     if (_username == null) {
       throw Exception("Unable to edit username when not logged in");
     }
@@ -274,6 +315,7 @@ class UserAuthentication {
         "token": _token,
         "expirationTime": expirationTime?.millisecondsSinceEpoch,
         "username": _username,
+        "userId": _userId,
       });
     }
   }

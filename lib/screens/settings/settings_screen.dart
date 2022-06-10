@@ -7,10 +7,12 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const AppScaffold(
+    return AppScaffold(
       settingsButton: false,
-      body: Center(
-        child: LoginInfo(),
+      body: Column(
+        children: const [
+          LoginInfo(),
+        ],
       ),
     );
   }

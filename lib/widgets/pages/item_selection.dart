@@ -17,6 +17,7 @@ class ItemSelectionByCategory extends StatelessWidget {
     return DefaultTabController(
       length: categories.length,
       child: Scaffold(
+        backgroundColor: Theme.of(context).cardColor,
         appBar: TabBar(
           isScrollable: true,
           tabs: categories.map((e) => Tab(child: Text(e))).toList(),
@@ -126,9 +127,6 @@ class _ItemButton extends StatelessWidget {
       },
     );
 
-    const paddingStyle =
-        EdgeInsets.symmetric(vertical: 8 + padding, horizontal: padding);
-
     onPressed() {
       if (user.avatar.isEquipped(item)) {
         Avatar.unequip(item);
@@ -137,22 +135,23 @@ class _ItemButton extends StatelessWidget {
       }
     }
 
-    if (user.avatar.isEquipped(item)) {
-      return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          padding: paddingStyle,
+    var border = user.avatar.isEquipped(item)
+        ? BorderSide(
+            width: 3,
+            color: Theme.of(context).colorScheme.primary,
+          )
+        : null;
+
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(
+          vertical: 8 + padding,
+          horizontal: padding,
         ),
-        onPressed: onPressed,
-        child: imageWidget,
-      );
-    } else {
-      return OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          padding: paddingStyle,
-        ),
-        onPressed: onPressed,
-        child: imageWidget,
-      );
-    }
+        side: border,
+      ),
+      onPressed: onPressed,
+      child: imageWidget,
+    );
   }
 }

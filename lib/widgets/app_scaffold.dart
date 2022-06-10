@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 
 /// Provides a scaffold including the app bar
 class AppScaffold extends StatelessWidget {
-  const AppScaffold({Key? key, required this.body, this.settingsButton = true})
+  const AppScaffold(
+      {Key? key,
+      required this.body,
+      this.settingsButton = true,
+      this.bottomNavigationBar})
       : super(key: key);
 
   final Widget body;
   final bool settingsButton;
+  final Widget? bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,20 @@ class AppScaffold extends StatelessWidget {
       appBar: CustomAppBar(
         settingsButton: settingsButton,
       ),
-      body: body,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment(-0.4, -0.2),
+            end: Alignment(0.7, 0.5),
+            colors: [
+              Color.fromARGB(255, 140, 5, 246),
+              Color.fromARGB(255, 1, 30, 184),
+            ],
+          ),
+        ),
+        child: body,
+      ),
+      bottomNavigationBar: bottomNavigationBar,
     );
   }
 }

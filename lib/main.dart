@@ -38,9 +38,19 @@ class App extends StatelessWidget {
         brightness: Brightness.dark,
         primarySwatch: Colors.deepPurple,
         textTheme: const TextTheme(),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+            ),
+          ),
+        ),
+        cardColor: const Color.fromARGB(255, 142, 123, 255),
         colorScheme: const ColorScheme(
           brightness: Brightness.dark,
-          primary: Color.fromARGB(255, 153, 132, 238),
+          primary: Color.fromARGB(255, 255, 190, 38),
           onPrimary: Colors.black,
           secondary: Color.fromARGB(255, 63, 63, 63),
           onSecondary: Colors.white,
@@ -48,7 +58,7 @@ class App extends StatelessWidget {
           onError: Colors.black,
           background: Color.fromARGB(255, 63, 63, 63),
           onBackground: Colors.white,
-          surface: Color.fromARGB(255, 85, 58, 183),
+          surface: Color.fromARGB(255, 75, 41, 199),
           onSurface: Colors.white,
         ),
       ),

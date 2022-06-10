@@ -2,7 +2,7 @@ import 'package:sff/screens/pages/reward_screen.dart';
 import 'package:sff/screens/pages/equip_screen.dart';
 import 'package:sff/screens/pages/ticket_screen.dart';
 import 'package:sff/screens/pages/team_screen.dart';
-import 'package:sff/widgets/custom_app_bar.dart';
+import 'package:sff/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class AppFrame extends StatefulWidget {
@@ -41,8 +41,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
 
     Color? itemColor = Theme.of(context).colorScheme.onSurface;
 
-    return Scaffold(
-      appBar: const CustomAppBar(),
+    return AppScaffold(
       body: TabBarView(
         controller: _controller,
         children: const [

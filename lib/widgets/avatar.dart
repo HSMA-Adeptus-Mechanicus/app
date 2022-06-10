@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/avatar.dart';
+import 'package:sff/data/data.dart';
 import 'package:sff/data/item.dart';
+import 'package:sff/data/user.dart';
 
 // order from back to front
 const categoryOrder = [
@@ -14,6 +16,33 @@ const categoryOrder = [
   "shoes",
   "torso",
 ];
+
+class UserAvatarWidget extends StatelessWidget {
+  final String userId;
+
+  const UserAvatarWidget({super.key, required this.userId});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<User>>(
+      stream: data.getUsersStream(),
+      builder: ((context, snapshot) {
+        if (snapshot.hasData) {
+          User user = snapshot.data!.firstWhere(
+            (user) => user.id == userId,
+          );
+          return AvatarWidget(avatar: user.avatar);
+        }
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error!);
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }),
+    );
+  }
+}
 
 class AvatarWidget extends StatelessWidget {
   final Avatar avatar;

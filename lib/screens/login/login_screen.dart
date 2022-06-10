@@ -28,9 +28,7 @@ class LoginScreen extends StatelessWidget {
               );
               return const Center(child: CircularProgressIndicator());
             } else if (state == LoginState.loggedOut) {
-              return const Scaffold(
-                body: LoginWidget(),
-              );
+              return const LoginWidget();
             }
           }
           return const Center(child: CircularProgressIndicator());
@@ -57,7 +55,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     return Center(
       child: IntrinsicHeight(
-        child: Form( // TODO: Add autofill hints
+        child: Form(
           key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(20),
