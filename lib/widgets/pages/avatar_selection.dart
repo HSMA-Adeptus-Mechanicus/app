@@ -9,7 +9,6 @@ class AvatarSelection extends StatelessWidget {
     return const ItemSelectionByCategory(
       categories: [
         "skin",
-        "hand", // TODO: automatically switch together with skin
         "face",
         "hair",
       ],
