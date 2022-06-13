@@ -46,7 +46,7 @@ class TicketItem extends StatelessWidget {
       child: Card(
         color: _ticket.done
             ? _ticket.rewardClaimed
-                ? Theme.of(context).backgroundColor
+                ? Theme.of(context).colorScheme.background
                 : Colors.green
             : Theme.of(context).cardColor,
         elevation: 5,
@@ -55,7 +55,14 @@ class TicketItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(_ticket.name),
+              Text(
+                _ticket.name,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Divider(
+                height: 10,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
               Text(_ticket.description),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

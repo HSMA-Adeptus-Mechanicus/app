@@ -38,9 +38,7 @@ class UserAvatarWidget extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const Center(child: CircularProgressIndicator());
       }),
     );
   }
@@ -63,22 +61,20 @@ class AvatarWidget extends StatelessWidget {
       children: equippedItems
           .map(
             (item) => FutureBuilder<Uint8List>(
-              future: item.getImageData(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData)
-                {
-                return Image.memory(
-                  snapshot.data!,
-                  scale: 1 / 3,
-                  filterQuality: FilterQuality.none,
-                );
-                }
-                if (snapshot.hasError) {
-                  return ErrorWidget(snapshot.error!);
-                }
-                return const SizedBox.shrink();
-              }
-            ),
+                future: item.getImageData(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Image.memory(
+                      snapshot.data!,
+                      scale: 1 / 3,
+                      filterQuality: FilterQuality.none,
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return ErrorWidget(snapshot.error!);
+                  }
+                  return const SizedBox.shrink();
+                }),
           )
           .toList(),
     );

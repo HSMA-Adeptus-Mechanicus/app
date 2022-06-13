@@ -1,5 +1,7 @@
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:sff/widgets/avatar.dart';
 
 final Size prefSize = AppBar().preferredSize;
 
@@ -14,22 +16,29 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget button = IconButton(
-      icon: const Icon(Icons.account_circle),
-      onPressed: () {
-        Navigator.of(context).push<void>(
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return const SettingsScreen();
-            },
-          ),
-        );
-      },
-    );
+    Widget? button;
+    if (settingsButton && UserAuthentication.getInstance().authenticated) {
+      button = IconButton(
+        padding: EdgeInsets.zero,
+        icon: UserAvatarWidget(
+          userId: UserAuthentication.getInstance().userId!,
+        ),
+        onPressed: () {
+          Navigator.of(context).push<void>(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                return const SettingsScreen();
+              },
+            ),
+          );
+        },
+      );
+    }
 
     return AppBar(
-      actions: settingsButton ? [button] : null,
+      // TODO: adjust look of back button
       title: const Text("Scrum for Fun"),
+      actions: button != null ? [button] : null,
     );
   }
 }

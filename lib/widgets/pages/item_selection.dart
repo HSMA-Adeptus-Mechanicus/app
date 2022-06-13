@@ -119,7 +119,7 @@ class _ItemButton extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       },
     );
 
