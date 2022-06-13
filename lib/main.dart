@@ -56,7 +56,7 @@ class App extends StatelessWidget {
           onSecondary: Colors.white,
           error: Colors.red,
           onError: Colors.black,
-          background: Color.fromARGB(255, 63, 63, 63),
+          background: Color.fromARGB(255, 136, 136, 136),
           onBackground: Colors.white,
           surface: Color.fromARGB(255, 75, 41, 199),
           onSurface: Colors.white,
@@ -71,11 +71,7 @@ class App extends StatelessWidget {
                 stateChange.previous == LoginState.loggingOut &&
                 stateChange.state == LoginState.loggedOut)
             .listen((stateChange) {
-          Navigator.pushAndRemoveUntil(
-            navigatorKey.currentContext!,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-            (route) => false,
-          );
+          navigateTopLevelToWidget(const LoginScreen());
         });
         return const LoginScreen();
       }),

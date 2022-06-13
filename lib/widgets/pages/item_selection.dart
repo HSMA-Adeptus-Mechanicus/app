@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/avatar.dart';
 import 'package:sff/data/data.dart';
@@ -99,13 +98,10 @@ class _ItemButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var image = () async {
-      var response = await http.get(Uri.parse(item.url));
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception();
-      }
-      var data = response.bodyBytes;
-      var image = cropImageData(data);
+    // TODO: make it so it does not repeatedly crop the image every time an item is equipped
+    final image = () async {
+      final data = await item.getImageData();
+      final image = cropImageData(data);
       if (image != null) {
         return toImageWidget(image);
       }
@@ -123,11 +119,12 @@ class _ItemButton extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       },
     );
 
     onPressed() {
+      // TODO: give immediate feedback when equipping items
       if (user.avatar.isEquipped(item)) {
         Avatar.unequip(item);
       } else {
@@ -142,16 +139,19 @@ class _ItemButton extends StatelessWidget {
           )
         : null;
 
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(
-          vertical: 8 + padding,
-          horizontal: padding,
+    return Opacity(
+      opacity: user.ownsItem(item) ? 1 : 0.25,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(
+            vertical: 8 + padding,
+            horizontal: padding,
+          ),
+          side: border,
         ),
-        side: border,
+        onPressed: onPressed,
+        child: imageWidget,
       ),
-      onPressed: onPressed,
-      child: imageWidget,
     );
   }
 }

@@ -5,10 +5,11 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/item.dart';
 
 class User {
-  const User(this.id, this.name, this.avatar);
+  const User(this.id, this.name, this.wardrobe, this.avatar);
   final String id;
   final String name;
   final Avatar avatar;
+  final List<String> wardrobe;
   static Future<User> fromJSON(Map<String, dynamic> json) async {
     List<Item> items = await first(data.getItemsStream());
     Map<String, Item> equippedItems = {};
@@ -19,6 +20,17 @@ class User {
             items.firstWhere((item) => item.id == entry.value);
       }
     }
-    return User(json["_id"], json["name"], Avatar(equippedItems));
+    return User(
+      json["_id"],
+      json["name"],
+      (json["wardrobe"] as List<dynamic>)
+          .map((element) => element as String)
+          .toList(),
+      Avatar(equippedItems),
+    );
+  }
+
+  bool ownsItem(Item item) {
+    return wardrobe.contains(item.id);
   }
 }

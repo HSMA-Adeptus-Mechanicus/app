@@ -1,4 +1,5 @@
 import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/navigation.dart';
 import 'package:sff/screens/app_frame.dart';
 import 'package:sff/screens/login/register_screen.dart';
 import 'package:sff/widgets/app_scaffold.dart';
@@ -18,14 +19,9 @@ class LoginScreen extends StatelessWidget {
           if (snapshot.hasData) {
             LoginState state = snapshot.data!;
             if (state == LoginState.loggedIn) {
-              Future.microtask(
-                () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AppFrame()),
-                  );
-                },
-              );
+              Future.microtask(() {
+                navigateTopLevelToWidget(const AppFrame());
+              });
               return const Center(child: CircularProgressIndicator());
             } else if (state == LoginState.loggedOut) {
               return const LoginWidget();

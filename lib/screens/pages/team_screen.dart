@@ -2,9 +2,44 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/widgets/avatar.dart';
+import 'package:sff/widgets/button_tab_bar.dart';
 
 class TeamScreen extends StatelessWidget {
   const TeamScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      initialIndex: 1,
+      child: Column(
+        children: const [
+          ButtonTabBar(
+            tabs: [
+              Tab(child: Text("Bossfight")),
+              Tab(child: Text("mein Team")),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                Center(
+                  child: Text("Bossfight"),
+                ),
+                Team(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Team extends StatelessWidget {
+  const Team({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +52,8 @@ class TeamScreen extends StatelessWidget {
             scrollDirection: Axis.vertical,
             padding: const EdgeInsets.all(10),
             itemCount: users.length,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            gridDelegate:
+                const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 300,
               childAspectRatio: 2 / 3,
               crossAxisSpacing: 5,

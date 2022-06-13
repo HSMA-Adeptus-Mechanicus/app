@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:sff/data/avatar.dart';
 import 'package:sff/data/data.dart';
@@ -36,9 +38,7 @@ class UserAvatarWidget extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const Center(child: CircularProgressIndicator());
       }),
     );
   }
@@ -60,11 +60,21 @@ class AvatarWidget extends StatelessWidget {
     return Stack(
       children: equippedItems
           .map(
-            (item) => Image.network(
-              item.url,
-              scale: 1 / 3,
-              filterQuality: FilterQuality.none,
-            ),
+            (item) => FutureBuilder<Uint8List>(
+                future: item.getImageData(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Image.memory(
+                      snapshot.data!,
+                      scale: 1 / 3,
+                      filterQuality: FilterQuality.none,
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return ErrorWidget(snapshot.error!);
+                  }
+                  return const SizedBox.shrink();
+                }),
           )
           .toList(),
     );

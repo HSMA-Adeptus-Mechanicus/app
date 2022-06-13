@@ -27,7 +27,7 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
                 TextFormField(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: "Username",
+                    labelText: "New username",
                   ),
                   autofillHints: const [AutofillHints.newUsername],
                   controller: _usernameController,
