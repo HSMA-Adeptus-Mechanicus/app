@@ -11,6 +11,7 @@ class TeamScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
+      initialIndex: 1,
       child: Column(
         children: const [
           ButtonTabBar(
