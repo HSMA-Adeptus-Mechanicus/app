@@ -47,6 +47,8 @@ class App extends StatelessWidget {
             fontSize: 19,
             color: Colors.black,
           ),
+          titleLarge: TextStyle(color: Colors.black),
+          titleMedium: TextStyle(color: Colors.black),
         ),
         primaryTextTheme: const TextTheme(
           bodyText1: TextStyle(fontSize: 19),
@@ -93,7 +95,7 @@ class App extends StatelessWidget {
           await initialized;
           navigateTopLevelToWidget(const LoginScreen());
         }();
-        return SplashScreen();
+        return const SplashScreen();
       }),
     );
   }
