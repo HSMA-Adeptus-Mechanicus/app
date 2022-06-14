@@ -15,13 +15,13 @@ class _SplashScreen extends State<SplashScreen> {
         children: [
           SizedBox.expand(
             child: Image.asset(
-              "assets/SplashBackgroundmitSchrift.png",
+              "assets/splash-screen/SplashBackgroundmitSchrift.png",
               fit: BoxFit.cover,
             ),
           ),
           Center(
             child: Image.asset(
-              "assets/Hourglass.gif",
+              "assets/splash-screen/Hourglass.gif",
               scale: 1 / 3,
               filterQuality: FilterQuality.none,
             ),
