@@ -16,6 +16,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // TODO: remove after presentation
       title: 'Flutter Demo',
       theme: ThemeData(
         brightness: Brightness.light,
@@ -38,15 +39,12 @@ class App extends StatelessWidget {
         fontFamily: "ZillaSlab",
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
-            fontSize: 20,
+            fontSize: 19,
             color: Colors.black,
           ),
-          
         ),
         primaryTextTheme: const TextTheme(
-          bodyText1: TextStyle(
-            fontSize: 20
-          ),
+          bodyText1: TextStyle(fontSize: 19),
         ),
         brightness: Brightness.dark,
         primarySwatch: Colors.deepPurple,

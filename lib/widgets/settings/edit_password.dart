@@ -32,6 +32,7 @@ class _EditPasswordDialogState extends State<EditPasswordDialog> {
                     labelText: "Altes Passwort",
                   ),
                   autofillHints: const [AutofillHints.password],
+                  obscureText: true,
                   controller: _oldPasswordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {

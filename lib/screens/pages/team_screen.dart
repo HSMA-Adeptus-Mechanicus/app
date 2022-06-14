@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/border_card.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
+import 'package:sff/widgets/fitted_text.dart';
 
 class TeamScreen extends StatelessWidget {
   const TeamScreen({Key? key}) : super(key: key);
@@ -17,8 +18,8 @@ class TeamScreen extends StatelessWidget {
         children: const [
           ButtonTabBar(
             tabs: [
-              Tab(child: Text("Bossfight")),
-              Tab(child: Text("Teamübersicht")),
+              Tab(child: FittedText("Bossfight")),
+              Tab(child: FittedText("Teamübersicht")),
             ],
           ),
           Expanded(
