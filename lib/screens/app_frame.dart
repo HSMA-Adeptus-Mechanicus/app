@@ -56,21 +56,26 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
         backgroundColor: Theme.of(context).colorScheme.surface,
         fixedColor: itemColor,
         unselectedItemColor: itemColor.withAlpha(140),
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
+            icon: Image.asset('assets/navigation/home_weiss.png'),
+            activeIcon: Image.asset('assets/navigation/home_orange.png'),
+            label: "Start",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.flag),
+            icon: Image.asset('assets/navigation/quests_weiss.png'),
+            activeIcon: Image.asset('assets/navigation/quests_orange.png'),
             label: "Quests",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.checkroom),
-            label: "Inventar",
+            icon: Image.asset('assets/navigation/kleiderbuegel_weiss.png'),
+            activeIcon:
+                Image.asset('assets/navigation/kleiderbuegel_orange.png'),
+            label: "Garderobe",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.star),
+            icon: Image.asset('assets/navigation/schatzkiste_weiss.png'),
+            activeIcon: Image.asset('assets/navigation/schatzkiste_weiss.png'),
             label: "Belohnungen",
           ),
         ],
