@@ -6,11 +6,20 @@ class AvatarSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ItemSelectionByCategory(
+    return ItemSelectionByCategory(
       categories: [
-        "skin",
-        "face",
-        "hair",
+        ItemCategory(
+          category: "skin",
+          icon: "assets/icons/Avatar/hautfarbe_schwarz.png",
+        ),
+        ItemCategory(
+          category: "face",
+          icon: "assets/icons/Avatar/gesicht_schwarz.png",
+        ),
+        ItemCategory(
+          category: "hair",
+          icon: "assets/icons/Avatar/haar_schwarz.png",
+        ),
       ],
     );
   }

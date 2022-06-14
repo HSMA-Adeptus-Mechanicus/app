@@ -2,6 +2,7 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/widgets/avatar.dart';
+import 'package:sff/widgets/border_card.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
 
 class TeamScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class TeamScreen extends StatelessWidget {
           ButtonTabBar(
             tabs: [
               Tab(child: Text("Bossfight")),
-              Tab(child: Text("mein Team")),
+              Tab(child: Text("Teamübersicht")),
             ],
           ),
           Expanded(
@@ -50,14 +51,13 @@ class Team extends StatelessWidget {
           List<User> users = snapshot.data!;
           return GridView.builder(
             scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(20),
             itemCount: users.length,
-            gridDelegate:
-                const SliverGridDelegateWithMaxCrossAxisExtent(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 300,
               childAspectRatio: 2 / 3,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
             ),
             itemBuilder: (context, index) {
               return UserItem(users[index]);
@@ -80,15 +80,17 @@ class UserItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
+    return BorderCard(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Center(
-              child: Text(_user.name),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(_user.name),
+              ),
             ),
             Expanded(
               child: Center(

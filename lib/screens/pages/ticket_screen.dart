@@ -1,6 +1,7 @@
 import 'package:sff/data/data.dart';
 import 'package:sff/data/ticket.dart';
 import 'package:flutter/material.dart';
+import 'package:sff/widgets/border_card.dart';
 
 class TicketScreen extends StatelessWidget {
   const TicketScreen({Key? key}) : super(key: key);
@@ -43,13 +44,12 @@ class TicketItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _ticket.claimReward(),
-      child: Card(
+      child: BorderCard(
         color: _ticket.done
             ? _ticket.rewardClaimed
                 ? Theme.of(context).colorScheme.background
                 : Colors.green
             : Theme.of(context).cardColor,
-        elevation: 5,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
           child: Column(

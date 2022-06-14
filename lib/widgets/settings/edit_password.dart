@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/widgets/display_error.dart';
 
-class EditUsernameDialog extends StatefulWidget {
-  const EditUsernameDialog({super.key});
+class EditPasswordDialog extends StatefulWidget {
+  const EditPasswordDialog({super.key});
 
   @override
-  State<EditUsernameDialog> createState() => _EditUsernameDialogState();
+  State<EditPasswordDialog> createState() => _EditPasswordDialogState();
 }
 
-class _EditUsernameDialogState extends State<EditUsernameDialog> {
+class _EditPasswordDialogState extends State<EditPasswordDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _passwordController = TextEditingController();
-  final _usernameController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _oldPasswordController = TextEditingController();
 
-  _EditUsernameDialogState();
+  _EditPasswordDialogState();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Benutzernamen ändern"),
+      title: const Text("Passwort ändern"),
       content: Form(
         key: _formKey,
         child: AutofillGroup(
@@ -29,13 +29,13 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
                 TextFormField(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: "Neuer Benutzername",
+                    labelText: "Altes Passwort",
                   ),
-                  autofillHints: const [AutofillHints.newUsername],
-                  controller: _usernameController,
+                  autofillHints: const [AutofillHints.password],
+                  controller: _oldPasswordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Bitte Benutzername eingeben";
+                      return "Bitte altes Passwort eingeben";
                     }
                     return null;
                   },
@@ -46,14 +46,14 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
                 TextFormField(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: "Passwort",
+                    labelText: "Neues Passwort",
                   ),
-                  autofillHints: const [AutofillHints.password],
+                  autofillHints: const [AutofillHints.newPassword],
                   obscureText: true,
-                  controller: _passwordController,
+                  controller: _newPasswordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Bitte Passwort eingeben";
+                      return "Bitte neues Passwort eingeben";
                     }
                     return null;
                   },
@@ -77,13 +77,13 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
             }
             Navigator.pop(context);
             displayError(() async {
-              await UserAuthentication.getInstance().editUsername(
-                _passwordController.text,
-                _usernameController.text,
+              await UserAuthentication.getInstance().editPassword(
+                _oldPasswordController.text,
+                _newPasswordController.text,
               );
             });
           },
-          child: const Text("Edit username"),
+          child: const Text("Passwort ändern"),
         ),
       ],
     );

@@ -54,23 +54,23 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Theme.of(context).colorScheme.surface,
-        fixedColor: itemColor,
+        fixedColor: Theme.of(context).colorScheme.primary,
         unselectedItemColor: itemColor.withAlpha(140),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+        items: [
+          createNavigationItem(
+            icon: "assets/icons/Navigation/home_weiss.png",
             label: "Home",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.flag),
+          createNavigationItem(
+            icon: "assets/icons/Navigation/quests_weiss.png",
             label: "Quests",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.checkroom),
+          createNavigationItem(
+            icon: "assets/icons/Navigation/kleiderbuegel_weiss.png",
             label: "Inventar",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
+          createNavigationItem(
+            icon: "assets/icons/Navigation/schatzkiste_weiss.png",
             label: "Belohnungen",
           ),
         ],
@@ -85,4 +85,27 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+BottomNavigationBarItem createNavigationItem(
+    {required String icon, required String label}) {
+  return BottomNavigationBarItem(
+    icon: Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: Image.asset(
+        icon,
+        fit: BoxFit.scaleDown,
+        height: 17,
+      ),
+    ),
+    label: label,
+    activeIcon: Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: Image.asset(
+        icon.replaceFirst(RegExp(r"weiss"), "orange"),
+        fit: BoxFit.scaleDown,
+        height: 17,
+      ),
+    ),
+  );
 }
