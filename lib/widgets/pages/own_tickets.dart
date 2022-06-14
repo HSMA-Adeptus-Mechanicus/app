@@ -46,36 +46,47 @@ class OwnTicketsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _ticket.claimReward(),
-      child: Card(
-        color: _ticket.done
-            ? _ticket.rewardClaimed
-                ? Theme.of(context).colorScheme.background
-                : Colors.green
-            : Theme.of(context).cardColor,
-        elevation: 5,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                _ticket.name,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              Divider(
-                height: 10,
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
-              Text(_ticket.description),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_ticket.storyPoints.toString()),
-                  Text(_ticket.done ? "done" : "in progress"),
-                ],
-              ),
-            ],
+      child: OutlinedButton(
+        onPressed: () {
+          if (!_ticket.rewardClaimed) _ticket.claimReward();
+        },
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+          side: BorderSide(
+            style: BorderStyle.none,
+          ),
+        ),
+        child: Card(
+          color: _ticket.done
+              ? _ticket.rewardClaimed
+                  ? Theme.of(context).colorScheme.background
+                  : Colors.green
+              : Theme.of(context).cardColor,
+          elevation: 5,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  _ticket.name,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                Divider(
+                  height: 10,
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
+                Text(_ticket.description),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(_ticket.storyPoints.toString()),
+                    Text(_ticket.done ? "done" : "in progress"),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
