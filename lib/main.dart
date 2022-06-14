@@ -3,15 +3,20 @@ import 'package:sff/navigation.dart';
 import 'package:sff/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:sff/screens/splash_screen.dart';
 
 void main() async {
-  await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const App());
+  runApp(App());
 }
 
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  final Future initialized = Future.wait([
+    GetStorage.init(),
+    Future.delayed(const Duration(milliseconds: 3000)),
+  ]);
+
+  App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +80,7 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.dark,
       navigatorKey: navigatorKey,
       home: Builder(builder: (context) {
+        // TODO: refactor
         UserAuthentication.getInstance()
             .getChangeStateStream()
             .where((stateChange) =>
@@ -83,7 +89,11 @@ class App extends StatelessWidget {
             .listen((stateChange) {
           navigateTopLevelToWidget(const LoginScreen());
         });
-        return const LoginScreen();
+        () async {
+          await initialized;
+          navigateTopLevelToWidget(const LoginScreen());
+        }();
+        return SplashScreen();
       }),
     );
   }
