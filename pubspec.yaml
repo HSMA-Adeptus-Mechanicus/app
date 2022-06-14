@@ -53,8 +53,8 @@ dev_dependencies:
 
 flutter_native_splash: 
   
-  background_image: assets/splash.png
-  image: assets/TextSplashBig.png
+  background_image: assets/SplashLogo.png
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
