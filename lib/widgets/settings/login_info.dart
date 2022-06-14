@@ -1,5 +1,6 @@
 import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/display_error.dart';
+import 'package:sff/widgets/settings/edit_password.dart';
 import 'package:sff/widgets/settings/edit_username.dart';
 import 'package:sff/widgets/settings/password_confirm.dart';
 import 'package:sff/data/api/user_authentication.dart';
@@ -58,37 +59,56 @@ class LoginInfo extends StatelessWidget {
                 "Session expires at: ${expirationTime != null ? DateFormat("H:m:s MMM d yyyy").format(expirationTime) : "unknown"}",
               ),
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      UserAuthentication.getInstance().logout();
-                    },
-                    child: const Text("Logout"),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (dialogContext) {
-                          return PasswordConfirm(
-                            action: "Delete Account",
-                            callback: (password) async {
-                              displayError(() async {
-                                await UserAuthentication.getInstance()
-                                    .deleteAccount(password);
-                              });
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: const Text("Delete Account"),
-                  ),
-                ],
+              SizedBox(
+                height: 30,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        UserAuthentication.getInstance().logout();
+                      },
+                      child: const Text("Logout"),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (dialogContext) {
+                            return const EditPasswordDialog();
+                          },
+                        );
+                      },
+                      child: const Text("Passwort ändern"),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (dialogContext) {
+                            return PasswordConfirm(
+                              action: "Account löschen",
+                              callback: (password) async {
+                                displayError(() async {
+                                  await UserAuthentication.getInstance()
+                                      .deleteAccount(password);
+                                });
+                              },
+                            );
+                          },
+                        );
+                      },
+                      child: const Text("Account löschen"),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

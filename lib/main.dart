@@ -40,9 +40,21 @@ class App extends StatelessWidget {
         ),
       ),
       darkTheme: ThemeData(
+        fontFamily: "ZillaSlab",
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(
+            fontSize: 20,
+            color: Colors.black,
+          ),
+          
+        ),
+        primaryTextTheme: const TextTheme(
+          bodyText1: TextStyle(
+            fontSize: 20
+          ),
+        ),
         brightness: Brightness.dark,
         primarySwatch: Colors.deepPurple,
-        textTheme: const TextTheme(),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(

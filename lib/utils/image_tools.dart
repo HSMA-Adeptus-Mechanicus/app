@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'dart:isolate';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 
@@ -36,14 +39,33 @@ img.Image cropImage(img.Image image) {
   return cropped;
 }
 
-img.Image? cropImageData(Uint8List data) {
-  var image = img.decodeImage(data);
-  if (image != null) {
-    return cropImage(image);
-  }
-  return null;
+_cropImageWorker(SendPort sendPort) async {
+  final receivePort = ReceivePort();
+  sendPort.send(receivePort.sendPort);
+  final image = await receivePort.first as Uint8List;
+  final cropped = cropImage(img.decodeImage(image)!);
+  sendPort.send(cropped);
 }
 
+Future<img.Image?> cropImageData(Uint8List data) async {
+  bool isolateSupported = !kIsWeb;
+  if (isolateSupported) {
+    final receivePort = ReceivePort();
+    final receiveIterator = StreamIterator(receivePort);
+    await Isolate.spawn(_cropImageWorker, receivePort.sendPort);
+    await receiveIterator.moveNext();
+    final sendPort = await receiveIterator.current as SendPort;
+    sendPort.send(data);
+    await receiveIterator.moveNext();
+    return await receiveIterator.current as img.Image;
+  } else {
+    final image = img.decodeImage(data);
+    if (image != null) {
+      return cropImage(image);
+    }
+    return null;
+  }
+}
 
 Image toImageWidget(img.Image image) {
   return Image.memory(

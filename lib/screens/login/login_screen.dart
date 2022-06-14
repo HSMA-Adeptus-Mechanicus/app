@@ -64,13 +64,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                       TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Username",
+                          labelText: "Benutzername",
                         ),
                         autofillHints: const [AutofillHints.username],
                         controller: _usernameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please provide a username";
+                            return "Bitte Benutzername eingeben";
                           }
                           return null;
                         },
@@ -79,14 +79,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                       TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Password",
+                          labelText: "Passwort",
                         ),
                         autofillHints: const [AutofillHints.password],
                         obscureText: true,
                         controller: _passwordController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please provide a password";
+                            return "Bitte Passwort eingeben";
                           }
                           return null;
                         },

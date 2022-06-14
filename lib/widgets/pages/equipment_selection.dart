@@ -6,13 +6,28 @@ class EquipmentSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ItemSelectionByCategory(
+    return ItemSelectionByCategory(
       categories: [
-        "torso",
-        "pants",
-        "shoes",
-        "hat",
-        "weapon",
+        ItemCategory(
+          category: "torso",
+          icon: "assets/icons/Garderobe/shirt_schwarz.png",
+        ),
+        ItemCategory(
+          category: "pants",
+          icon: "assets/icons/Garderobe/hose_schwarz.png",
+        ),
+        ItemCategory(
+          category: "shoes",
+          icon: "assets/icons/Garderobe/schuhe_schwarz.png",
+        ),
+        ItemCategory(
+          category: "hat",
+          icon: "assets/icons/Garderobe/hut_schwarz.png",
+        ),
+        ItemCategory(
+          category: "weapon",
+          icon: "assets/icons/Garderobe/waffen_schwarz.png",
+        ),
       ],
     );
   }
