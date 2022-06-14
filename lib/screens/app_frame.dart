@@ -75,7 +75,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
           ),
           BottomNavigationBarItem(
             icon: Image.asset('assets/navigation/schatzkiste_weiss.png'),
-            activeIcon: Image.asset('assets/navigation/schatzkiste_weiss.png'),
+            activeIcon: Image.asset('assets/navigation/schatzkiste_orange.png'),
             label: "Belohnungen",
           ),
         ],
