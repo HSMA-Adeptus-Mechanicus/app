@@ -52,7 +52,7 @@ class OwnTicketsItem extends StatelessWidget {
         },
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-          side: BorderSide(
+          side: const BorderSide(
             style: BorderStyle.none,
           ),
         ),

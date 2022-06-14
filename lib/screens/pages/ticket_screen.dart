@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/api/user_authentication.dart';
-import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
-import 'package:sff/widgets/pages/avatar_selection.dart';
-import 'package:sff/widgets/pages/equipment_selection.dart';
 import 'package:sff/widgets/pages/all_tickets.dart';
 import 'package:sff/widgets/pages/own_tickets.dart';
 
@@ -15,14 +11,14 @@ class TicketScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Column(
-        children: [
-          const ButtonTabBar(
+        children: const [
+          ButtonTabBar(
             tabs: [
               Tab(child: Text("Meine")),
               Tab(child: Text("Alle")),
             ],
           ),
-          const Expanded(
+          Expanded(
             child: TabBarView(
               children: [
                 OwnTickets(),
