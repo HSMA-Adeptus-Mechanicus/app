@@ -48,7 +48,7 @@ class OwnTicketsItem extends StatelessWidget {
     return GestureDetector(
       child: OutlinedButton(
         onPressed: () {
-          if (!_ticket.rewardClaimed) _ticket.claimReward();
+          if (!_ticket.rewardClaimed && _ticket.done) _ticket.claimReward();
         },
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
