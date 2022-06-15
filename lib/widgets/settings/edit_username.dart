@@ -83,7 +83,7 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
               );
             });
           },
-          child: const Text("Edit username"),
+          child: const Text("Benutzername ändern"),
         ),
       ],
     );

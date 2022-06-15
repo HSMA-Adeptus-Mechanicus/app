@@ -91,20 +91,20 @@ BottomNavigationBarItem createNavigationItem(
     {required String icon, required String label}) {
   return BottomNavigationBarItem(
     icon: Padding(
-      padding: const EdgeInsets.all(2.0),
+      padding: const EdgeInsets.all(6),
       child: Image.asset(
         icon,
         fit: BoxFit.scaleDown,
-        height: 17,
+        height: 20,
       ),
     ),
     label: label,
     activeIcon: Padding(
-      padding: const EdgeInsets.all(2.0),
+      padding: const EdgeInsets.all(6),
       child: Image.asset(
         icon.replaceFirst(RegExp(r"weiss"), "orange"),
         fit: BoxFit.scaleDown,
-        height: 17,
+        height: 20,
       ),
     ),
   );
