@@ -10,6 +10,7 @@ class EditUsernameDialog extends StatefulWidget {
 }
 
 class _EditUsernameDialogState extends State<EditUsernameDialog> {
+  final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
 
@@ -18,8 +19,9 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Edit username"),
+      title: const Text("Benutzernamen ändern"),
       content: Form(
+        key: _formKey,
         child: AutofillGroup(
           child: IntrinsicHeight(
             child: Column(
@@ -27,13 +29,13 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
                 TextFormField(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: "New username",
+                    labelText: "Neuer Benutzername",
                   ),
                   autofillHints: const [AutofillHints.newUsername],
                   controller: _usernameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Please provide a username";
+                      return "Bitte Benutzername eingeben";
                     }
                     return null;
                   },
@@ -44,14 +46,14 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
                 TextFormField(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: "Password",
+                    labelText: "Passwort",
                   ),
                   autofillHints: const [AutofillHints.password],
                   obscureText: true,
                   controller: _passwordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Please provide a password";
+                      return "Bitte Passwort eingeben";
                     }
                     return null;
                   },
@@ -66,10 +68,13 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text("Cancel"),
+          child: const Text("Abbrechen"),
         ),
         TextButton(
           onPressed: () {
+            if (!_formKey.currentState!.validate()) {
+              return;
+            }
             Navigator.pop(context);
             displayError(() async {
               await UserAuthentication.getInstance().editUsername(
@@ -78,7 +83,7 @@ class _EditUsernameDialogState extends State<EditUsernameDialog> {
               );
             });
           },
-          child: const Text("Edit username"),
+          child: const Text("Benutzername ändern"),
         ),
       ],
     );

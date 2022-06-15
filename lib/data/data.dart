@@ -27,7 +27,7 @@ class Data {
   Stream<List<Ticket>> getTicketsStream() async* {
     Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/tickets");
     await for (List<dynamic> snapshot in stream) {
-      yield snapshot.map((e) => Ticket.fromJSON(e)).toList();
+      yield await Future.wait(snapshot.map((e) => Ticket.fromJSON(e)).toList());
     }
   }
 
