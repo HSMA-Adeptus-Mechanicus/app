@@ -28,7 +28,8 @@ class UserAuthentication {
   }
 
   UserAuthentication() {
-    _broadcastStream = _streamController.stream.asBroadcastStream();
+    _stateBroadcastStream = _streamController.stream.asBroadcastStream();
+    _usernameBroadcastStream = _stateBroadcastStream.map((event) => _username,);
     loadStorage();
   }
 
@@ -64,7 +65,8 @@ class UserAuthentication {
   String? _userId;
 
   final StreamController<LoginState> _streamController = StreamController();
-  late final Stream<LoginState> _broadcastStream;
+  late final Stream<LoginState> _stateBroadcastStream;
+  late final Stream<String?> _usernameBroadcastStream;
 
   bool get authenticated {
     return _token != null;
@@ -238,6 +240,8 @@ class UserAuthentication {
       "auth/edit-username?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
       {"username": newUsername},
     );
+    _username = newUsername;
+    _updateState(LoginState.loggedIn);
   }
 
   deleteAccount(String password) async {
@@ -255,12 +259,31 @@ class UserAuthentication {
     }
   }
 
+  /// Providing a stream that fires an event when the username changes with the current username
+  Stream<String?> getUsernameStream() {
+    late StreamController<String?> controller;
+    onListen() {
+      controller.add(username);
+      controller.addStream(_usernameBroadcastStream);
+    }
+
+    onCancel() {
+      controller.close();
+    }
+
+    controller = StreamController(
+      onListen: onListen,
+      onCancel: onCancel,
+    );
+    return controller.stream;
+  }
+
   /// Providing a stream that fires an event when the login status changes with the current login state
   Stream<LoginState> getStateStream() {
     late StreamController<LoginState> controller;
     onListen() {
       controller.add(state);
-      controller.addStream(_broadcastStream);
+      controller.addStream(_stateBroadcastStream);
     }
 
     onCancel() {
@@ -279,7 +302,7 @@ class UserAuthentication {
     late StreamController<LoginStateChangeEvent> controller;
     onListen() {
       LoginState previous = state;
-      controller.addStream(_broadcastStream.map((state) {
+      controller.addStream(_stateBroadcastStream.map((state) {
         var change = LoginStateChangeEvent(previous, state);
         previous = state;
         return change;
@@ -298,9 +321,6 @@ class UserAuthentication {
   }
 
   _updateState(LoginState state) async {
-    if (state == _state) {
-      return;
-    }
     _state = state;
     _streamController.add(state);
     await _save();
