@@ -96,7 +96,27 @@ class Bossfight extends StatelessWidget {
                     width: constraints.maxWidth,
                     height: constraints.maxHeight,
                     child: Stack(
-                      children: positionedAvatars,
+                      children: [
+                        Positioned(
+                          left: -30,
+                          child: SizedBox(
+                            width: constraints.maxWidth,
+                            height: constraints.maxHeight * 0.65,
+                            child: Align(
+                              alignment: Alignment.bottomLeft,
+                              child: SizedBox(
+                                height: constraints.maxHeight * 0.55,
+                                child: Image.asset(
+                                  "assets/boss/Boss_1_1.png",
+                                  filterQuality: FilterQuality.none,
+                                  scale: 1 / 10,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        ...positionedAvatars,
+                      ],
                     ),
                   );
                 }),
