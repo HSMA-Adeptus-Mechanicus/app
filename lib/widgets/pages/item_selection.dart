@@ -168,7 +168,7 @@ class _ItemButton extends StatelessWidget {
     return StreamBuilder<Avatar>(
       stream: avatar.getStream(),
       builder: (context, snapshot) {
-        var border = user.avatar.isEquipped(item)
+        var border = avatar.isEquipped(item)
             ? null
             : BorderSide(
                 width: 1,
