@@ -22,19 +22,13 @@ class RandomizerWidgetGesture extends State<MyStatefulWidget> {
   //What the fuck is this even
 
   Future<void> addItemToInventory(Item addedItem) async {
-    List<User> allUsers = await first(data.getUsersStream());
-    User currentUser;
-
-    for (int i = 0; i <= allUsers.length; i++) {
-      if (allUsers[i].id == UserAuthentication.getInstance().userId) {
-        currentUser = allUsers[i];
-
+  
+    User currentUser = await data.getCurrentUser();
         List<Item> inventory = await currentUser.getInventory();
-
         inventory.add(addedItem);
       }
-    }
-  }
+    
+  
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +37,12 @@ class RandomizerWidgetGesture extends State<MyStatefulWidget> {
         alignment: Alignment.bottomRight,
         child: GestureDetector(
           onTap: () async {
+            if(Enough Coins ){
             addItemToInventory(await itemRandomizer());
+            }
+            else{
+              notEnoughCoins
+            }
           },
         ),
       ),

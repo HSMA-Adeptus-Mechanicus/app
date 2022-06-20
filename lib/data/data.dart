@@ -4,6 +4,7 @@ import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/item.dart';
 import 'package:sff/data/ticket.dart';
 import 'package:sff/data/user.dart';
+import 'package:sff/data/api/user_authentication.dart';
 
 const data = Data();
 
@@ -16,7 +17,9 @@ Future<T> first<T>(Stream<T> stream) {
   StreamSubscription<T>? subscription;
   subscription = stream.listen((event) {
     completer.complete(event);
-    subscription!.cancel().then((value) {}); // This future might not complete at all
+    subscription!
+        .cancel()
+        .then((value) {}); // This future might not complete at all
   });
   return completer.future;
 }
@@ -44,5 +47,18 @@ class Data {
     await for (List<dynamic> snapshot in stream) {
       yield snapshot.map((e) => Item.fromJSON(e)).toList();
     }
+  }
+
+  Future<User> getCurrentUser() async {
+    List<User> allUsers = await first(data.getUsersStream());
+    User currentUser;
+
+    for (int i = 0; i <= allUsers.length; i++) {
+      if (allUsers[i].id == UserAuthentication.getInstance().userId) {
+        currentUser = allUsers[i];
+        return currentUser;
+      }
+    }
+    throw Exception("No current User found");
   }
 }
