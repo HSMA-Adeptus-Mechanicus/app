@@ -33,4 +33,14 @@ class User {
   bool ownsItem(Item item) {
     return wardrobe.contains(item.id);
   }
+
+  Future<List<Item>> getInventory() async {
+    List<Item> items = await first(data.getItemsStream());
+    List<Item> inventory = items.where((items) => ownsItem(items)).toList();
+    return inventory;
+  }
+
+  String getId() {
+    return id;
+  }
 }
