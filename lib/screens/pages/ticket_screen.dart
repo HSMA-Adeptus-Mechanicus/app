@@ -14,8 +14,8 @@ class TicketScreen extends StatelessWidget {
         children: const [
           ButtonTabBar(
             tabs: [
-              Tab(child: FittedText("Meine Tickets")),
-              Tab(child: FittedText("Team Tickets")),
+              Tab(child: FittedText("Meine Quests")),
+              Tab(child: FittedText("Team Quests")),
             ],
           ),
           Expanded(

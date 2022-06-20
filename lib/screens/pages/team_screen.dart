@@ -1,6 +1,7 @@
 import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
 import 'package:flutter/material.dart';
+import 'package:sff/screens/pages/bossfight_screen.dart';
 import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/border_card.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
@@ -13,7 +14,6 @@ class TeamScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      initialIndex: 1,
       child: Column(
         children: const [
           ButtonTabBar(
@@ -25,9 +25,7 @@ class TeamScreen extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
-                Center(
-                  child: Text("Bossfight"),
-                ),
+                Bossfight(),
                 Team(),
               ],
             ),
