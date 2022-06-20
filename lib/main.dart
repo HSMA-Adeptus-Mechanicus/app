@@ -70,6 +70,9 @@ class App extends StatelessWidget {
           ),
         ),
         cardColor: const Color.fromARGB(255, 142, 123, 255),
+        indicatorColor: const Color.fromARGB(255, 255, 190, 38),
+        highlightColor: const Color.fromARGB(255, 255, 190, 38),
+        splashColor: const Color.fromARGB(255, 255, 161, 38),
         colorScheme: const ColorScheme(
           brightness: Brightness.dark,
           primary: Color.fromARGB(255, 255, 190, 38),

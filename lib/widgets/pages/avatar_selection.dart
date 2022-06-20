@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:sff/data/avatar.dart';
 import 'package:sff/widgets/pages/item_selection.dart';
 
 class AvatarSelection extends StatelessWidget {
-  const AvatarSelection({Key? key}) : super(key: key);
+  final EditableAvatar avatar;
+
+  const AvatarSelection({Key? key, required this.avatar}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ItemSelectionByCategory(
+      avatar: avatar,
       categories: [
         ItemCategory(
           category: "skin",
