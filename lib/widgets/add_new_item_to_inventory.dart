@@ -17,18 +17,12 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class RandomizerWidgetGesture extends State<MyStatefulWidget> {
-  //HIER IF-ABFRAGE AN DIE MÜNZEN MACHEN UND ABZIEHEN!
-  //Und halt pop up o.ä. um zu zeigen, was du gedroppt hast
-  //What the fuck is this even
-
   Future<void> addItemToInventory(Item addedItem) async {
-  
     User currentUser = await data.getCurrentUser();
-        List<Item> inventory = await currentUser.getInventory();
-        inventory.add(addedItem);
-      }
-    
-  
+    List<Item> inventory = await currentUser.getInventory();
+    inventory.add(addedItem);
+    //how to write this into Back End?
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +31,14 @@ class RandomizerWidgetGesture extends State<MyStatefulWidget> {
         alignment: Alignment.bottomRight,
         child: GestureDetector(
           onTap: () async {
-            if(Enough Coins ){
-            addItemToInventory(await itemRandomizer());
-            }
-            else{
-              notEnoughCoins
+            User helperUser = await data.getCurrentUser();
+            if (helperUser.currency > 14) {
+              addItemToInventory(await itemRandomizer());
+              print("You HAVE enough coins!");
+              //Subtract 15 from User Coins HOW
+            } else {
+              final snackBar =
+                  SnackBar(content: const Text('Yay! A SnackBar!'));
             }
           },
         ),
