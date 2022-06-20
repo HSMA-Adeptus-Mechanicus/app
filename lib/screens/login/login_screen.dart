@@ -1,4 +1,5 @@
 import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/navigation.dart';
 import 'package:sff/screens/app_frame.dart';
 import 'package:sff/screens/login/register_screen.dart';
 import 'package:sff/widgets/app_scaffold.dart';
@@ -18,14 +19,9 @@ class LoginScreen extends StatelessWidget {
           if (snapshot.hasData) {
             LoginState state = snapshot.data!;
             if (state == LoginState.loggedIn) {
-              Future.microtask(
-                () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AppFrame()),
-                  );
-                },
-              );
+              Future.microtask(() {
+                navigateTopLevelToWidget(const AppFrame());
+              });
               return const Center(child: CircularProgressIndicator());
             } else if (state == LoginState.loggedOut) {
               return const LoginWidget();
@@ -68,13 +64,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                       TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Username",
+                          labelText: "Benutzername",
                         ),
                         autofillHints: const [AutofillHints.username],
                         controller: _usernameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please provide a username";
+                            return "Bitte Benutzername eingeben";
                           }
                           return null;
                         },
@@ -83,14 +79,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                       TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Password",
+                          labelText: "Passwort",
                         ),
                         autofillHints: const [AutofillHints.password],
                         obscureText: true,
                         controller: _passwordController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please provide a password";
+                            return "Bitte Passwort eingeben";
                           }
                           return null;
                         },

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/avatar.dart';
 import 'package:sff/data/data.dart';
@@ -7,8 +6,15 @@ import 'package:sff/data/item.dart';
 import 'package:sff/data/user.dart';
 import 'package:sff/utils/image_tools.dart';
 
+class ItemCategory {
+  final String icon;
+  final String category;
+
+  ItemCategory({required this.icon, required this.category});
+}
+
 class ItemSelectionByCategory extends StatelessWidget {
-  final List<String> categories;
+  final List<ItemCategory> categories;
 
   const ItemSelectionByCategory({super.key, required this.categories});
 
@@ -20,10 +26,23 @@ class ItemSelectionByCategory extends StatelessWidget {
         backgroundColor: Theme.of(context).cardColor,
         appBar: TabBar(
           isScrollable: true,
-          tabs: categories.map((e) => Tab(child: Text(e))).toList(),
+          tabs: categories
+              .map((e) => Tab(
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Image.asset(
+                        e.icon,
+                        height: 20,
+                        width: 30,
+                      ),
+                    ),
+                  ))
+              .toList(),
         ),
         body: TabBarView(
-          children: categories.map((e) => _ItemSelection(category: e)).toList(),
+          children: categories
+              .map((e) => _ItemSelection(category: e.category))
+              .toList(),
         ),
       ),
     );
@@ -99,13 +118,10 @@ class _ItemButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var image = () async {
-      var response = await http.get(Uri.parse(item.url));
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception();
-      }
-      var data = response.bodyBytes;
-      var image = cropImageData(data);
+    // TODO: make it so it does not repeatedly crop the image every time an item is equipped
+    final image = () async {
+      final data = await item.getImageData();
+      final image = await cropImageData(data);
       if (image != null) {
         return toImageWidget(image);
       }
@@ -123,11 +139,12 @@ class _ItemButton extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       },
     );
 
     onPressed() {
+      // TODO: give immediate feedback when equipping items
       if (user.avatar.isEquipped(item)) {
         Avatar.unequip(item);
       } else {
@@ -142,16 +159,19 @@ class _ItemButton extends StatelessWidget {
           )
         : null;
 
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(
-          vertical: 8 + padding,
-          horizontal: padding,
+    return Opacity(
+      opacity: user.ownsItem(item) ? 1 : 0.25,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(
+            vertical: 8 + padding,
+            horizontal: padding,
+          ),
+          side: border,
         ),
-        side: border,
+        onPressed: onPressed,
+        child: imageWidget,
       ),
-      onPressed: onPressed,
-      child: imageWidget,
     );
   }
 }

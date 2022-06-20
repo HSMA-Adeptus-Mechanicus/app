@@ -220,6 +220,7 @@ class UserAuthentication {
     if (_username == null) {
       throw Exception("Unable to edit password when not logged in");
     }
+    await _updateState(LoginState.loggingOut);
     try {
       await apiWrapper.patch(
         "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
