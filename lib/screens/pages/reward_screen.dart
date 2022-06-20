@@ -35,8 +35,8 @@ class RewardScreen extends StatelessWidget {
                         ).image,
                       ),
                       SizedBox(width: 7.0),
-                      const Text(
-                        "30",
+                      Text(
+                        "${user.currency}",
                         style: TextStyle(
                           color: Colors.white,
                         ),
