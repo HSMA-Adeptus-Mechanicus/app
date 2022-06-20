@@ -47,7 +47,7 @@ class RewardScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        " Du hast ${user.currency} Münzen\n gesammelt, ${username}!\n Hol dir dein neues Item!",
+                        " Du hast ${user.currency} Münzen\n gesammelt, ${username}!\n ${user.currency >= 15 ? "Hol dir dein neues Item!" : "Dir fehlen ${15 - user.currency} Münzen!"}",
                         style: TextStyle(
                           color: Colors.white,
                         ),
