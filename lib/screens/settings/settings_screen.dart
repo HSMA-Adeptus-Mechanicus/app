@@ -20,9 +20,9 @@ class SettingsScreen extends StatelessWidget {
           Expanded(
             child: Theme(
               data: Theme.of(context).copyWith(
-                textTheme: TextTheme(
-                  titleMedium: TextStyle(color: Colors.white),
-                  bodySmall: TextStyle(color: Colors.white.withAlpha(150)),
+                textTheme: Theme.of(context).textTheme.copyWith(
+                  titleMedium: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white, fontSize: 20),
+                  bodySmall: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white.withAlpha(150)),
                 ),
               ),
               child: ListView(

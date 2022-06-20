@@ -112,7 +112,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                   indent: 20,
                   endIndent: 20,
                 ),
-                ElevatedButton(
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
                   onPressed: () async {
                     Navigator.push(
                       context,

@@ -50,10 +50,7 @@ class App extends StatelessWidget {
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
             fontSize: 19,
-            color: Colors.black,
           ),
-          titleLarge: TextStyle(color: Colors.black),
-          titleMedium: TextStyle(color: Colors.black),
         ),
         primaryTextTheme: const TextTheme(
           bodyText1: TextStyle(fontSize: 19),
@@ -73,13 +70,15 @@ class App extends StatelessWidget {
           style: ButtonStyle(
             shape: MaterialStateProperty.all(RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50))),
-            side: MaterialStateProperty.all(BorderSide(
+            side: MaterialStateProperty.all(const BorderSide(
               color: Color.fromARGB(255, 255, 190, 38),
               style: BorderStyle.solid,
               width: 2,
             )),
+            // backgroundColor: MaterialStateProperty.all(Colors.white),
           ),
         ),
+        inputDecorationTheme: InputDecorationTheme(fillColor: Colors.red),
         cardColor: const Color.fromARGB(255, 142, 123, 255),
         indicatorColor: const Color.fromARGB(255, 255, 190, 38),
         highlightColor: const Color.fromARGB(255, 255, 190, 38),
