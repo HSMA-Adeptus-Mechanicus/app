@@ -71,7 +71,7 @@ class _ItemSelection extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final user = snapshot.data!.firstWhere((user) =>
-                    user.name == UserAuthentication.getInstance().username);
+                    user.id == UserAuthentication.getInstance().userId);
                 return GridView.builder(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.all(10),

@@ -33,10 +33,20 @@ class LoginInfo extends StatelessWidget {
               Row(
                 children: [
                   Flexible(
-                    child: Text(
-                      UserAuthentication.getInstance().username ?? "-",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+                    child: StreamBuilder<String?>(
+                        stream: UserAuthentication.getInstance()
+                            .getUsernameStream(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              snapshot.data ?? "-",
+                              style: Theme.of(context).textTheme.titleLarge,
+                            );
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }),
                   ),
                   IconButton(
                     onPressed: () {
