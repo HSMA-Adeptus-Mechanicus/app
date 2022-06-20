@@ -6,13 +6,6 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
 import 'package:sff/widgets/avatar.dart';
 
-class AlignedAvatar {
-  final AvatarWidget avatar;
-  final double align;
-
-  AlignedAvatar(this.avatar, this.align);
-}
-
 class Bossfight extends StatelessWidget {
   const Bossfight({
     Key? key,
@@ -24,63 +17,91 @@ class Bossfight extends StatelessWidget {
       stream: data.getUsersStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<AlignedAvatar> alignedUserWidgets = [];
           List<User> users = snapshot.data!;
           int currentUserIndex = users.indexWhere((element) =>
               element.id == UserAuthentication.getInstance().userId);
 
           {
             // swap current user to center
-            int centerIndex = (users.length - 1) ~/ 2;
+            // in case there is an even number of users it will be the center right
+            int centerIndex = users.length ~/ 2;
             User temp = users[currentUserIndex];
             users[currentUserIndex] = users[centerIndex];
             users[centerIndex] = temp;
           }
 
-          for (int i = 0; i < users.length; i++) {
-            alignedUserWidgets.add(AlignedAvatar(
-              AvatarWidget(
-                avatar: users[i].avatar,
-              ),
-              sin((i / (users.length - 1) * 2 - 1) * 90 / 180 * pi) * 1.9,
-            ));
-          }
+          List<Widget> avatars =
+              users.map((user) => AvatarWidget(avatar: user.avatar)).toList();
 
-          // sort such that the avatars in the center are on top
-          alignedUserWidgets
-              .sort((a, b) => (b.align.abs() - a.align.abs()).sign.toInt());
-
-          double width = MediaQuery.of(context).size.width;
-
-          return Stack(
-            children: [
-              CustomPaint(
-                painter: VersusPainter(),
-                child: const Center(
-                  child: Text(
-                    "VS",
-                    style: TextStyle(
-                      fontSize: 50,
+          return ClipRect(
+            child: Stack(
+              children: [
+                CustomPaint(
+                  painter: VersusPainter(),
+                  child: const Center(
+                    child: Text(
+                      "VS",
+                      style: TextStyle(
+                        fontSize: 50,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Stack(
-                children: alignedUserWidgets.map((e) {
-                  final size =
-                      width / users.length * 5 / ((e.align.abs() / 3) + 1);
-                  return Align(
-                    alignment:
-                        Alignment(e.align, 1 + 0.8 / (e.align.abs() + 1.5)),
-                    child: SizedBox(
+                LayoutBuilder(builder: (context, constraints) {
+                  getSize(int i) {
+                    return 3 /
+                        ((i -
+                                    ((users.length -
+                                            (users.length.isEven ? 0 : 1)) /
+                                        2))
+                                .abs() +
+                            3) *
+                        min(
+                          constraints.maxWidth / 0.9,
+                          constraints.maxHeight / 1.5,
+                        );
+                  }
+
+                  double totalWidth =
+                      List.generate(users.length, getSize).reduce(
+                    (value, element) => value + element,
+                  );
+                  double overflowAmount = constraints.maxWidth * 0.1;
+                  double availableSpace = constraints.maxWidth + overflowAmount;
+
+                  double offset = -overflowAmount / 2;
+                  List<Positioned> positionedAvatars = [];
+                  for (int i = 0; i < users.length; i++) {
+                    final size = getSize(i);
+                    final space = size / totalWidth * availableSpace;
+                    positionedAvatars.add(Positioned(
+                      top: constraints.maxHeight - size + size * 0.2,
+                      left: offset - (size - space) / 2,
                       width: size,
                       height: size,
-                      child: Center(child: e.avatar),
+                      child: avatars[i],
+                    ));
+                    offset += space;
+                  }
+
+                  positionedAvatars.sort((a, b) => (((b.left! + b.width! / 2) -
+                                  constraints.maxWidth / 2)
+                              .abs() -
+                          ((a.left! + a.width! / 2) - constraints.maxWidth / 2)
+                              .abs())
+                      .sign
+                      .toInt());
+
+                  return SizedBox(
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight,
+                    child: Stack(
+                      children: positionedAvatars,
                     ),
                   );
-                }).toList(),
-              ),
-            ],
+                }),
+              ],
+            ),
           );
         }
         if (snapshot.hasError) {
@@ -97,14 +118,15 @@ class VersusPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Path separationPath = Path();
     const lineSegments = 7;
-    const angle = -35 / 180 * pi;
+    // const angle = -35 / 180 * pi;
+    double angle = atan2(size.height * -0.2, size.width / 2);
     double length = size.width / cos(angle) + 80;
     for (int i = 0; i <= lineSegments; i++) {
       Offset pos = size.center(Offset.zero);
       Offset diagonalVec = Offset(cos(angle), sin(angle));
       Offset tangent = Offset(cos(angle + pi / 2), sin(angle + pi / 2));
       pos += diagonalVec * ((i / lineSegments - 0.5) * length);
-      pos += tangent * (i % 2 == 0 ? 1 : -1) * 10;
+      pos += tangent * (i % 2 == 0 ? 1 : -1) * length * 0.03;
       if (i == 0) {
         separationPath.moveTo(pos.dx, pos.dy);
       } else {
@@ -114,9 +136,9 @@ class VersusPainter extends CustomPainter {
     canvas.drawPath(
       separationPath,
       Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 20,
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 20,
     );
 
     const spikes = 10;

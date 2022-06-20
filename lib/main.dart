@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/screens/login/login_screen.dart';
@@ -7,6 +8,10 @@ import 'package:sff/screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+  ]);
+
   runApp(App());
 }
 
@@ -21,7 +26,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // TODO: remove after presentation
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         brightness: Brightness.light,

@@ -17,23 +17,10 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller = TabController(length: 4, vsync: this);
-    _controller.addListener(_updateIndex);
   }
 
   int _selectedIndex = 0;
   late TabController _controller;
-
-  void _updateIndex() {
-    setState(() {
-      _selectedIndex = _controller.index;
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.removeListener(_updateIndex);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +29,9 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
     Color? itemColor = Theme.of(context).colorScheme.onSurface;
 
     return AppScaffold(
+      // TODO: prevent app scaffold and thereby the app bar with the avatar to be rebuild when a different tab is selected causing the avatar to flicker
       body: TabBarView(
+        physics: const NeverScrollableScrollPhysics(),
         controller: _controller,
         children: const [
           TeamScreen(),
