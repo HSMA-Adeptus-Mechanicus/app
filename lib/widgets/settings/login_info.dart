@@ -1,11 +1,7 @@
 import 'package:sff/widgets/avatar.dart';
-import 'package:sff/widgets/display_error.dart';
-import 'package:sff/widgets/settings/edit_password.dart';
 import 'package:sff/widgets/settings/edit_username.dart';
-import 'package:sff/widgets/settings/password_confirm.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 /// Provides information about the login status, like time until the session expires (and maybe more in the future), and a logout button
 class LoginInfo extends StatelessWidget {
@@ -15,8 +11,6 @@ class LoginInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime? expirationTime =
-        UserAuthentication.getInstance().expirationTime?.toLocal();
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -40,7 +34,13 @@ class LoginInfo extends StatelessWidget {
                           if (snapshot.hasData) {
                             return Text(
                               snapshot.data ?? "-",
-                              style: Theme.of(context).textTheme.titleLarge,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground),
                             );
                           }
                           return const Center(
@@ -61,64 +61,6 @@ class LoginInfo extends StatelessWidget {
                     icon: const Icon(Icons.edit),
                   ),
                 ],
-              ),
-              Text(
-                UserAuthentication.getInstance().userId ?? "-",
-              ),
-              Text(
-                "Session expires at: ${expirationTime != null ? DateFormat("H:m:s MMM d yyyy").format(expirationTime) : "unknown"}",
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 30,
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        UserAuthentication.getInstance().logout();
-                      },
-                      child: const Text("Logout"),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (dialogContext) {
-                            return const EditPasswordDialog();
-                          },
-                        );
-                      },
-                      child: const Text("Passwort ändern"),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (dialogContext) {
-                            return PasswordConfirm(
-                              action: "Account löschen",
-                              callback: (password) async {
-                                displayError(() async {
-                                  await UserAuthentication.getInstance()
-                                      .deleteAccount(password);
-                                });
-                              },
-                            );
-                          },
-                        );
-                      },
-                      child: const Text("Account löschen"),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),

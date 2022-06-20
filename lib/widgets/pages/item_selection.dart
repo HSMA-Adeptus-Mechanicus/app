@@ -153,16 +153,20 @@ class _ItemButton extends StatelessWidget {
     }
 
     var border = user.avatar.isEquipped(item)
-        ? BorderSide(
-            width: 3,
-            color: Theme.of(context).colorScheme.primary,
-          )
-        : null;
+        ? null
+        : BorderSide(
+            width: 1,
+            color: Colors.grey,
+          );
 
     return Opacity(
       opacity: user.ownsItem(item) ? 1 : 0.25,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
+          primary: Theme.of(context).colorScheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
           padding: const EdgeInsets.symmetric(
             vertical: 8 + padding,
             horizontal: padding,

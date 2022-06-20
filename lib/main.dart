@@ -9,7 +9,7 @@ import 'package:sff/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitUp,
   ]);
 
   runApp(App());
@@ -67,6 +67,17 @@ class App extends StatelessWidget {
                 borderRadius: BorderRadius.circular(50),
               ),
             ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50))),
+            side: MaterialStateProperty.all(BorderSide(
+              color: Color.fromARGB(255, 255, 190, 38),
+              style: BorderStyle.solid,
+              width: 2,
+            )),
           ),
         ),
         cardColor: const Color.fromARGB(255, 142, 123, 255),
