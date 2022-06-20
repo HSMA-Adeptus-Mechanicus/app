@@ -13,10 +13,10 @@ class MyStatefulWidget extends StatefulWidget {
   const MyStatefulWidget({Key? key}) : super(key: key);
 
   @override
-  State<MyStatefulWidget> createState() => randomizerWidgetGesture();
+  State<MyStatefulWidget> createState() => RandomizerWidgetGesture();
 }
 
-class randomizerWidgetGesture extends State<MyStatefulWidget> {
+class RandomizerWidgetGesture extends State<MyStatefulWidget> {
   //HIER IF-ABFRAGE AN DIE MÜNZEN MACHEN UND ABZIEHEN!
   //Und halt pop up o.ä. um zu zeigen, was du gedroppt hast
   //What the fuck is this even
