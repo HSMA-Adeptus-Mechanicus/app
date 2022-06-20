@@ -65,13 +65,13 @@ class _RegisterFormState extends State<RegisterForm> {
                       TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Username",
+                          labelText: "Benutzername",
                         ),
                         autofillHints: const [AutofillHints.newUsername],
                         controller: _usernameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please provide a username";
+                            return "Bitte Benutzername eingeben";
                           }
                           return null;
                         },
@@ -80,14 +80,14 @@ class _RegisterFormState extends State<RegisterForm> {
                       TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Password",
+                          labelText: "Passwort",
                         ),
                         autofillHints: const [AutofillHints.newPassword],
                         obscureText: true,
                         controller: _passwordController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please provide a password";
+                            return "Bitte Passwort eingeben";
                           }
                           return null;
                         },

@@ -23,14 +23,14 @@ class _PasswordConfirmState extends State<PasswordConfirm> {
       content: TextFormField(
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
-          labelText: "Password",
+          labelText: "Passwort",
         ),
         autofillHints: const [AutofillHints.password],
         obscureText: true,
         controller: _passwordController,
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "Please provide a password";
+            return "Bitte Passwort eingeben";
           }
           return null;
         },
@@ -40,7 +40,7 @@ class _PasswordConfirmState extends State<PasswordConfirm> {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text("Cancel"),
+          child: const Text("Abbrechen"),
         ),
         TextButton(
           onPressed: () {
