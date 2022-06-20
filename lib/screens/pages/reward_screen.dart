@@ -21,8 +21,7 @@ class RewardScreen extends StatelessWidget {
                 .first;
             //return Text("Username: $username\nCoins: ${user.currency}");
             return Padding(
-              padding: EdgeInsets.fromLTRB(
-                  13.0, 25.0, 0.0, 0.0), //EdgeInset Top 24.0 but left only 10.0
+              padding: EdgeInsets.fromLTRB(13.0, 25.0, 0.0, 0.0),
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Column(
