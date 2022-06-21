@@ -67,4 +67,3 @@ class RewardScreen extends StatelessWidget {
         });
   }
 }
-
