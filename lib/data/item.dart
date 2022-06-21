@@ -36,6 +36,11 @@ class Item {
     await authAPI.post("db/items/buy/$id", null);
     CachedAPI.getInstance().request("db/users").ignore();
   }
+
+  bool operator ==(Object other) {
+    if (other is! Item) return false;
+    return id == other.id;
+  }
 }
 
 class _ItemImageCache {
