@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
@@ -92,7 +93,12 @@ class TicketItem extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           if (!allowClaimingReward) return;
-          if (!_ticket.rewardClaimed && _ticket.done) _ticket.claimReward();
+          if (!_ticket.rewardClaimed && _ticket.done) {
+            _ticket.claimReward();
+            AudioCache player = AudioCache();
+            player.play("audio/coinDing.mp3");
+          }
+          ;
         },
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),

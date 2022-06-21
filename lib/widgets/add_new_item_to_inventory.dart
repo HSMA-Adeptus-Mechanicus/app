@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/data/item.dart';
 import 'package:sff/navigation.dart';
@@ -19,6 +20,8 @@ class RandomizerWidgetGesture extends State<RandomizerWidget> {
     return GestureDetector(
       onTap: () async {
         User user = await data.getCurrentUser();
+        AudioCache player = AudioCache();
+        player.play("audio/explosion-6801.mp3");
         if (user.currency > 14) {
           final item = (await Item.itemRandomizer())..buy();
           if ((await (await data.getCurrentUser()).getInventory())

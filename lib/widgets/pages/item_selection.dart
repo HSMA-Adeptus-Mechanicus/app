@@ -5,6 +5,7 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/item.dart';
 import 'package:sff/data/user.dart';
 import 'package:sff/utils/image_tools.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class ItemCategory {
   final String icon;
@@ -145,6 +146,8 @@ class _ItemButton extends StatelessWidget {
 
     onPressed() {
       // TODO: give immediate feedback when equipping items
+      AudioCache player = AudioCache();
+      player.play("audio/duckQuack.mp3");
       if (user.avatar.isEquipped(item)) {
         Avatar.unequip(item);
       } else {
