@@ -20,9 +20,7 @@ class RandomizerWidget extends StatefulWidget {
 class RandomizerWidgetGesture extends State<RandomizerWidget> {
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomRight,
-      child: GestureDetector(
+    return GestureDetector(
         onTap: () async {
           User user = await data.getCurrentUser();
           if (user.currency > 14) {
@@ -98,7 +96,6 @@ class RandomizerWidgetGesture extends State<RandomizerWidget> {
         },
         child: Image.asset("assets/icons/Pixel/Schatzkiste1.png",
             filterQuality: FilterQuality.none),
-      ),
-    );
+      );
   }
 }
