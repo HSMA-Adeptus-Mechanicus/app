@@ -46,10 +46,14 @@ class Item {
     CachedAPI.getInstance().request("db/users").ignore();
   }
 
+  @override
   bool operator ==(Object other) {
     if (other is! Item) return false;
     return id == other.id;
   }
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class _ItemImageCache {

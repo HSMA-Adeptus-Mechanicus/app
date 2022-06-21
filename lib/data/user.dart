@@ -41,8 +41,4 @@ class User {
     List<Item> inventory = items.where((items) => ownsItem(items)).toList();
     return inventory;
   }
-
-  String getId() {
-    return id;
-  }
 }

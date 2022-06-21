@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
@@ -10,19 +9,14 @@ class RewardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder2(
-        streams: Tuple2(
-            UserAuthentication().getUsernameStream(), data.getUsersStream()),
+    return StreamBuilder(
+        stream: data.getUsersStream(),
         builder: (context, snapshot) {
-          if (snapshot.item1.hasData && snapshot.item2.hasData) {
-            String username = snapshot.item1.data as String;
-            User user = (snapshot.item2.data as List<User>)
-                .where((user) =>
-                    UserAuthentication.getInstance().userId == user.id)
-                .first;
-            //return Text("Username: $username\nCoins: ${user.currency}");
+          if (snapshot.hasData) {
+            User user = (snapshot.data as List<User>).firstWhere(
+                (user) => UserAuthentication.getInstance().userId == user.id);
             return Padding(
-              padding: const EdgeInsets.fromLTRB(13.0, 25.0, 0.0, 0.0),
+              padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 25.0),
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Column(
@@ -49,15 +43,18 @@ class RewardScreen extends StatelessWidget {
                       children: [
                         // 15 sollte keine magic number sein
                         Text(
-                          " Du hast ${user.currency} Münzen\n gesammelt, $username!\n ${user.currency >= 15 ? "Hol dir dein neues Item!" : "Dir fehlen ${15 - user.currency} Münzen\n zum neuen Item!"}",
+                          " Du hast ${user.currency} Münzen\n gesammelt, ${user.name}!\n ${user.currency >= 15 ? "Hol dir dein neues Item!" : "Dir fehlen ${15 - user.currency} Münzen\n zum neuen Item!"}",
                           style: const TextStyle(
                             color: Colors.white,
                           ),
                         )
                       ],
                     ),
-                    const SizedBox(height: 260.0),
-                    const RandomizerWidget(),
+                    const Expanded(
+                      child: Center(
+                        child: RandomizerWidget(),
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -24,78 +24,13 @@ class RandomizerWidgetGesture extends State<RandomizerWidget> {
           if ((await (await data.getCurrentUser()).getInventory())
               .contains(item)) {
             navigateToWidget(
-              AppScaffold(
-                body: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () async {
-                    Navigator.pop(context);
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: toImageWidget(
-                            (await cropImageData(await item.getImageData()))!),
-                      ),
-                      Image.asset(
-                        "assets/icons/Pixel/Schatzkiste2.png",
-                        filterQuality: FilterQuality.none,
-                        scale: 1,
-                      ),
-                      Row(
-                        children: const [
-                          Flexible(
-                            child: Padding(
-                              padding: EdgeInsets.all(40.0),
-                              child: Text(
-                                "Aber leider hast du das Item schon. Hier hast du eine (1) Münze zurück. Kauf dir ein Eis davon.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  height: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
+              NewItemScreen(item: item, duplicate: true),
             );
           } else if ((await (await data.getCurrentUser()).getInventory())
                   .contains(item) ==
               false) {
             navigateToWidget(
-              AppScaffold(
-                body: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () async {
-                    Navigator.pop(context);
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: toImageWidget(
-                            (await cropImageData(await item.getImageData()))!),
-                      ),
-                      Image.asset(
-                        "assets/icons/Pixel/Schatzkiste2.png",
-                        filterQuality: FilterQuality.none,
-                        scale: 1,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              NewItemScreen(item: item),
             );
           }
         } else {
@@ -107,6 +42,74 @@ class RandomizerWidgetGesture extends State<RandomizerWidget> {
       },
       child: Image.asset("assets/icons/Pixel/Schatzkiste1.png",
           filterQuality: FilterQuality.none),
+    );
+  }
+}
+
+class NewItemScreen extends StatelessWidget {
+  const NewItemScreen({Key? key, required this.item, this.duplicate = false})
+      : super(key: key);
+
+  final Item item;
+  final bool duplicate;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppScaffold(
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () async {
+          Navigator.pop(context);
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: FutureBuilder<Image>(future: () async {
+                return toImageWidget(
+                    (await cropImageData(await item.getImageData()))!);
+              }(), builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                }
+                return Container();
+              }),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            Image.asset(
+              "assets/icons/Pixel/Schatzkiste2.png",
+              filterQuality: FilterQuality.none,
+              scale: 1,
+            ),
+            ...(duplicate
+                ? [
+                    Row(
+                      children: const [
+                        Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.all(40.0),
+                            child: Text(
+                              "Aber leider hast du das Item schon. Hier hast du eine (1) Münze zurück. Kauf dir ein Eis davon.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ]
+                : []),
+          ],
+        ),
+      ),
     );
   }
 }
