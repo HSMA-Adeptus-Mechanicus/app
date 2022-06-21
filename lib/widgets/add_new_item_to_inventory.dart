@@ -5,6 +5,8 @@ import 'package:sff/data/item.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
+import 'package:sff/screens/app_frame.dart';
+import 'package:sff/widgets/app_scaffold.dart';
 
 class MyStatefulWidget extends StatefulWidget {
   const MyStatefulWidget({Key? key}) : super(key: key);
@@ -22,7 +24,27 @@ class RandomizerWidgetGesture extends State<MyStatefulWidget> {
         onTap: () async {
           User user = await data.getCurrentUser();
           if (user.currency > 14) {
-            (await itemRandomizer()).buy();
+            final item = (await Item.itemRandomizer())..buy();
+
+            navigateTopLevelToWidget(
+              AppScaffold(
+                body: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () async {
+                    navigateTopLevelToWidget(AppFrame());
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.memory(await item.getImageData()),
+                      Image.asset("assets/icons/Pixel/Schatzkiste2.png",
+                          filterQuality: FilterQuality.none),
+                    ],
+                  ),
+                ),
+              ),
+            );
           } else {
             const snackBar =
                 SnackBar(content: Text("You DON'T have enough coins!"));
@@ -30,14 +52,9 @@ class RandomizerWidgetGesture extends State<MyStatefulWidget> {
                 .showSnackBar(snackBar);
           }
         },
-        child: const Text("hier bin ich"),
+        child: Image.asset("assets/icons/Pixel/Schatzkiste1.png",
+            filterQuality: FilterQuality.none),
       ),
     );
   }
-}
-
-Future<Item> itemRandomizer() async {
-  List<Item> itemArray = await first(data.getItemsStream());
-  var rng = Random().nextInt(itemArray.length);
-  return itemArray[rng];
 }

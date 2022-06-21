@@ -1,9 +1,11 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 import 'package:sff/data/api/authenticated_api.dart';
 import 'package:sff/data/api/cached_api.dart';
+import 'package:sff/data/data.dart';
 
 class Item {
   const Item(this.id, this.category, this.url);
@@ -16,6 +18,14 @@ class Item {
 
   static clearCache() async {
     await _ItemImageCache.getInstance().clearCache();
+  }
+
+  static Future<Item> itemRandomizer() async {
+    List<Item> itemArray = await first(data.getItemsStream());
+    itemArray =
+        itemArray.where((element) => element.category != "hand").toList();
+    var rng = Random().nextInt(itemArray.length);
+    return itemArray[rng];
   }
 
   Future<Uint8List> getImageData() async {

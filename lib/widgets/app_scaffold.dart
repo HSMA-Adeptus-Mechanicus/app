@@ -20,18 +20,20 @@ class AppScaffold extends StatelessWidget {
       appBar: CustomAppBar(
         settingsButton: settingsButton,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment(-0.7, -0.4),
-            end: Alignment(1, 0.8),
-            colors: [
-              Color.fromARGB(255, 140, 5, 246),
-              Color.fromARGB(255, 1, 30, 184),
-            ],
+      body: SizedBox.expand(
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment(-0.7, -0.4),
+              end: Alignment(1, 0.8),
+              colors: [
+                Color.fromARGB(255, 140, 5, 246),
+                Color.fromARGB(255, 1, 30, 184),
+              ],
+            ),
           ),
+          child: body,
         ),
-        child: body,
       ),
       bottomNavigationBar: bottomNavigationBar,
     );
