@@ -22,8 +22,17 @@ class Item {
 
   static Future<Item> itemRandomizer() async {
     List<Item> itemArray = await first(data.getItemsStream());
+    List<String> starterItems =
+        (await CachedAPI.getInstance().get("db/items/starter") as List<dynamic>)
+            .map((e) => e as String)
+            .toList();
+    itemArray = itemArray
+        .where((element) => !starterItems.contains(element.id))
+        .toList();
+
     itemArray =
         itemArray.where((element) => element.category != "hand").toList();
+
     var rng = Random().nextInt(itemArray.length);
     return itemArray[rng];
   }
@@ -33,6 +42,7 @@ class Item {
   }
 
   Future<void> buy() async {
+    print(id);
     await authAPI.post("db/items/buy/$id", null);
     CachedAPI.getInstance().request("db/users").ignore();
   }
