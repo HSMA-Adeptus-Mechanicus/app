@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/item.dart';
+import 'package:sff/data/sprint.dart';
 import 'package:sff/data/ticket.dart';
 import 'package:sff/data/user.dart';
 
@@ -43,6 +44,13 @@ class Data {
     Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/items");
     await for (List<dynamic> snapshot in stream) {
       yield snapshot.map((e) => Item.fromJSON(e)).toList();
+    }
+  }
+  
+  Stream<List<Sprint>> getSprintsStream() async* {
+    Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/sprints");
+    await for (List<dynamic> snapshot in stream) {
+      yield snapshot.map((e) => Sprint.fromJSON(e)).toList();
     }
   }
 }
