@@ -42,7 +42,6 @@ class Item {
   }
 
   Future<void> buy() async {
-    print(id);
     await authAPI.post("db/items/buy/$id", null);
     CachedAPI.getInstance().request("db/users").ignore();
   }
