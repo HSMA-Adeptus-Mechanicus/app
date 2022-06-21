@@ -5,6 +5,7 @@ import 'package:sff/data/item.dart';
 import 'package:sff/data/sprint.dart';
 import 'package:sff/data/ticket.dart';
 import 'package:sff/data/user.dart';
+import 'package:sff/data/api/user_authentication.dart';
 
 const data = Data();
 
@@ -17,7 +18,9 @@ Future<T> first<T>(Stream<T> stream) {
   StreamSubscription<T>? subscription;
   subscription = stream.listen((event) {
     completer.complete(event);
-    subscription!.cancel().then((value) {}); // This future might not complete at all
+    subscription!
+        .cancel()
+        .then((value) {}); // This future might not complete at all
   });
   return completer.future;
 }
@@ -46,11 +49,17 @@ class Data {
       yield snapshot.map((e) => Item.fromJSON(e)).toList();
     }
   }
-  
+
   Stream<List<Sprint>> getSprintsStream() async* {
     Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/sprints");
     await for (List<dynamic> snapshot in stream) {
       yield snapshot.map((e) => Sprint.fromJSON(e)).toList();
     }
+  }
+
+  Future<User> getCurrentUser() async {
+    final users = (await first(data.getUsersStream()));
+    return users.firstWhere(
+        (user) => user.id == UserAuthentication.getInstance().userId);
   }
 }

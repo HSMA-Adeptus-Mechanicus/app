@@ -118,7 +118,8 @@ class CachedAPI {
   /// Requests the data from the API and caches it.
   Future<dynamic> request(String path) async {
     if (requestsInProgress.contains(path)) {
-      throw Exception("Concurrent requests to the same data ($path) are not allowed");
+      throw Exception(
+          "Concurrent requests to the same data ($path) are not allowed");
     }
     requestsInProgress.add(path);
     try {
