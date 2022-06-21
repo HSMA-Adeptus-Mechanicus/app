@@ -57,7 +57,7 @@ class RewardScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 160.0),
-                  RandomizerWidget(),
+                    RandomizerWidget(),
                   ],
                 ),
               ),
@@ -67,4 +67,3 @@ class RewardScreen extends StatelessWidget {
         });
   }
 }
-
