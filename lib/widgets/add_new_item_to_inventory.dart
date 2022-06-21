@@ -10,14 +10,14 @@ import 'package:sff/screens/pages/reward_screen.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
+class RandomizerWidget extends StatefulWidget {
+  const RandomizerWidget({Key? key}) : super(key: key);
 
   @override
-  State<MyStatefulWidget> createState() => RandomizerWidgetGesture();
+  State<RandomizerWidget> createState() => RandomizerWidgetGesture();
 }
 
-class RandomizerWidgetGesture extends State<MyStatefulWidget> {
+class RandomizerWidgetGesture extends State<RandomizerWidget> {
   @override
   Widget build(BuildContext context) {
     return Align(
