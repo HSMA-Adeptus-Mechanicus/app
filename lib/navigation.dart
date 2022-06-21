@@ -9,3 +9,10 @@ navigateTopLevelToWidget(Widget destination) async {
     (route) => false,
   );
 }
+
+navigateToWidget(Widget destination) async {
+  await Navigator.push(
+    navigatorKey.currentContext!,
+    MaterialPageRoute(builder: (context) => destination),
+  );
+}
