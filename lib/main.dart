@@ -78,7 +78,7 @@ class App extends StatelessWidget {
             // backgroundColor: MaterialStateProperty.all(Colors.white),
           ),
         ),
-        inputDecorationTheme: InputDecorationTheme(fillColor: Colors.red),
+        inputDecorationTheme: const InputDecorationTheme(fillColor: Colors.red),
         cardColor: const Color.fromARGB(255, 142, 123, 255),
         indicatorColor: const Color.fromARGB(255, 255, 190, 38),
         highlightColor: const Color.fromARGB(255, 255, 190, 38),

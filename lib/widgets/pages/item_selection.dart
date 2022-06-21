@@ -170,7 +170,7 @@ class _ItemButton extends StatelessWidget {
       builder: (context, snapshot) {
         var border = avatar.isEquipped(item)
             ? null
-            : BorderSide(
+            : const BorderSide(
                 width: 1,
                 color: Colors.grey,
               );
