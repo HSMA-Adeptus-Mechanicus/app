@@ -50,14 +50,7 @@ class Data {
   }
 
   Future<User> getCurrentUser() async {
-    List<User> allUsers = await first(data.getUsersStream());
-    User currentUser;
-    for (int i = 0; i <= allUsers.length; i++) {
-      if (allUsers[i].id == UserAuthentication.getInstance().userId) {
-        currentUser = allUsers[i];
-        return currentUser;
-      }
-    }
-    throw Exception("No current User found");
+    final users = (await first(data.getUsersStream()));
+    return users.firstWhere((user) => user.id == UserAuthentication.getInstance().userId);
   }
 }

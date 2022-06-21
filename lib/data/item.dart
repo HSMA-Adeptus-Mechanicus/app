@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
+import 'package:sff/data/api/authenticated_api.dart';
+import 'package:sff/data/api/cached_api.dart';
 
 class Item {
   const Item(this.id, this.category, this.url);
@@ -18,6 +20,11 @@ class Item {
 
   Future<Uint8List> getImageData() async {
     return await _ItemImageCache.getInstance().getImage(url);
+  }
+
+  Future<void> buy() async {
+    await authAPI.post("db/items/buy/$id", null);
+    CachedAPI.getInstance().request("db/users").ignore();
   }
 }
 
