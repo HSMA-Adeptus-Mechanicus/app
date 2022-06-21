@@ -43,6 +43,7 @@ class Bossfight extends StatelessWidget {
                       "VS",
                       style: TextStyle(
                         fontSize: 50,
+                        color: Colors.black,
                       ),
                     ),
                   ),

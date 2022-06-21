@@ -44,7 +44,9 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: android-build
-        path: build/app/outputs/bundle/release/app-release.aab
+        path: |
+          build/app/outputs/flutter-apk/app-release.apk
+          build/app/outputs/bundle/release/app-release.aab
   build_windows:
     name: Build Windows
     runs-on: windows-latest

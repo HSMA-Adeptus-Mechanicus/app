@@ -16,6 +16,7 @@ class LoginInfo extends StatelessWidget {
       children: [
         SizedBox(
           height: 150,
+          width: 150,
           child: UserAvatarWidget(
             userId: UserAuthentication.getInstance().userId!,
           ),
