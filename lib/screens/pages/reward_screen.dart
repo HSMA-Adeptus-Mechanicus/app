@@ -56,7 +56,7 @@ class RewardScreen extends StatelessWidget {
                         )
                       ],
                     ),
-                    SizedBox(height: 160.0),
+                    SizedBox(height: 260.0),
                   RandomizerWidget(),
                   ],
                 ),
