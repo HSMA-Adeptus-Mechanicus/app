@@ -22,7 +22,7 @@ class RewardScreen extends StatelessWidget {
                 .first;
             //return Text("Username: $username\nCoins: ${user.currency}");
             return Padding(
-              padding: EdgeInsets.fromLTRB(13.0, 25.0, 0.0, 0.0),
+              padding: const EdgeInsets.fromLTRB(13.0, 25.0, 0.0, 0.0),
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Column(
@@ -35,29 +35,29 @@ class RewardScreen extends StatelessWidget {
                             scale: 1.3,
                           ).image,
                         ),
-                        SizedBox(width: 7.0),
+                        const SizedBox(width: 7.0),
                         Text(
                           "${user.currency}",
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 80.0),
+                    const SizedBox(height: 80.0),
                     Row(
                       children: [
                         // 15 sollte keine magic number sein
                         Text(
-                          " Du hast ${user.currency} Münzen\n gesammelt, ${username}!\n ${user.currency >= 15 ? "Hol dir dein neues Item!" : "Dir fehlen ${15 - user.currency} Münzen\n zum neuen Item!"}",
-                          style: TextStyle(
+                          " Du hast ${user.currency} Münzen\n gesammelt, $username!\n ${user.currency >= 15 ? "Hol dir dein neues Item!" : "Dir fehlen ${15 - user.currency} Münzen\n zum neuen Item!"}",
+                          style: const TextStyle(
                             color: Colors.white,
                           ),
                         )
                       ],
                     ),
-                    SizedBox(height: 260.0),
-                  RandomizerWidget(),
+                    const SizedBox(height: 260.0),
+                    const RandomizerWidget(),
                   ],
                 ),
               ),

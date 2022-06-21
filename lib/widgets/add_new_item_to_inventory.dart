@@ -1,12 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:sff/data/item.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
-import 'package:sff/screens/app_frame.dart';
-import 'package:sff/screens/pages/reward_screen.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 
