@@ -38,9 +38,11 @@ class RandomizerWidgetGesture extends State<MyStatefulWidget> {
               //Subtract 15 from User Coins HOW
             } else {
               final snackBar =
-                  SnackBar(content: const Text('Yay! A SnackBar!'));
+                  SnackBar(content: const Text('You DONT have enough coins!'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
           },
+          child: const Text("hier bin ich"),
         ),
       ),
     );

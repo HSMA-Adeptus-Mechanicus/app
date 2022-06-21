@@ -31,7 +31,7 @@ class Ticket {
     try {
       assignedUser = users.firstWhere((user) => user.id == json["assignee"]);
     } catch (e) {
-      assignedUser = const User("", "unknown", [], Avatar({}));
+      assignedUser = User("", "unknown", [], const Avatar({}), 0);
     }
     return Ticket(
       json["_id"],
