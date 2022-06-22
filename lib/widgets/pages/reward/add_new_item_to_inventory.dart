@@ -5,6 +5,7 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/widgets/app_scaffold.dart';
+import 'package:sff/widgets/shaker.dart';
 
 class RandomizerWidget extends StatefulWidget {
   const RandomizerWidget({Key? key}) : super(key: key);
@@ -40,8 +41,7 @@ class RandomizerWidgetGesture extends State<RandomizerWidget> {
               .showSnackBar(snackBar);
         }
       },
-      child: Image.asset("assets/icons/Pixel/Schatzkiste1.png",
-          filterQuality: FilterQuality.none),
+      child: TestAnimWidget(),
     );
   }
 }
