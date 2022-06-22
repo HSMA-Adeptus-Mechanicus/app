@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/navigation.dart';
@@ -9,7 +10,7 @@ import 'package:sff/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitUp,
   ]);
 
   runApp(App());
@@ -88,6 +89,8 @@ class App extends StatelessWidget {
       navigatorKey: navigatorKey,
       home: Builder(builder: (context) {
         // TODO: refactor
+        AudioCache player = AudioCache();
+        player.play("audio/CRAWLING.mp3");
         UserAuthentication.getInstance()
             .getChangeStateStream()
             .where((stateChange) =>
