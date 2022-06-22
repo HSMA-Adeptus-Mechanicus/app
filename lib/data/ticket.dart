@@ -49,5 +49,6 @@ class Ticket {
   Future<void> claimReward() async {
     await authAPI.patch("db/tickets/claim-reward/$id", null);
     CachedAPI.getInstance().request("db/tickets").ignore();
+    CachedAPI.getInstance().request("db/users").ignore();
   }
 }
