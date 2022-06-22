@@ -17,62 +17,70 @@ class TicketList extends StatelessWidget {
       onRefresh: () async {
         await CachedAPI.getInstance().request("db/tickets");
       },
-      child: StreamBuilder<List<Ticket>>(
-        stream: data.getTicketsStream(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<Ticket> tickets = snapshot.data!;
-            if (onlyOwnTickets) {
-              tickets = tickets
-                  .where((ticket) =>
-                      ticket.assignee ==
-                      UserAuthentication.getInstance().userId)
-                  .toList();
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          textTheme: Theme.of(context).textTheme.copyWith(
+            titleMedium: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
+            titleLarge: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.black),
+          ),
+        ),
+        child: StreamBuilder<List<Ticket>>(
+          stream: data.getTicketsStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<Ticket> tickets = snapshot.data!;
+              if (onlyOwnTickets) {
+                tickets = tickets
+                    .where((ticket) =>
+                        ticket.assignee ==
+                        UserAuthentication.getInstance().userId)
+                    .toList();
+              }
+              if (onlyOwnTickets) {
+                stableSort<Ticket>(
+                    tickets,
+                    (a, b) => !a.done && b.done
+                        ? 1
+                        : a.done && !b.done
+                            ? -1
+                            : 0);
+                stableSort<Ticket>(
+                    tickets,
+                    (a, b) => a.rewardClaimed && !b.rewardClaimed
+                        ? 1
+                        : !a.rewardClaimed && b.rewardClaimed
+                            ? -1
+                            : 0);
+              } else {
+                stableSort<Ticket>(
+                    tickets,
+                    (a, b) => a.done && !b.done
+                        ? 1
+                        : !a.done && b.done
+                            ? -1
+                            : 0);
+              }
+      
+              return ListView.separated(
+                padding: const EdgeInsets.all(15),
+                itemCount: tickets.length,
+                itemBuilder: (context, index) {
+                  return TicketItem(tickets[index],
+                      allowClaimingReward: onlyOwnTickets);
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 7,
+                  );
+                },
+              );
             }
-            if (onlyOwnTickets) {
-              stableSort<Ticket>(
-                  tickets,
-                  (a, b) => !a.done && b.done
-                      ? 1
-                      : a.done && !b.done
-                          ? -1
-                          : 0);
-              stableSort<Ticket>(
-                  tickets,
-                  (a, b) => a.rewardClaimed && !b.rewardClaimed
-                      ? 1
-                      : !a.rewardClaimed && b.rewardClaimed
-                          ? -1
-                          : 0);
-            } else {
-              stableSort<Ticket>(
-                  tickets,
-                  (a, b) => a.done && !b.done
-                      ? 1
-                      : !a.done && b.done
-                          ? -1
-                          : 0);
+            if (snapshot.hasError) {
+              return ErrorWidget(snapshot.error!);
             }
-
-            return ListView.separated(
-              padding: const EdgeInsets.all(15),
-              itemCount: tickets.length,
-              itemBuilder: (context, index) {
-                return TicketItem(tickets[index],
-                    allowClaimingReward: onlyOwnTickets);
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: 7,
-                );
-              },
-            );
-          }
-          if (snapshot.hasError) {
-            return ErrorWidget(snapshot.error!);
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
     );
   }

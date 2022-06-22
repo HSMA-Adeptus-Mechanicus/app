@@ -9,7 +9,7 @@ import 'package:sff/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitUp,
   ]);
 
   runApp(App());
@@ -50,10 +50,7 @@ class App extends StatelessWidget {
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
             fontSize: 19,
-            color: Colors.black,
           ),
-          titleLarge: TextStyle(color: Colors.black),
-          titleMedium: TextStyle(color: Colors.black),
         ),
         primaryTextTheme: const TextTheme(
           bodyText1: TextStyle(fontSize: 19),
@@ -69,7 +66,23 @@ class App extends StatelessWidget {
             ),
           ),
         ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50))),
+            side: MaterialStateProperty.all(const BorderSide(
+              color: Color.fromARGB(255, 255, 190, 38),
+              style: BorderStyle.solid,
+              width: 2,
+            )),
+            // backgroundColor: MaterialStateProperty.all(Colors.white),
+          ),
+        ),
+        inputDecorationTheme: const InputDecorationTheme(fillColor: Colors.red),
         cardColor: const Color.fromARGB(255, 142, 123, 255),
+        indicatorColor: const Color.fromARGB(255, 255, 190, 38),
+        highlightColor: const Color.fromARGB(255, 255, 190, 38),
+        splashColor: const Color.fromARGB(255, 255, 161, 38),
         colorScheme: const ColorScheme(
           brightness: Brightness.dark,
           primary: Color.fromARGB(255, 255, 190, 38),

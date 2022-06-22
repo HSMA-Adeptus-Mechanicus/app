@@ -5,6 +5,7 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/item.dart';
 import 'package:sff/data/user.dart';
 import 'package:sff/utils/image_tools.dart';
+import 'package:sff/utils/stable_sort.dart';
 
 class ItemCategory {
   final String icon;
@@ -15,8 +16,10 @@ class ItemCategory {
 
 class ItemSelectionByCategory extends StatelessWidget {
   final List<ItemCategory> categories;
+  final EditableAvatar avatar;
 
-  const ItemSelectionByCategory({super.key, required this.categories});
+  const ItemSelectionByCategory(
+      {super.key, required this.categories, required this.avatar});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class ItemSelectionByCategory extends StatelessWidget {
         ),
         body: TabBarView(
           children: categories
-              .map((e) => _ItemSelection(category: e.category))
+              .map((e) => _ItemSelection(category: e.category, avatar: avatar))
               .toList(),
         ),
       ),
@@ -51,27 +54,35 @@ class ItemSelectionByCategory extends StatelessWidget {
 
 class _ItemSelection extends StatelessWidget {
   final String category;
+  final EditableAvatar avatar;
 
   const _ItemSelection({
     required this.category,
     Key? key,
+    required this.avatar,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Item>>(
-      stream: data.getItemsStream(),
+    return FutureBuilder<List<User>>(
+      future: first(data.getUsersStream()),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<Item> items = snapshot.data!
-              .where((element) => element.category == category)
-              .toList();
-          return StreamBuilder<List<User>>(
-            stream: data.getUsersStream(),
+          final user = snapshot.data!.firstWhere(
+              (user) => user.id == UserAuthentication.getInstance().userId);
+          return FutureBuilder<List<Item>>(
+            future: first(data.getItemsStream()),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                final user = snapshot.data!.firstWhere((user) =>
-                    user.id == UserAuthentication.getInstance().userId);
+                List<Item> items = snapshot.data!
+                    .where((element) => element.category == category)
+                    .toList();
+                stableSort<Item>(items, (a, b) => a.url.compareTo(b.url));
+                stableSort<Item>(
+                    items,
+                    (a, b) =>
+                        (user.ownsItem(b) ? 1 : 0) -
+                        (user.ownsItem(a) ? 1 : 0));
                 return GridView.builder(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.all(10),
@@ -86,6 +97,7 @@ class _ItemSelection extends StatelessWidget {
                     return _ItemButton(
                       user: user,
                       item: items[index],
+                      avatar: avatar,
                     );
                   },
                 );
@@ -111,10 +123,12 @@ class _ItemButton extends StatelessWidget {
     Key? key,
     required this.user,
     required this.item,
+    required this.avatar,
   }) : super(key: key);
 
   final User user;
   final Item item;
+  final EditableAvatar avatar;
 
   @override
   Widget build(BuildContext context) {
@@ -144,34 +158,41 @@ class _ItemButton extends StatelessWidget {
     );
 
     onPressed() {
-      // TODO: give immediate feedback when equipping items
-      if (user.avatar.isEquipped(item)) {
-        Avatar.unequip(item);
+      if (avatar.isEquipped(item)) {
+        avatar.removeItem(item.category);
       } else {
-        Avatar.equip(item);
+        avatar.setItem(item);
       }
     }
 
-    var border = user.avatar.isEquipped(item)
-        ? BorderSide(
-            width: 3,
-            color: Theme.of(context).colorScheme.primary,
-          )
-        : null;
-
-    return Opacity(
-      opacity: user.ownsItem(item) ? 1 : 0.25,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(
-            vertical: 8 + padding,
-            horizontal: padding,
+    return StreamBuilder<Avatar>(
+      stream: avatar.getStream(),
+      builder: (context, snapshot) {
+        var border = avatar.isEquipped(item)
+            ? null
+            : const BorderSide(
+                width: 1,
+                color: Colors.grey,
+              );
+        return Opacity(
+          opacity: user.ownsItem(item) ? 1 : 0.25,
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              primary: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 8 + padding,
+                horizontal: padding,
+              ),
+              side: border,
+            ),
+            onPressed: user.ownsItem(item) ? onPressed : null,
+            child: imageWidget,
           ),
-          side: border,
-        ),
-        onPressed: onPressed,
-        child: imageWidget,
-      ),
+        );
+      },
     );
   }
 }

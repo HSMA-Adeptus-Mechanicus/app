@@ -26,7 +26,7 @@ class TeamScreen extends StatelessWidget {
             child: TabBarView(
               children: [
                 Bossfight(),
-                Team(),
+                _Team(),
               ],
             ),
           ),
@@ -36,8 +36,8 @@ class TeamScreen extends StatelessWidget {
   }
 }
 
-class Team extends StatelessWidget {
-  const Team({
+class _Team extends StatelessWidget {
+  const _Team({
     Key? key,
   }) : super(key: key);
 

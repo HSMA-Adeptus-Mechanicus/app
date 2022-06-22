@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/item.dart';
+import 'package:sff/data/sprint.dart';
 import 'package:sff/data/ticket.dart';
 import 'package:sff/data/user.dart';
 import 'package:sff/data/api/user_authentication.dart';
@@ -49,8 +50,16 @@ class Data {
     }
   }
 
+  Stream<List<Sprint>> getSprintsStream() async* {
+    Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/sprints");
+    await for (List<dynamic> snapshot in stream) {
+      yield snapshot.map((e) => Sprint.fromJSON(e)).toList();
+    }
+  }
+
   Future<User> getCurrentUser() async {
     final users = (await first(data.getUsersStream()));
-    return users.firstWhere((user) => user.id == UserAuthentication.getInstance().userId);
+    return users.firstWhere(
+        (user) => user.id == UserAuthentication.getInstance().userId);
   }
 }
