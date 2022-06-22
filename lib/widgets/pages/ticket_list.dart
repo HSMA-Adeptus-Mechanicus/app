@@ -188,7 +188,22 @@ class TicketItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(_ticket.storyPoints.toString()),
-                    Text(_ticket.done ? "fertig" : "in Bearbeitung"),
+                    Text(allowClaimingReward
+                        ? _ticket.done
+                            ? _ticket.rewardClaimed
+                                ? "Belohnung abgeholt"
+                                : "Belohnung abholen"
+                            : "In Bearbeitung"
+                        : _ticket.done
+                            ? "Fertig"
+                            : "In Bearbeitung"),
+
+                    /*
+                    ticket.done
+              ? _ticket.rewardClaimed || !allowClaimingReward
+                  ? Theme.of(context).colorScheme.background
+                  : Colors.green
+              : Theme.of(context).cardColor,*/
                   ],
                 ),
               ],
