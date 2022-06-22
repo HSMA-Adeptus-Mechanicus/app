@@ -20,9 +20,15 @@ class TicketList extends StatelessWidget {
       child: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
-            titleMedium: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
-            titleLarge: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.black),
-          ),
+                titleMedium: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(color: Colors.black),
+                titleLarge: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(color: Colors.black),
+              ),
         ),
         child: StreamBuilder<List<Ticket>>(
           stream: data.getTicketsStream(),
@@ -60,7 +66,7 @@ class TicketList extends StatelessWidget {
                             ? -1
                             : 0);
               }
-      
+
               return ListView.separated(
                 padding: const EdgeInsets.all(15),
                 itemCount: tickets.length,
@@ -96,11 +102,56 @@ class TicketItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _showMyDialog() async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: true, // user must tap button!
+        builder: (BuildContext context) {
+          return SizedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image(
+                      image: Image.asset(
+                        "assets/icons/Pixel/Muenze.PNG",
+                        scale: 1.0,
+                      ).image,
+                    ),
+                    Text(
+                      "${_ticket.storyPoints * 7}",
+                      style: const TextStyle(
+                        fontSize: 25,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Du erhälst + ${_ticket.storyPoints * 7} Münzen!",
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
     return GestureDetector(
       child: ElevatedButton(
         onPressed: () {
+          //_showMyDialog();
           if (!allowClaimingReward) return;
-          if (!_ticket.rewardClaimed && _ticket.done) _ticket.claimReward();
+          if (!_ticket.rewardClaimed && _ticket.done) {
+            _ticket.claimReward();
+            _showMyDialog();
+          }
         },
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
