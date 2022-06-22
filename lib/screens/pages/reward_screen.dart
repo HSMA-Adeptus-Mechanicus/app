@@ -41,7 +41,6 @@ class RewardScreen extends StatelessWidget {
                     const SizedBox(height: 80.0),
                     Row(
                       children: [
-                        // 15 sollte keine magic number sein
                         Text(
                           " Du hast ${user.currency} Münzen\n gesammelt, ${user.name}!\n ${user.currency >= 15 ? "Hol dir dein neues Item!" : "Dir fehlen ${15 - user.currency} Münzen\n zum neuen Item!"}",
                           style: const TextStyle(
