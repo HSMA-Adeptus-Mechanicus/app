@@ -105,7 +105,7 @@ class TicketItem extends StatelessWidget {
     Future<void> _showMyDialog() async {
       return showDialog<void>(
         context: context,
-        barrierDismissible: true, // user must tap button!
+        barrierDismissible: true,
         builder: (BuildContext context) {
           return SizedBox(
             child: Column(
@@ -146,7 +146,6 @@ class TicketItem extends StatelessWidget {
     return GestureDetector(
       child: ElevatedButton(
         onPressed: () {
-          //_showMyDialog();
           if (!allowClaimingReward) return;
           if (!_ticket.rewardClaimed && _ticket.done) {
             _ticket.claimReward();
@@ -197,13 +196,6 @@ class TicketItem extends StatelessWidget {
                         : _ticket.done
                             ? "Fertig"
                             : "In Bearbeitung"),
-
-                    /*
-                    ticket.done
-              ? _ticket.rewardClaimed || !allowClaimingReward
-                  ? Theme.of(context).colorScheme.background
-                  : Colors.green
-              : Theme.of(context).cardColor,*/
                   ],
                 ),
               ],
