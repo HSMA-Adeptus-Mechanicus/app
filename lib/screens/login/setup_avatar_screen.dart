@@ -8,7 +8,7 @@ import 'package:sff/screens/app_frame.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/display_error.dart';
-import 'package:sff/widgets/pages/avatar_selection.dart';
+import 'package:sff/widgets/pages/equip/avatar_selection.dart';
 
 class SetupAvatarScreen extends StatelessWidget {
   const SetupAvatarScreen({Key? key}) : super(key: key);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/avatar.dart';
-import 'package:sff/widgets/pages/item_selection.dart';
+import 'package:sff/widgets/pages/equip/item_selection.dart';
 
 class EquipmentSelection extends StatelessWidget {
   final EditableAvatar avatar;

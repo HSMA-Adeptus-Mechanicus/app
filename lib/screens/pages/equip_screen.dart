@@ -7,8 +7,8 @@ import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
 import 'package:sff/widgets/display_error.dart';
 import 'package:sff/widgets/fitted_text.dart';
-import 'package:sff/widgets/pages/avatar_selection.dart';
-import 'package:sff/widgets/pages/equipment_selection.dart';
+import 'package:sff/widgets/pages/equip/avatar_selection.dart';
+import 'package:sff/widgets/pages/equip/equipment_selection.dart';
 
 
 // TODO: ask user what to do when switching to another tab if there are not applied changes
