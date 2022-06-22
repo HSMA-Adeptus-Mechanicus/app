@@ -28,6 +28,10 @@ class SetupAvatarScreen extends StatelessWidget {
             EditableAvatar avatar = EditableAvatar(userAvatar.equippedItems);
             return Column(
               children: [
+                const Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Text("Passe hier noch deinen Avatar an."),
+                ),
                 Expanded(
                   child: StreamBuilder<Avatar>(
                       stream: avatar.getStream(),

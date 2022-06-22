@@ -52,66 +52,74 @@ class _RegisterFormState extends State<RegisterForm> {
   Widget build(BuildContext context) {
     return Center(
       child: IntrinsicHeight(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AutofillGroup(
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Benutzername",
-                        ),
-                        autofillHints: const [AutofillHints.newUsername],
-                        controller: _usernameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Bitte Benutzername eingeben";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Passwort",
-                        ),
-                        autofillHints: const [AutofillHints.newPassword],
-                        obscureText: true,
-                        controller: _passwordController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Bitte Passwort eingeben";
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      displayError(() async {
-                        await UserAuthentication.getInstance().register(
-                          _usernameController.text,
-                          _passwordController.text,
-                        );
-                      });
-                    }
-                  },
-                  child: const Text("Register"),
-                ),
-              ],
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(30),
+              child: Text("Hallo! Bevor es richtig losgeht, verrate uns deinen Namen und passe deinen Avatar an."),
             ),
-          ),
+            Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AutofillGroup(
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "Benutzername",
+                            ),
+                            autofillHints: const [AutofillHints.newUsername],
+                            controller: _usernameController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Bitte Benutzername eingeben";
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "Passwort",
+                            ),
+                            autofillHints: const [AutofillHints.newPassword],
+                            obscureText: true,
+                            controller: _passwordController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Bitte Passwort eingeben";
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          displayError(() async {
+                            await UserAuthentication.getInstance().register(
+                              _usernameController.text,
+                              _passwordController.text,
+                            );
+                          });
+                        }
+                      },
+                      child: const Text("Register"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
