@@ -51,6 +51,9 @@ class App extends StatelessWidget {
           bodyMedium: TextStyle(
             fontSize: 19,
           ),
+          bodySmall: TextStyle(
+            fontSize: 15,
+          ),
         ),
         primaryTextTheme: const TextTheme(
           bodyText1: TextStyle(fontSize: 19),
