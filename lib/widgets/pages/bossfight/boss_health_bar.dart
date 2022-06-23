@@ -65,12 +65,12 @@ class _BossBarPainter extends CustomPainter {
           3 * pixelSize,
           min(percentage * barWidth, (89 - offsetLeft - 2) * pixelSize),
           barHeight),
-      Paint()..color = Colors.red,
+      Paint()..color = const Color.fromARGB(255, 210, 0, 0),
     );
     canvas.drawRect(
       Rect.fromLTWH(offsetLeft * pixelSize, 5 * pixelSize,
           percentage * barWidth, (14 - 5 - 5) * pixelSize),
-      Paint()..color = Colors.red,
+      Paint()..color = const Color.fromARGB(255, 210, 0, 0),
     );
     canvas.drawImageRect(
       image,
