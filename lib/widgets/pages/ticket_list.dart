@@ -191,28 +191,24 @@ class TicketItem extends StatelessWidget {
                 Text(_ticket.description),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      //Text(_ticket.storyPoints.toString()),
-                      SizedBox(),
-                      Text(
-                        allowClaimingReward
-                            ? _ticket.done
-                                ? _ticket.rewardClaimed
-                                    ? "Belohnung abgeholt"
-                                    : "Belohnung abholen"
-                                : "In Bearbeitung"
-                            : _ticket.done
-                                ? "Fertig"
-                                : "In Bearbeitung",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.0,
-                          fontWeight: FontWeight.w100,
-                        ),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      allowClaimingReward
+                          ? _ticket.done
+                              ? _ticket.rewardClaimed
+                                  ? "Belohnung abgeholt"
+                                  : "Belohnung abholen"
+                              : "In Bearbeitung"
+                          : _ticket.done
+                              ? "Fertig"
+                              : "In Bearbeitung",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.0,
+                        fontWeight: FontWeight.w100,
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ],
