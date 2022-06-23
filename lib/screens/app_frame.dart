@@ -76,25 +76,34 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
   }
 }
 
+//boolStream ob ein Punkt angezeigt werden soll, oder nicht
+//Punkt mit Stack und Positioned
 BottomNavigationBarItem createNavigationItem(
     {required String icon, required String label}) {
   return BottomNavigationBarItem(
-    icon: Padding(
-      padding: const EdgeInsets.all(6),
-      child: Image.asset(
-        icon,
-        fit: BoxFit.scaleDown,
-        height: 20,
-      ),
-    ),
+    icon: NavigationIcon(iconAsset: icon, active: false),
     label: label,
-    activeIcon: Padding(
+    activeIcon: NavigationIcon(iconAsset: icon, active: true),
+  );
+}
+
+class NavigationIcon extends StatelessWidget {
+  final bool active;
+  final String iconAsset;
+
+  const NavigationIcon(
+      {Key? key, required this.iconAsset, required this.active})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
       padding: const EdgeInsets.all(6),
       child: Image.asset(
-        icon.replaceFirst(RegExp(r"weiss"), "orange"),
+        active ? iconAsset.replaceFirst(RegExp(r"weiss"), "orange") : iconAsset,
         fit: BoxFit.scaleDown,
         height: 20,
       ),
-    ),
-  );
+    );
+  }
 }
