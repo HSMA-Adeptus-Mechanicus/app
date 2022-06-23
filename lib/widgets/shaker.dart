@@ -55,10 +55,8 @@ class _TestAnimWidgetState extends State<TestAnimWidget>
                     bottom: offsetAnimation.value + 9,
                     top: 9 - offsetAnimation.value,
                   ),
-                  child: Image.asset(
-                    "assets/icons/Pixel/Schatzkiste1.png",
-                    filterQuality: FilterQuality.none,
-                  ),
+                  child: Image.asset("assets/icons/Pixel/Schatzkiste1.png",
+                      filterQuality: FilterQuality.none, scale: 1 / 2),
                 );
               },
             );
