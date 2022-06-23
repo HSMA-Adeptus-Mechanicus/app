@@ -19,7 +19,7 @@ class _TestAnimWidgetState extends State<TestAnimWidget>
   @override
   void initState() {
     controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
       animationBehavior: AnimationBehavior.preserve,
     );
@@ -28,7 +28,7 @@ class _TestAnimWidgetState extends State<TestAnimWidget>
 
   @override
   Widget build(BuildContext context) {
-    final Animation<double> offsetAnimation = Tween(begin: 15.0, end: 24.0)
+    final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 9.0)
         .chain(CurveTween(curve: Curves.elasticIn))
         .animate(controller)
       ..addStatusListener((status) {});
@@ -41,8 +41,7 @@ class _TestAnimWidgetState extends State<TestAnimWidget>
               (user) => user.id == UserAuthentication.getInstance().userId)),
           builder: (context, snapshot) {
             if ((snapshot.data?.currency ?? 0) > 14) {
-              controller.forward(from: 25.0);
-              controller.repeat();
+              controller.repeat(reverse: true);
             } else {
               controller.reset();
             }
@@ -53,8 +52,8 @@ class _TestAnimWidgetState extends State<TestAnimWidget>
                   padding: EdgeInsets.only(
                     // left: offsetAnimation.value + 24.0,
                     // right: 24.0 - offsetAnimation.value,
-                    bottom: offsetAnimation.value + 24.0,
-                    top: 24.0 - offsetAnimation.value,
+                    bottom: offsetAnimation.value + 9,
+                    top: 9 - offsetAnimation.value,
                   ),
                   child: Image.asset(
                     "assets/icons/Pixel/Schatzkiste1.png",
