@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/avatar.dart';
 import 'package:sff/data/data.dart';
@@ -6,6 +7,7 @@ import 'package:sff/data/item.dart';
 import 'package:sff/data/user.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/utils/stable_sort.dart';
+import 'package:sff/utils/string_compare.dart';
 
 class ItemCategory {
   final String icon;
@@ -64,8 +66,15 @@ class _ItemSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> starterItems = [];
     return FutureBuilder<List<User>>(
-      future: first(data.getUsersStream()),
+      future: () async {
+        starterItems = (await CachedAPI.getInstance()
+                .getCacheFirst("db/items/starter") as List<dynamic>)
+            .map((e) => e as String)
+            .toList();
+        return first(data.getUsersStream());
+      }(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final user = snapshot.data!.firstWhere(
@@ -77,12 +86,15 @@ class _ItemSelection extends StatelessWidget {
                 List<Item> items = snapshot.data!
                     .where((element) => element.category == category)
                     .toList();
-                stableSort<Item>(items, (a, b) => a.url.compareTo(b.url));
+                stableSort<Item>(
+                    items, (a, b) => compareStringNumbers(a.url, b.url));
                 stableSort<Item>(
                     items,
                     (a, b) =>
-                        (user.ownsItem(b) ? 1 : 0) -
-                        (user.ownsItem(a) ? 1 : 0));
+                        (user.ownsItem(a) ? 0 : 1) -
+                        (user.ownsItem(b) ? 0 : 1));
+                stableSort<Item>(items,
+                    (a, b) => (starterItems.contains(a.id) ? 0 : 1) - (starterItems.contains(b.id) ? 0 : 1));
                 return GridView.builder(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.all(10),
