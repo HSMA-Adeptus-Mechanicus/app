@@ -170,9 +170,15 @@ class TicketItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  _ticket.assignedUser.name,
-                  style: Theme.of(context).textTheme.titleMedium,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _ticket.assignedUser.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(_ticket.storyPoints.toString()),
+                  ],
                 ),
                 Divider(
                   height: 10,
@@ -183,20 +189,31 @@ class TicketItem extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(_ticket.description),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(_ticket.storyPoints.toString()),
-                    Text(allowClaimingReward
-                        ? _ticket.done
-                            ? _ticket.rewardClaimed
-                                ? "Belohnung abgeholt"
-                                : "Belohnung abholen"
-                            : "In Bearbeitung"
-                        : _ticket.done
-                            ? "Fertig"
-                            : "In Bearbeitung"),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //Text(_ticket.storyPoints.toString()),
+                      SizedBox(),
+                      Text(
+                        allowClaimingReward
+                            ? _ticket.done
+                                ? _ticket.rewardClaimed
+                                    ? "Belohnung abgeholt"
+                                    : "Belohnung abholen"
+                                : "In Bearbeitung"
+                            : _ticket.done
+                                ? "Fertig"
+                                : "In Bearbeitung",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.w100,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
