@@ -26,12 +26,13 @@ const requiredItemCategories = [
 ];
 
 class EditableAvatar extends Avatar {
-  EditableAvatar(super.equippedItems) {
+  EditableAvatar(Map<String, Item> equippedItems) : super({}) {
+    setTo(equippedItems);
     broadcastStream = changeController.stream.asBroadcastStream();
   }
 
-  final StreamController<Avatar> changeController = StreamController();
-  late final Stream<Avatar> broadcastStream;
+  final StreamController<EditableAvatar> changeController = StreamController();
+  late final Stream<EditableAvatar> broadcastStream;
 
   setItem(Item item) async {
     if (item.category == "skin") {
@@ -54,8 +55,14 @@ class EditableAvatar extends Avatar {
     changeController.add(this);
   }
 
-  Stream<Avatar> getStream() {
-    late StreamController<Avatar> controller;
+  setTo(Map<String, Item> items) {
+    equippedItems.clear();
+    equippedItems.addAll(items);
+    changeController.add(this);
+  }
+
+  Stream<EditableAvatar> getStream() {
+    late StreamController<EditableAvatar> controller;
     onListen() {
       controller.add(this);
       controller.addStream(broadcastStream);
@@ -73,7 +80,18 @@ class EditableAvatar extends Avatar {
   }
 
   applyToCurrentUser() async {
-    await authAPI.post("db/avatar/equip", equippedItems.map((key, value) => MapEntry(key, value.id)));
+    await authAPI.post("db/avatar/equip",
+        equippedItems.map((key, value) => MapEntry(key, value.id)));
     CachedAPI.getInstance().request("db/users").ignore();
+  }
+
+  bool equals(Avatar avatar) {
+    if (equippedItems.length != avatar.equippedItems.length) return false;
+    for (final entry in equippedItems.entries) {
+      if (entry.value != avatar.equippedItems[entry.key]) {
+        return false;
+      }
+    }
+    return true;
   }
 }
