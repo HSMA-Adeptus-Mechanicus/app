@@ -16,7 +16,8 @@ class RewardScreen extends StatelessWidget {
             User user = (snapshot.data as List<User>).firstWhere(
                 (user) => UserAuthentication.getInstance().userId == user.id);
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 25.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 13.0, vertical: 25.0),
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Column(
@@ -42,7 +43,7 @@ class RewardScreen extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          " Du hast ${user.currency} Münzen\n gesammelt, ${user.name}!\n ${user.currency >= 15 ? "Hol dir dein neues Item!" : "Dir fehlen ${15 - user.currency} Münzen\n zum neuen Item!"}",
+                          "${user.currency >= 15 ? "Du hast genug Münzen gesammelt, ${user.name}!\nHol dir dein neues Item!" : "Hallo ${user.name}.\nDir fehlen ${15 - user.currency} Münzen\n zum neuen Item!"}",
                           style: const TextStyle(
                             color: Colors.white,
                           ),
