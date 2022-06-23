@@ -41,7 +41,7 @@ class RandomizerWidgetGesture extends State<RandomizerWidget> {
               .showSnackBar(snackBar);
         }
       },
-      child: TestAnimWidget(),
+      child: const TestAnimWidget(),
     );
   }
 }

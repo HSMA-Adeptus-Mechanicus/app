@@ -5,6 +5,8 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
 
 class TestAnimWidget extends StatefulWidget {
+  const TestAnimWidget({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _TestAnimWidgetState();
 }
