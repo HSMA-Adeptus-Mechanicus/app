@@ -7,7 +7,7 @@ import 'package:sff/navigation.dart';
 import 'package:sff/screens/app_frame.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 import 'package:sff/widgets/avatar.dart';
-import 'package:sff/widgets/display_error.dart';
+import 'package:sff/widgets/pages/equip/apply_reset_options.dart';
 import 'package:sff/widgets/pages/equip/avatar_selection.dart';
 
 class SetupAvatarScreen extends StatelessWidget {
@@ -48,9 +48,7 @@ class SetupAvatarScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(25),
                   child: ElevatedButton(
                     onPressed: () async {
-                      await displayError(() async {
-                        await avatar.applyToCurrentUser();
-                      });
+                      await showSavingDialog(avatar.applyToCurrentUser());
                       navigateTopLevelToWidget(const AppFrame());
                     },
                     child: const Text("Fertig!"),

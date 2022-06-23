@@ -233,7 +233,6 @@ class UserAuthentication {
   }
 
   editUsername(String password, String newUsername) async {
-    // TODO: add stream that allows detecting the change of the username to automatically update it in the UI
     if (_username == null) {
       throw Exception("Unable to edit username when not logged in");
     }

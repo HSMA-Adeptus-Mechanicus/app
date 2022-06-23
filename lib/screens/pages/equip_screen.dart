@@ -5,13 +5,10 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/user.dart';
 import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
-import 'package:sff/widgets/display_error.dart';
 import 'package:sff/widgets/fitted_text.dart';
+import 'package:sff/widgets/pages/equip/apply_reset_options.dart';
 import 'package:sff/widgets/pages/equip/avatar_selection.dart';
 import 'package:sff/widgets/pages/equip/equipment_selection.dart';
-
-
-// TODO: ask user what to do when switching to another tab if there are not applied changes
 
 class EquipScreen extends StatelessWidget {
   const EquipScreen({Key? key}) : super(key: key);
@@ -38,31 +35,23 @@ class EquipScreen extends StatelessWidget {
                   ],
                 ),
                 Expanded(
-                  child: Scaffold(
-                    backgroundColor: Colors.transparent,
-                    body: Center(
-                      child: StreamBuilder<Avatar>(
-                        stream: avatar.getStream(),
-                        builder: (context, snapshot) {
-                          return AvatarWidget(
-                            avatar: avatar,
-                          );
-                        },
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: StreamBuilder<Avatar>(
+                          stream: avatar.getStream(),
+                          builder: (context, snapshot) {
+                            return AvatarWidget(
+                              avatar: avatar,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    floatingActionButton: FloatingActionButton(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      onPressed: () async {
-                        // TODO: show loading indicator while applying (also in setup_avatar_screen)
-                        displayError(() async {
-                          await avatar.applyToCurrentUser();
-                        });
-                      },
-                      child: Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: ApplyResetOptionsShower(avatar: avatar),
                       ),
-                    ),
+                    ],
                   ),
                 ),
                 Expanded(

@@ -144,7 +144,6 @@ class _ItemButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: make it so it does not repeatedly crop the image every time an item is equipped
     final image = () async {
       final data = await item.getImageData();
       final image = await cropImageData(data);
