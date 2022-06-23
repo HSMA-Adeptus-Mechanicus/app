@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/api/user_authentication.dart';
-import 'package:sff/data/avatar.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/widgets/display_error.dart';

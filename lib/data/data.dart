@@ -1,17 +1,17 @@
 import 'dart:async';
 
 import 'package:sff/data/api/cached_api.dart';
-import 'package:sff/data/item.dart';
-import 'package:sff/data/sprint.dart';
-import 'package:sff/data/ticket.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/item.dart';
+import 'package:sff/data/model/sprint.dart';
+import 'package:sff/data/model/ticket.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/data/api/user_authentication.dart';
 
 const data = Data();
 
 // TODO: Delete once it has been solved
 /// This is a workaround for stream.first that should (hopefully)
-/// no longer be necessary in the next release of dart
+/// no longer be necessary in the next release of dart (2.18)
 /// more information: https://github.com/dart-lang/sdk/issues/34775
 Future<T> first<T>(Stream<T> stream) {
   Completer<T> completer = Completer();

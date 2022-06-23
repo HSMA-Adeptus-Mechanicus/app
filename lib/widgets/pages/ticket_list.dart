@@ -1,7 +1,7 @@
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/ticket.dart';
+import 'package:sff/data/model/ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/utils/stable_sort.dart';
 import 'package:sff/widgets/border_card.dart';

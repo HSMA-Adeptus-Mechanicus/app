@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:sff/data/avatar.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/item.dart';
+import 'package:sff/data/model/item.dart';
 
 class User {
   User(this.id, this.name, this.wardrobe, this.avatar, this.currency);

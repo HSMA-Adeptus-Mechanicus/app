@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sff/data/api/user_authentication.dart';
 
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/user.dart';
 
 class TestAnimWidget extends StatefulWidget {
   const TestAnimWidget({Key? key}) : super(key: key);

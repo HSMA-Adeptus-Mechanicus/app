@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
-import 'package:sff/data/avatar.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/item.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/item.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/utils/stable_sort.dart';
 import 'package:sff/utils/string_compare.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/api/user_authentication.dart';
-import 'package:sff/data/avatar.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
 import 'package:sff/widgets/fitted_text.dart';

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/sprint.dart';
+import 'package:sff/data/model/sprint.dart';
 import 'package:sff/widgets/pages/bossfight/boss_health_bar.dart';
 import 'package:sff/widgets/pages/bossfight/bossfight_team.dart';
 

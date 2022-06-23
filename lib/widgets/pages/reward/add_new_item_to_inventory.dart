@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/item.dart';
+import 'package:sff/data/model/item.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 import 'package:sff/widgets/shaker.dart';

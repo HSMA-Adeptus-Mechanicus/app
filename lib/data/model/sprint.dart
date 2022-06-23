@@ -1,5 +1,5 @@
 import 'package:sff/data/data.dart';
-import 'package:sff/data/ticket.dart';
+import 'package:sff/data/model/ticket.dart';
 
 class Sprint {
   final String name;

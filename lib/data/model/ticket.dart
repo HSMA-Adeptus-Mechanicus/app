@@ -1,8 +1,8 @@
 import 'package:sff/data/api/authenticated_api.dart';
 import 'package:sff/data/api/cached_api.dart';
-import 'package:sff/data/avatar.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/user.dart';
 
 class Ticket {
   const Ticket(

@@ -1,5 +1,5 @@
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/screens/pages/bossfight_screen.dart';
 import 'package:sff/widgets/avatar.dart';
