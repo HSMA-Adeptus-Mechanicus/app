@@ -1,4 +1,6 @@
 import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/data/data.dart';
+import 'package:sff/data/user.dart';
 import 'package:sff/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/widgets/avatar.dart';
@@ -16,29 +18,81 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget? button;
+    List<Widget>? actions;
     if (settingsButton && UserAuthentication.getInstance().authenticated) {
-      button = IconButton(
-        padding: EdgeInsets.zero,
-        icon: UserAvatarWidget(
-          userId: UserAuthentication.getInstance().userId!,
+      actions = [
+        StreamBuilder<User>(
+          stream: data.getUsersStream().map(
+                (event) => event.firstWhere(
+                  (element) =>
+                      element.id == UserAuthentication.getInstance().userId,
+                ),
+              ),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              User user = snapshot.data!;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    user.name,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          // color: Theme.of(context).cardColor,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 17,
+                        child: Image.asset("assets/icons/Pixel/Muenze.PNG"),
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        user.currency.toString(),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).cardColor,
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }
+            if (snapshot.hasError) {
+              return ErrorWidget(snapshot.error!);
+            }
+            return Container();
+          },
         ),
-        onPressed: () {
-          Navigator.of(context).push<void>(
-            MaterialPageRoute<void>(
-              builder: (BuildContext context) {
-                return const SettingsScreen();
-              },
-            ),
-          );
-        },
-      );
+        IconButton(
+          padding: EdgeInsets.zero,
+          icon: UserAvatarWidget(
+            userId: UserAuthentication.getInstance().userId!,
+          ),
+          onPressed: () {
+            Navigator.of(context).push<void>(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const SettingsScreen();
+                },
+              ),
+            );
+          },
+        )
+      ];
     }
 
     return AppBar(
       // TODO: adjust look of back button
-      title: const Text("Scrum for Fun"),
-      actions: button != null ? [button] : null,
+      title: SizedBox(
+        height: 45,
+        child: Image.asset("assets/logo/logo.png"),
+      ),
+      actions: [
+        ...(actions ?? []),
+      ],
     );
   }
 }

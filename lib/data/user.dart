@@ -17,8 +17,12 @@ class User {
     Map<String, dynamic> avatar = json["avatar"];
     for (var entry in avatar.entries) {
       if (entry.value is String) {
-        equippedItems[entry.key] =
-            items.firstWhere((item) => item.id == entry.value);
+        try {
+          equippedItems[entry.key] =
+              items.firstWhere((item) => item.id == entry.value);
+        } catch (e) {
+          // ignore if the item does not exist
+        }
       }
     }
     return User(
