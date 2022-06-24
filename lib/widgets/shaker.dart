@@ -27,6 +27,12 @@ class _TestAnimWidgetState extends State<TestAnimWidget>
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Animation<double> offsetAnimation = Tween(begin: 0.0, end: 9.0)
         .chain(CurveTween(curve: Curves.elasticIn))
