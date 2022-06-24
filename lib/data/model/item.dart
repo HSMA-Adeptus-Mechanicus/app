@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
-import 'package:sff/data/api/authenticated_api.dart';
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/streamable.dart';
@@ -16,6 +15,7 @@ class Item extends Streamable<Item> {
   String get category {
     return _category;
   }
+
   String get url {
     return _url;
   }
@@ -23,6 +23,7 @@ class Item extends Streamable<Item> {
   static Item fromJSON(Map<String, dynamic> json) {
     return Item(json["_id"], json["category"], json["url"]);
   }
+
   @override
   bool processUpdatedJSON(Map<String, dynamic> json) {
     bool change = _category != json["category"] || _url != json["url"];

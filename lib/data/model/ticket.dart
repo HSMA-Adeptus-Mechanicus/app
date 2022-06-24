@@ -1,5 +1,3 @@
-import 'package:sff/data/api/authenticated_api.dart';
-import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/model/streamable.dart';
 
 class Ticket extends Streamable<Ticket> {
