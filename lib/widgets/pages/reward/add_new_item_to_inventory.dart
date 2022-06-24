@@ -21,7 +21,8 @@ class RandomizerWidgetGesture extends State<RandomizerWidget> {
       onTap: () async {
         User user = await data.getCurrentUser();
         if (user.currency > 14) {
-          final item = (await Item.itemRandomizer())..buy();
+          final item = (await Item.itemRandomizer());
+          user.buy(item);
           if ((await (await data.getCurrentUser()).getInventory())
               .contains(item)) {
             navigateToWidget(

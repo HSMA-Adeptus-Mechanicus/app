@@ -28,6 +28,11 @@ abstract class Streamable<T extends Streamable<T>> {
     }
   }
 
+  @protected
+  void updateStream() {
+    _controller.add(this as T);
+  }
+
   Stream<T> asStream() {
     late StreamController<T> controller;
     onListen() {

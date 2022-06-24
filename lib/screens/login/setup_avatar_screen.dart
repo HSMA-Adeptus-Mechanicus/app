@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/screens/app_frame.dart';
 import 'package:sff/widgets/app_scaffold.dart';
@@ -15,11 +16,12 @@ class SetupAvatarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScaffold(
       settingsButton: false,
-      body: FutureBuilder<Avatar>(
-        future: data.getCurrentUser().then((user) => user.getAvatar()),
+      body: FutureBuilder<UserAndAvatar>(
+        future: data.getCurrentUser().then((value) => first(value.getStreamWithAvatar())),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Avatar userAvatar = snapshot.data!;
+            User user = snapshot.data!.user;
+            Avatar userAvatar = snapshot.data!.avatar;
             EditableAvatar avatar = EditableAvatar(userAvatar.equippedItems);
             return Column(
               children: [
@@ -43,7 +45,7 @@ class SetupAvatarScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(25),
                   child: ElevatedButton(
                     onPressed: () async {
-                      await showSavingDialog(avatar.applyToCurrentUser());
+                      await showSavingDialog(user.applyAvatar(avatar));
                       navigateTopLevelToWidget(const AppFrame());
                     },
                     child: const Text("Fertig!"),

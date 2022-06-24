@@ -20,10 +20,11 @@ class ApplyResetOptionsShower extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           EditableAvatar editableAvatar = snapshot.data!;
-          return StreamBuilder<Avatar>(
+          return StreamBuilder<UserAndAvatar>(
             stream: () async* {
-              User user = await data.getCurrentUser();
-              yield* user.asStream().asyncMap((user) => user.getAvatar());
+              yield* await data
+                  .getCurrentUser()
+                  .then((value) => value.getStreamWithAvatar());
             }(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -50,7 +51,7 @@ class ApplyResetOptions extends StatefulWidget {
   }) : super(key: key);
 
   final EditableAvatar editableAvatar;
-  final Avatar userAvatar;
+  final UserAndAvatar userAvatar;
 
   @override
   State<ApplyResetOptions> createState() => _ApplyResetOptionsState();
@@ -60,7 +61,7 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
   @override
   void dispose() {
     super.dispose();
-    if (!widget.editableAvatar.equals(widget.userAvatar)) {
+    if (!widget.editableAvatar.equals(widget.userAvatar.avatar)) {
       Future.microtask(() {
         showDialog(
           barrierDismissible: false,
@@ -75,7 +76,7 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.editableAvatar.equals(widget.userAvatar)) {
+    if (widget.editableAvatar.equals(widget.userAvatar.avatar)) {
       return const SizedBox.shrink();
     }
     return Padding(
@@ -86,7 +87,8 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
           FloatingActionButton(
             backgroundColor: Theme.of(context).colorScheme.primary,
             onPressed: () async {
-              widget.editableAvatar.setTo(widget.userAvatar.equippedItems);
+              widget.editableAvatar
+                  .setTo(widget.userAvatar.avatar.equippedItems);
             },
             child: Icon(
               Icons.replay_sharp,
@@ -97,7 +99,7 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
             backgroundColor: Theme.of(context).colorScheme.primary,
             onPressed: () async {
               await showSavingDialog(
-                  widget.editableAvatar.applyToCurrentUser());
+                  widget.userAvatar.user.applyAvatar(widget.editableAvatar));
             },
             child: Icon(
               Icons.check,
@@ -133,7 +135,8 @@ class UnsavedChangesDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             Navigator.pop(context);
-            showSavingDialog(widget.editableAvatar.applyToCurrentUser());
+            showSavingDialog(
+                widget.userAvatar.user.applyAvatar(widget.editableAvatar));
           },
           child: const Text("Speichern"),
         ),
@@ -166,8 +169,6 @@ Future<T> showSavingDialog<T>(Future<T> future) async {
     );
     try {
       var result = await future;
-      // account for delay until the buttons disappear
-      await Future.delayed(const Duration(milliseconds: 300));
       return result;
     } finally {
       Navigator.pop(navigatorKey.currentContext!);

@@ -48,6 +48,10 @@ class Ticket extends Streamable<Ticket> {
     return _assignee;
   }
 
+  int get rewardCurrency {
+    return storyPoints * 7;
+  }
+
   static Ticket fromJSON(Map<String, dynamic> json) {
     return Ticket(
       json["_id"],
@@ -80,9 +84,11 @@ class Ticket extends Streamable<Ticket> {
     return change;
   }
 
-  Future<void> claimReward() async {
-    await authAPI.patch("db/tickets/claim-reward/$id", null);
-    CachedAPI.getInstance().reload("db/tickets");
-    CachedAPI.getInstance().reload("db/users");
+  /// only for use in user.dart!
+  void setClaimed(bool claimed) {
+    if (claimed != rewardClaimed) {
+      _rewardClaimed = claimed;
+      updateStream();
+    }
   }
 }

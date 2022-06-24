@@ -149,10 +149,11 @@ class TicketItem extends StatelessWidget {
         stream: _ticket.asStream(),
         builder: (context, snapshot) {
           return ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (!allowClaimingReward) return;
               if (!_ticket.rewardClaimed && _ticket.done) {
-                _ticket.claimReward();
+                User user = await data.getCurrentUser();
+                user.claimReward(_ticket);
                 _showMyDialog();
               }
             },

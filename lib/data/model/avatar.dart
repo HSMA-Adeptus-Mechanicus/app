@@ -81,12 +81,6 @@ class EditableAvatar extends Avatar {
     return controller.stream;
   }
 
-  applyToCurrentUser() async {
-    await authAPI.post("db/avatar/equip",
-        equippedItems.map((key, value) => MapEntry(key, value.id)));
-    CachedAPI.getInstance().reload("db/users");
-  }
-
   bool equals(Avatar avatar) {
     if (equippedItems.length != avatar.equippedItems.length) return false;
     for (final entry in equippedItems.entries) {

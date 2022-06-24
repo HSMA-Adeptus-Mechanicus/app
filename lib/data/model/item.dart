@@ -56,11 +56,6 @@ class Item extends Streamable<Item> {
     return await _ItemImageCache.getInstance().getImage(url);
   }
 
-  Future<void> buy() async {
-    await authAPI.post("db/items/buy/$id", null);
-    CachedAPI.getInstance().reload("db/users");
-  }
-
   @override
   bool operator ==(Object other) {
     if (other is! Item) return false;
