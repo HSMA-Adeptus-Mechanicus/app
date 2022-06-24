@@ -11,6 +11,8 @@ class User extends Streamable<User> {
   Map<String, String?> _avatar;
   List<String> _wardrobe;
   int _currency;
+  Future<Avatar>? _avatarFuture;
+
   String get name {
     return _name;
   }
@@ -46,34 +48,41 @@ class User extends Streamable<User> {
         (json["wardrobe"] as List<dynamic>).map((e) => e as String).toList();
     Map<String, String> newAvatar = (json["avatar"] as Map<String, dynamic>)
         .map((key, value) => MapEntry(key, value as String));
+    bool avatarChanged = newAvatar.length != avatar.length ||
+        !newAvatar.entries
+            .every((element) => element.value == avatar[element.key]);
     bool change = json["name"] != name ||
         newWardrobe.length != wardrobe.length ||
         !newWardrobe.every((element) => wardrobe.contains(element)) ||
-        newAvatar.length != avatar.length ||
-        !newAvatar.entries
-            .every((element) => element.value == avatar[element.key]) ||
+        avatarChanged ||
         json["currency"] != currency;
     _name = json["name"];
     _wardrobe = newWardrobe;
     _avatar = newAvatar;
     _currency = json["currency"];
+    if (avatarChanged) {
+      _avatarFuture = null;
+    }
     return change;
   }
 
-  Future<Avatar> getAvatar() async {
-    List<Item> items = await first(data.getItemsStream());
-    Map<String, Item> equippedItems = {};
-    for (var entry in avatar.entries) {
-      if (entry.value is String) {
-        try {
-          equippedItems[entry.key] =
-              items.firstWhere((item) => item.id == entry.value);
-        } catch (e) {
-          // ignore if the item does not exist
+  Future<Avatar> getAvatar() {
+    final avatarFuture = _avatarFuture ??= () async {
+      List<Item> items = await first(data.getItemsStream());
+      Map<String, Item> equippedItems = {};
+      for (var entry in avatar.entries) {
+        if (entry.value is String) {
+          try {
+            equippedItems[entry.key] =
+                items.firstWhere((item) => item.id == entry.value);
+          } catch (e) {
+            // ignore if the item does not exist
+          }
         }
       }
-    }
-    return Avatar(equippedItems);
+      return Avatar(equippedItems);
+    }();
+    return avatarFuture;
   }
 
   bool ownsItem(Item item) {
