@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/sprint.dart';
-import 'package:sff/widgets/pages/bossfight/boss_health_bar.dart';
+import 'package:sff/widgets/pages/bossfight/boss.dart';
 import 'package:sff/widgets/pages/bossfight/bossfight_team.dart';
 
 class Bossfight extends StatelessWidget {
@@ -55,44 +55,7 @@ class Bossfight extends StatelessWidget {
               },
             ),
           ),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return SizedBox(
-                width: constraints.maxWidth,
-                height: constraints.maxHeight,
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: SizedBox(
-                        height: 20,
-                        width: constraints.maxWidth * 0.7,
-                        child: const BossHealthBar(),
-                      ),
-                    ),
-                    Positioned(
-                      left: -30,
-                      child: SizedBox(
-                        width: constraints.maxWidth,
-                        height: constraints.maxHeight * 0.65,
-                        child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: SizedBox(
-                            height: constraints.maxHeight * 0.55,
-                            child: Image.asset(
-                              "assets/boss/Boss_1_1.png",
-                              filterQuality: FilterQuality.none,
-                              scale: 1 / 10,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+          const Boss(),
           const BossfightTeam(),
         ],
       ),
