@@ -32,11 +32,11 @@ class ApplyResetOptionsShower extends StatelessWidget {
                   userAvatar: snapshot.data!,
                 );
               }
-              return Container();
+              return const SizedBox.shrink();
             },
           );
         }
-        return Container();
+        return const SizedBox.shrink();
       },
     );
   }
@@ -76,7 +76,7 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
   @override
   Widget build(BuildContext context) {
     if (widget.editableAvatar.equals(widget.userAvatar)) {
-      return Container();
+      return const SizedBox.shrink();
     }
     return Padding(
       padding: const EdgeInsets.all(15),

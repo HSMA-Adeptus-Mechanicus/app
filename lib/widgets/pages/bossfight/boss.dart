@@ -61,7 +61,7 @@ class Boss extends StatelessWidget {
                   ],
                 );
               }
-              return Container();
+              return const SizedBox.shrink();
             },
           ),
         );

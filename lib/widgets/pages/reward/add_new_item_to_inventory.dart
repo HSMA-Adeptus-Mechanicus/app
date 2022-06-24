@@ -75,7 +75,7 @@ class NewItemScreen extends StatelessWidget {
                 if (snapshot.hasData) {
                   return snapshot.data!;
                 }
-                return Container();
+                return const SizedBox.shrink();
               }),
             ),
             const SizedBox(

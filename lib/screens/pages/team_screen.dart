@@ -103,7 +103,7 @@ class UserItem extends StatelessWidget {
                           if (snapshot.hasData) {
                             return AvatarWidget(avatar: snapshot.data!);
                           }
-                          return Container();
+                          return const SizedBox.shrink();
                         }),
                   ),
                 ),
