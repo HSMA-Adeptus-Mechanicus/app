@@ -3,29 +3,27 @@ import 'dart:ui' as ui show Image;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sff/data/data.dart';
 
 class BossHealthBar extends StatelessWidget {
   const BossHealthBar({
     Key? key,
+    required this.health,
   }) : super(key: key);
+
+  final double health;
 
   @override
   Widget build(BuildContext context) {
-    double percentage = 0;
     return FutureBuilder<ui.Image>(
       future: () async {
         final imageData =
             await rootBundle.load("assets/icons/Pixel/Lebensbalken.png");
-        percentage = await (await first(data.getSprintsStream()))
-            .first
-            .calculateHealthPercentage();
         return decodeImageFromList(imageData.buffer.asUint8List());
       }(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return CustomPaint(
-            painter: _BossBarPainter(snapshot.data!, percentage),
+            painter: _BossBarPainter(snapshot.data!, health),
           );
         }
         if (snapshot.hasError) {
@@ -39,9 +37,9 @@ class BossHealthBar extends StatelessWidget {
 
 class _BossBarPainter extends CustomPainter {
   final ui.Image image;
-  final double percentage;
+  final double healthPercentage;
 
-  _BossBarPainter(this.image, this.percentage);
+  _BossBarPainter(this.image, this.healthPercentage);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -49,6 +47,8 @@ class _BossBarPainter extends CustomPainter {
     double offsetLeft = 12;
     double barWidth = (89 - offsetLeft - 1) * pixelSize;
     double barHeight = (14 - 3 - 3) * pixelSize;
+
+    // TODO: refactor
     canvas.drawRect(
       Rect.fromLTWH(offsetLeft * pixelSize, 3 * pixelSize,
           (89 - offsetLeft - 2) * pixelSize, barHeight),
@@ -63,13 +63,13 @@ class _BossBarPainter extends CustomPainter {
       Rect.fromLTWH(
           offsetLeft * pixelSize,
           3 * pixelSize,
-          min(percentage * barWidth, (89 - offsetLeft - 2) * pixelSize),
+          min(healthPercentage * barWidth, (89 - offsetLeft - 2) * pixelSize),
           barHeight),
       Paint()..color = const Color.fromARGB(255, 210, 0, 0),
     );
     canvas.drawRect(
       Rect.fromLTWH(offsetLeft * pixelSize, 5 * pixelSize,
-          percentage * barWidth, (14 - 5 - 5) * pixelSize),
+          healthPercentage * barWidth, (14 - 5 - 5) * pixelSize),
       Paint()..color = const Color.fromARGB(255, 210, 0, 0),
     );
     canvas.drawImageRect(
