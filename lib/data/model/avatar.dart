@@ -49,7 +49,7 @@ class EditableAvatar extends Avatar {
     changeController.add(this);
   }
 
-  removeItem(String category) {
+  void removeItem(String category) {
     if (requiredItemCategories.contains(category)) {
       return;
     }
@@ -57,7 +57,7 @@ class EditableAvatar extends Avatar {
     changeController.add(this);
   }
 
-  setTo(Map<String, Item> items) {
+  void setTo(Map<String, Item> items) {
     equippedItems.clear();
     equippedItems.addAll(items);
     changeController.add(this);

@@ -15,7 +15,7 @@ abstract class Streamable<T extends Streamable<T>> {
   @protected
   bool processUpdatedJSON(Map<String, dynamic> json);
 
-  updateJSON(Map<String, dynamic> json) {
+  void updateJSON(Map<String, dynamic> json) {
     if (json["_id"] != id) {
       throw Exception("The supplied JSON object is not a version of this object");
     }

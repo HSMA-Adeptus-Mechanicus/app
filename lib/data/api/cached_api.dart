@@ -116,12 +116,12 @@ class CachedAPI {
   Set<String> requestsInProgress = {};
 
   /// triggers a reload of the path if the data is outdated but ignoring the result
-  reloadIfOutdated(String path) {
+  void reloadIfOutdated(String path) {
     requestIfOutdated(path).ignore();
   }
 
   /// triggers a reload of the path but ignoring the result
-  reload(String path) {
+  void reload(String path) {
     request(path).ignore();
   }
 

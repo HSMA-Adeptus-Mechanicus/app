@@ -34,9 +34,7 @@ class User extends Streamable<User> {
     return User(
       json["_id"],
       json["name"],
-      (json["wardrobe"] as List<dynamic>)
-          .whereType<String>()
-          .toList(),
+      (json["wardrobe"] as List<dynamic>).whereType<String>().toList(),
       avatar.map((key, value) => MapEntry(key, value as String?)),
       json["currency"],
     );
