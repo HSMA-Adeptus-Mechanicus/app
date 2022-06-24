@@ -145,81 +145,86 @@ class TicketItem extends StatelessWidget {
     }
 
     return GestureDetector(
-      child: ElevatedButton(
-        onPressed: () {
-          if (!allowClaimingReward) return;
-          if (!_ticket.rewardClaimed && _ticket.done) {
-            _ticket.claimReward();
-            _showMyDialog();
-          }
-        },
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-          side: const BorderSide(
-            style: BorderStyle.none,
-          ),
-        ),
-        child: BorderCard(
-          color: _ticket.done
-              ? _ticket.rewardClaimed || !allowClaimingReward
-                  ? Theme.of(context).colorScheme.background
-                  : Colors.green
-              : Theme.of(context).cardColor,
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: StreamBuilder<Ticket>(
+        stream: _ticket.asStream(),
+        builder: (context, snapshot) {
+          return ElevatedButton(
+            onPressed: () {
+              if (!allowClaimingReward) return;
+              if (!_ticket.rewardClaimed && _ticket.done) {
+                _ticket.claimReward();
+                _showMyDialog();
+              }
+            },
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+              side: const BorderSide(
+                style: BorderStyle.none,
+              ),
+            ),
+            child: BorderCard(
+              color: _ticket.done
+                  ? _ticket.rewardClaimed || !allowClaimingReward
+                      ? Theme.of(context).colorScheme.background
+                      : Colors.green
+                  : Theme.of(context).cardColor,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    StreamBuilder<User>(
-                        stream: data.getUserStream(_ticket.assignee),
-                        builder: (context, snapshot) {
-                          return Text(
-                            snapshot.data?.name ?? "unknown",
-                            style: Theme.of(context).textTheme.titleMedium,
-                          );
-                        }),
-                    Text(_ticket.storyPoints.toString()),
-                  ],
-                ),
-                Divider(
-                  height: 10,
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
-                Text(
-                  _ticket.name,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                Text(_ticket.description),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      allowClaimingReward
-                          ? _ticket.done
-                              ? _ticket.rewardClaimed
-                                  ? "Belohnung abgeholt"
-                                  : "Belohnung abholen"
-                              : "In Bearbeitung"
-                          : _ticket.done
-                              ? "Fertig"
-                              : "In Bearbeitung",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.w100,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        StreamBuilder<User>(
+                            stream: data.getUserStream(_ticket.assignee),
+                            builder: (context, snapshot) {
+                              return Text(
+                                snapshot.data?.name ?? "unknown",
+                                style: Theme.of(context).textTheme.titleMedium,
+                              );
+                            }),
+                        Text(_ticket.storyPoints.toString()),
+                      ],
+                    ),
+                    Divider(
+                      height: 10,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+                    Text(
+                      _ticket.name,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(_ticket.description),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          allowClaimingReward
+                              ? _ticket.done
+                                  ? _ticket.rewardClaimed
+                                      ? "Belohnung abgeholt"
+                                      : "Belohnung abholen"
+                                  : "In Bearbeitung"
+                              : _ticket.done
+                                  ? "Fertig"
+                                  : "In Bearbeitung",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.0,
+                            fontWeight: FontWeight.w100,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        }
       ),
     );
   }

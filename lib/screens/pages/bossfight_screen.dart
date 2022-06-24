@@ -31,11 +31,14 @@ class Bossfight extends StatelessWidget {
           ),
           Align(
             alignment: const Alignment(0.8, -0.8),
-            child: StreamBuilder<List<Sprint>>(
-              stream: data.getSprintsStream(),
+            child: StreamBuilder<Sprint>(
+              stream: () async* {
+                Sprint sprint = (await data.getSprintsStream().firstWhere((element) => element.isNotEmpty)).first;
+                yield* sprint.asStream();
+              }(),
               builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final sprint = snapshot.data![0];
+                if (snapshot.hasData) {
+                  final sprint = snapshot.data!;
                   return IntrinsicHeight(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -22,7 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (settingsButton && UserAuthentication.getInstance().authenticated) {
       actions = [
         StreamBuilder<User>(
-          stream: data.getUserStream(UserAuthentication.getInstance().userId!),
+          stream: data.getCurrentUserStream(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               User user = snapshot.data!;
