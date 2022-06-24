@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/widgets/pages/bossfight/boss_health_bar.dart';
@@ -32,7 +30,9 @@ class Boss extends StatelessWidget {
                   "assets/boss/Boss2_2.png",
                   "assets/boss/Boss2_1.png",
                 ];
-                final bossImage = bossImages[(bossImages.length * health).toInt().clamp(0, bossImages.length - 1)];
+                final bossImage = bossImages[(bossImages.length * health)
+                    .toInt()
+                    .clamp(0, bossImages.length - 1)];
                 return Stack(
                   children: [
                     Align(
