@@ -1,3 +1,4 @@
+import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/model/user.dart';
@@ -49,19 +50,24 @@ class _Team extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<User> users = snapshot.data!;
-          return GridView.builder(
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(20),
-            itemCount: users.length,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 300,
-              childAspectRatio: 2 / 3,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20,
-            ),
-            itemBuilder: (context, index) {
-              return UserItem(users[index]);
+          return RefreshIndicator(
+            onRefresh: () async {
+              await CachedAPI.getInstance().request("db/users");
             },
+            child: GridView.builder(
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.all(20),
+              itemCount: users.length,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 300,
+                childAspectRatio: 2 / 3,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+              ),
+              itemBuilder: (context, index) {
+                return UserItem(users[index]);
+              },
+            ),
           );
         }
         if (snapshot.hasError) {
@@ -109,7 +115,7 @@ class UserItem extends StatelessWidget {
                 ),
               ],
             );
-          }
+          },
         ),
       ),
     );

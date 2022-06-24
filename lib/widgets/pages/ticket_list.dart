@@ -14,61 +14,61 @@ class TicketList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        await CachedAPI.getInstance().request("db/tickets");
-      },
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          textTheme: Theme.of(context).textTheme.copyWith(
-                titleMedium: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(color: Colors.black),
-                titleLarge: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(color: Colors.black),
-              ),
-        ),
-        child: StreamBuilder<List<Ticket>>(
-          stream: data.getTicketsStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<Ticket> tickets = snapshot.data!;
-              if (onlyOwnTickets) {
-                tickets = tickets
-                    .where((ticket) =>
-                        ticket.assignee ==
-                        UserAuthentication.getInstance().userId)
-                    .toList();
-              }
-              if (onlyOwnTickets) {
-                stableSort<Ticket>(
-                    tickets,
-                    (a, b) => !a.done && b.done
-                        ? 1
-                        : a.done && !b.done
-                            ? -1
-                            : 0);
-                stableSort<Ticket>(
-                    tickets,
-                    (a, b) => a.rewardClaimed && !b.rewardClaimed
-                        ? 1
-                        : !a.rewardClaimed && b.rewardClaimed
-                            ? -1
-                            : 0);
-              } else {
-                stableSort<Ticket>(
-                    tickets,
-                    (a, b) => a.done && !b.done
-                        ? 1
-                        : !a.done && b.done
-                            ? -1
-                            : 0);
-              }
+    return Theme(
+      data: Theme.of(context).copyWith(
+        textTheme: Theme.of(context).textTheme.copyWith(
+              titleMedium: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: Colors.black),
+              titleLarge: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(color: Colors.black),
+            ),
+      ),
+      child: StreamBuilder<List<Ticket>>(
+        stream: data.getTicketsStream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Ticket> tickets = snapshot.data!;
+            if (onlyOwnTickets) {
+              tickets = tickets
+                  .where((ticket) =>
+                      ticket.assignee ==
+                      UserAuthentication.getInstance().userId)
+                  .toList();
+            }
+            if (onlyOwnTickets) {
+              stableSort<Ticket>(
+                  tickets,
+                  (a, b) => !a.done && b.done
+                      ? 1
+                      : a.done && !b.done
+                          ? -1
+                          : 0);
+              stableSort<Ticket>(
+                  tickets,
+                  (a, b) => a.rewardClaimed && !b.rewardClaimed
+                      ? 1
+                      : !a.rewardClaimed && b.rewardClaimed
+                          ? -1
+                          : 0);
+            } else {
+              stableSort<Ticket>(
+                  tickets,
+                  (a, b) => a.done && !b.done
+                      ? 1
+                      : !a.done && b.done
+                          ? -1
+                          : 0);
+            }
 
-              return ListView.separated(
+            return RefreshIndicator(
+              onRefresh: () async {
+                await CachedAPI.getInstance().request("db/tickets");
+              },
+              child: ListView.separated(
                 padding: const EdgeInsets.all(15),
                 itemCount: tickets.length,
                 itemBuilder: (context, index) {
@@ -80,14 +80,14 @@ class TicketList extends StatelessWidget {
                     height: 7,
                   );
                 },
-              );
-            }
-            if (snapshot.hasError) {
-              return ErrorWidget(snapshot.error!);
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
-        ),
+              ),
+            );
+          }
+          if (snapshot.hasError) {
+            return ErrorWidget(snapshot.error!);
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }
@@ -135,7 +135,7 @@ class TicketItem extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  "Du erhälst + ${_ticket.storyPoints * 7} Münzen!",
+                  "Du erhältst + ${_ticket.storyPoints * 7} Münzen!",
                 ),
               ],
             ),
@@ -158,7 +158,8 @@ class TicketItem extends StatelessWidget {
               }
             },
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
               side: const BorderSide(
                 style: BorderStyle.none,
               ),
@@ -225,7 +226,7 @@ class TicketItem extends StatelessWidget {
               ),
             ),
           );
-        }
+        },
       ),
     );
   }
