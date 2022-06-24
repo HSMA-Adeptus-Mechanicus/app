@@ -1,4 +1,5 @@
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/screens/pages/bossfight_screen.dart';
@@ -82,21 +83,33 @@ class UserItem extends StatelessWidget {
     return BorderCard(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(_user.name),
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: AvatarWidget(avatar: _user.avatar),
-              ),
-            ),
-          ],
+        child: StreamBuilder<User>(
+          stream: _user.asStream(),
+          builder: (context, snapshot) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(_user.name),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: FutureBuilder<Avatar>(
+                        future: _user.getAvatar(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return AvatarWidget(avatar: snapshot.data!);
+                          }
+                          return Container();
+                        }),
+                  ),
+                ),
+              ],
+            );
+          }
         ),
       ),
     );

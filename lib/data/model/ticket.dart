@@ -1,38 +1,54 @@
 import 'package:sff/data/api/authenticated_api.dart';
 import 'package:sff/data/api/cached_api.dart';
-import 'package:sff/data/model/avatar.dart';
-import 'package:sff/data/data.dart';
-import 'package:sff/data/model/user.dart';
+import 'package:sff/data/model/streamable.dart';
 
-class Ticket {
-  const Ticket(
-    this.id,
-    this.name,
-    this.description,
-    this.storyPoints,
-    this.duration,
-    this.done,
-    this.rewardClaimed,
-    this.assignee,
-    this.assignedUser,
+class Ticket extends Streamable<Ticket> {
+  Ticket(
+    super.id,
+    this._name,
+    this._description,
+    this._storyPoints,
+    this._duration,
+    this._done,
+    this._rewardClaimed,
+    this._assignee,
   );
-  final String id;
-  final String name;
-  final String description;
-  final int storyPoints;
-  final double duration;
-  final bool done;
-  final bool rewardClaimed;
-  final String assignee;
-  final User assignedUser;
-  static Future<Ticket> fromJSON(Map<String, dynamic> json) async {
-    List<User> users = await first(data.getUsersStream());
-    User assignedUser;
-    try {
-      assignedUser = users.firstWhere((user) => user.id == json["assignee"]);
-    } catch (e) {
-      assignedUser = User("", "unknown", [], const Avatar({}), 0);
-    }
+  String _name;
+  String _description;
+  int _storyPoints;
+  double _duration;
+  bool _done;
+  bool _rewardClaimed;
+  String _assignee;
+  String get name {
+    return _name;
+  }
+
+  String get description {
+    return _description;
+  }
+
+  int get storyPoints {
+    return _storyPoints;
+  }
+
+  double get duration {
+    return _duration;
+  }
+
+  bool get done {
+    return _done;
+  }
+
+  bool get rewardClaimed {
+    return _rewardClaimed;
+  }
+
+  String get assignee {
+    return _assignee;
+  }
+
+  static Ticket fromJSON(Map<String, dynamic> json) {
     return Ticket(
       json["_id"],
       json["name"],
@@ -42,13 +58,31 @@ class Ticket {
       json["done"],
       json["rewardClaimed"],
       json["assignee"],
-      assignedUser,
     );
+  }
+
+  @override
+  bool processUpdatedJSON(Map<String, dynamic> json) {
+    bool change = json["name"] != name ||
+        json["description"] != description ||
+        json["storyPoints"] != storyPoints ||
+        json["duration"].toDouble() != duration ||
+        json["done"] != done ||
+        json["rewardClaimed"] != rewardClaimed ||
+        json["assignee"] != assignee;
+    _name = json["name"];
+    _description = json["description"];
+    _storyPoints = json["storyPoints"];
+    _duration = json["duration"].toDouble();
+    _done = json["done"];
+    _rewardClaimed = json["rewardClaimed"];
+    _assignee = json["assignee"];
+    return change;
   }
 
   Future<void> claimReward() async {
     await authAPI.patch("db/tickets/claim-reward/$id", null);
-    CachedAPI.getInstance().request("db/tickets").ignore();
-    CachedAPI.getInstance().request("db/users").ignore();
+    CachedAPI.getInstance().reload("db/tickets");
+    CachedAPI.getInstance().reload("db/users");
   }
 }

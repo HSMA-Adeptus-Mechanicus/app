@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/widgets/display_error.dart';
 
@@ -21,11 +21,10 @@ class ApplyResetOptionsShower extends StatelessWidget {
         if (snapshot.hasData) {
           EditableAvatar editableAvatar = snapshot.data!;
           return StreamBuilder<Avatar>(
-            stream: data
-                .getUsersStream()
-                .map((users) => users.firstWhere((element) =>
-                    element.id == UserAuthentication.getInstance().userId))
-                .map((user) => user.avatar),
+            stream: () async* {
+              User user = await data.getCurrentUser();
+              yield* user.asStream().asyncMap((user) => user.getAvatar());
+            }(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return ApplyResetOptions(

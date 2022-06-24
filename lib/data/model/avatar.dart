@@ -84,7 +84,7 @@ class EditableAvatar extends Avatar {
   applyToCurrentUser() async {
     await authAPI.post("db/avatar/equip",
         equippedItems.map((key, value) => MapEntry(key, value.id)));
-    CachedAPI.getInstance().request("db/users").ignore();
+    CachedAPI.getInstance().reload("db/users");
   }
 
   bool equals(Avatar avatar) {

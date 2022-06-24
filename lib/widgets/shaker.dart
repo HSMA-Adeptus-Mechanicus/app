@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/api/user_authentication.dart';
 
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
@@ -43,8 +42,7 @@ class _TestAnimWidgetState extends State<TestAnimWidget>
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         StreamBuilder<User>(
-          stream: data.getUsersStream().map((event) => event.firstWhere(
-              (user) => user.id == UserAuthentication.getInstance().userId)),
+          stream: data.getCurrentUserStream(),
           builder: (context, snapshot) {
             if ((snapshot.data?.currency ?? 0) > 14) {
               controller.repeat(reverse: true);

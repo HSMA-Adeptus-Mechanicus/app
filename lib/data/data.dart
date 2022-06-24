@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/model/item.dart';
 import 'package:sff/data/model/sprint.dart';
+import 'package:sff/data/model/streamable.dart';
 import 'package:sff/data/model/ticket.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/data/api/user_authentication.dart';
@@ -28,38 +29,116 @@ Future<T> first<T>(Stream<T> stream) {
 class Data {
   const Data();
 
-  Stream<List<Ticket>> getTicketsStream() async* {
-    Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/tickets");
-    await for (List<dynamic> snapshot in stream) {
-      yield await Future.wait(snapshot.map((e) => Ticket.fromJSON(e)).toList());
-    }
+  Stream<List<Ticket>> getTicketsStream() {
+    return _StreamListSupplier.getInstance("db/tickets", Ticket.fromJSON)
+        .getStream();
   }
 
-  Stream<List<User>> getUsersStream() async* {
-    Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/users");
-    await for (List<dynamic> snapshot in stream) {
-      yield await Future.wait(snapshot.map((e) => User.fromJSON(e)).toList(),
-          eagerError: true);
-    }
+  Stream<List<User>> getUsersStream() {
+    return _StreamListSupplier.getInstance("db/users", User.fromJSON)
+        .getStream();
   }
 
-  Stream<List<Item>> getItemsStream() async* {
-    Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/items");
-    await for (List<dynamic> snapshot in stream) {
-      yield snapshot.map((e) => Item.fromJSON(e)).toList();
-    }
+  Stream<List<Item>> getItemsStream() {
+    return _StreamListSupplier.getInstance("db/items", Item.fromJSON)
+        .getStream();
   }
 
-  Stream<List<Sprint>> getSprintsStream() async* {
-    Stream<dynamic> stream = CachedAPI.getInstance().getStream("db/sprints");
-    await for (List<dynamic> snapshot in stream) {
-      yield snapshot.map((e) => Sprint.fromJSON(e)).toList();
-    }
+  Stream<List<Sprint>> getSprintsStream() {
+    return _StreamListSupplier.getInstance("db/sprints", Sprint.fromJSON)
+        .getStream();
+  }
+
+  Future<User> getUser(String id) async {
+    List<User> users = await first(data.getUsersStream());
+    return users.firstWhere((user) => user.id == id);
+  }
+
+  Stream<User> getUserStream(String id) async* {
+    User user = await getUser(id);
+    yield* user.asStream();
   }
 
   Future<User> getCurrentUser() async {
-    final users = (await first(data.getUsersStream()));
-    return users.firstWhere(
-        (user) => user.id == UserAuthentication.getInstance().userId);
+    return getUser(UserAuthentication.getInstance().userId!);
+  }
+
+  Stream<User> getCurrentUserStream() {
+    return getUserStream(UserAuthentication.getInstance().userId!);
+  }
+}
+
+typedef ParseFunction<T> = T Function(Map<String, dynamic> data);
+
+class _StreamListSupplier<T extends Streamable<T>> {
+  static final Map<String, _StreamListSupplier> _streamSupplier = {};
+
+  static _StreamListSupplier<T> getInstance<T extends Streamable<T>>(
+      String path, ParseFunction<T> parse) {
+    var existing = _streamSupplier[path];
+    if (existing == null) {
+      var newSupplier = _StreamListSupplier<T>(path, parse);
+      _streamSupplier[path] = newSupplier;
+      return newSupplier;
+    } else {
+      CachedAPI.getInstance().reloadIfOutdated(path);
+    }
+    if (existing is! _StreamListSupplier<T>) {
+      throw Exception("A stream supplier for a path can only have one type");
+    }
+    return existing;
+  }
+
+  List<T>? _dataList;
+  late final Stream<List<T>> _broadcastStream;
+
+  _StreamListSupplier(String apiPath, ParseFunction<T> parse) {
+    _broadcastStream = _createStream(apiPath, parse).asBroadcastStream();
+  }
+  Stream<List<T>> _createStream(String apiPath, ParseFunction<T> parse) async* {
+    Stream<dynamic> stream = CachedAPI.getInstance().getStream(apiPath);
+    await for (List<dynamic> snapshot in stream) {
+      bool addedOrRemoved = false;
+      List<T> dataList = _dataList ??= [];
+      dataList.retainWhere((element) {
+        bool result = snapshot.any((json) => json["_id"] == element.id);
+        addedOrRemoved = addedOrRemoved || !result;
+        return result;
+      });
+      for (Map<String, dynamic> json in snapshot) {
+        try {
+          final element =
+              dataList.firstWhere((element) => element.id == json["_id"]);
+          element.updateJSON(json);
+        } catch (e) {
+          dataList.add(parse(json));
+          addedOrRemoved = true;
+        }
+      }
+      if (addedOrRemoved) {
+        yield dataList;
+      }
+    }
+  }
+
+  Stream<List<T>> getStream() {
+    late StreamController<List<T>> controller;
+    onListen() {
+      final dataList = _dataList;
+      if (dataList != null) {
+        controller.add(dataList);
+      }
+      controller.addStream(_broadcastStream);
+    }
+
+    onCancel() {
+      controller.close();
+    }
+
+    controller = StreamController(
+      onListen: onListen,
+      onCancel: onCancel,
+    );
+    return controller.stream;
   }
 }

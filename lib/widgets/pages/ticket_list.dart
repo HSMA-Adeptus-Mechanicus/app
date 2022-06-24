@@ -3,6 +3,7 @@ import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/ticket.dart';
 import 'package:flutter/material.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/utils/stable_sort.dart';
 import 'package:sff/widgets/border_card.dart';
 
@@ -173,10 +174,14 @@ class TicketItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      _ticket.assignedUser.name,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
+                    StreamBuilder<User>(
+                        stream: data.getUserStream(_ticket.assignee),
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data?.name ?? "unknown",
+                            style: Theme.of(context).textTheme.titleMedium,
+                          );
+                        }),
                     Text(_ticket.storyPoints.toString()),
                   ],
                 ),

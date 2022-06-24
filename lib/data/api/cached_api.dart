@@ -43,7 +43,7 @@ class CachedAPI {
       if (value != null) {
         controller.add(value["data"]);
       }
-      requestIfOutdated(path).ignore();
+      reloadIfOutdated(path);
     }
 
     onResume() {
@@ -114,6 +114,16 @@ class CachedAPI {
   }
 
   Set<String> requestsInProgress = {};
+
+  /// triggers a reload of the path if the data is outdated but ignoring the result
+  reloadIfOutdated(String path) {
+    requestIfOutdated(path).ignore();
+  }
+
+  /// triggers a reload of the path but ignoring the result
+  reload(String path) {
+    request(path).ignore();
+  }
 
   /// Requests the data from the API and caches it.
   Future<dynamic> request(String path) async {

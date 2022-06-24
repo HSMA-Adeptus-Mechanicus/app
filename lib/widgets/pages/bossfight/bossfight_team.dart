@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/widgets/avatar.dart';
 
@@ -16,12 +17,12 @@ class BossfightTeam extends StatelessWidget {
     return StreamBuilder<List<User>>(
       stream: data.getUsersStream(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           List<User> users = snapshot.data!;
           int currentUserIndex = users.indexWhere((element) =>
               element.id == UserAuthentication.getInstance().userId);
 
-          {
+          if (currentUserIndex >= 0) {
             // swap current user to center
             // in case there is an even number of users it will be the center right
             int centerIndex = users.length ~/ 2;
@@ -31,17 +32,23 @@ class BossfightTeam extends StatelessWidget {
           }
 
           List<Widget> avatars = users
-              .map((user) => AvatarWidget(avatar: user.avatar))
+              .map((user) => StreamBuilder<Avatar>(
+                    stream:
+                        user.asStream().asyncMap((user) => user.getAvatar()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return AvatarWidget(avatar: snapshot.data!);
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ))
               .toList();
 
           return LayoutBuilder(
             builder: (context, constraints) {
               getSize(int i) {
                 return 3 /
-                    ((i -
-                                ((users.length -
-                                        (users.length.isEven ? 0 : 1)) /
-                                    2))
+                    ((i - ((users.length - (users.length.isEven ? 0 : 1)) / 2))
                             .abs() +
                         3) *
                     min(
@@ -50,13 +57,11 @@ class BossfightTeam extends StatelessWidget {
                     );
               }
 
-              double totalWidth =
-                  List.generate(users.length, getSize).reduce(
+              double totalWidth = List.generate(users.length, getSize).reduce(
                 (value, element) => value + element,
               );
               double overflowAmount = constraints.maxWidth * 0.1;
-              double availableSpace =
-                  constraints.maxWidth + overflowAmount;
+              double availableSpace = constraints.maxWidth + overflowAmount;
 
               double offset = -overflowAmount / 2;
               List<Positioned> positionedAvatars = [];
@@ -74,10 +79,8 @@ class BossfightTeam extends StatelessWidget {
               }
 
               positionedAvatars.sort((a, b) =>
-                  (((b.left! + b.width! / 2) - constraints.maxWidth / 2)
-                              .abs() -
-                          ((a.left! + a.width! / 2) -
-                                  constraints.maxWidth / 2)
+                  (((b.left! + b.width! / 2) - constraints.maxWidth / 2).abs() -
+                          ((a.left! + a.width! / 2) - constraints.maxWidth / 2)
                               .abs())
                       .sign
                       .toInt());

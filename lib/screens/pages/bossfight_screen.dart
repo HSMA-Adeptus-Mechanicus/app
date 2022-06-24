@@ -34,7 +34,7 @@ class Bossfight extends StatelessWidget {
             child: StreamBuilder<List<Sprint>>(
               stream: data.getSprintsStream(),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   final sprint = snapshot.data![0];
                   return IntrinsicHeight(
                     child: Column(
@@ -51,7 +51,7 @@ class Bossfight extends StatelessWidget {
                 if (snapshot.hasError) {
                   return ErrorWidget(snapshot.error!);
                 }
-                return const SizedBox();
+                return const SizedBox.shrink();
               },
             ),
           ),

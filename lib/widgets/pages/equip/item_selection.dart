@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/api/cached_api.dart';
-import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/item.dart';
@@ -67,18 +66,17 @@ class _ItemSelection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> starterItems = [];
-    return FutureBuilder<List<User>>(
+    return FutureBuilder<User>(
       future: () async {
         starterItems = (await CachedAPI.getInstance()
                 .getCacheFirst("db/items/starter") as List<dynamic>)
             .map((e) => e as String)
             .toList();
-        return first(data.getUsersStream());
+        return data.getCurrentUser();
       }(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final user = snapshot.data!.firstWhere(
-              (user) => user.id == UserAuthentication.getInstance().userId);
+          final user = snapshot.data!;
           return FutureBuilder<List<Item>>(
             future: first(data.getItemsStream()),
             builder: (context, snapshot) {

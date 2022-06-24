@@ -1,20 +1,68 @@
 import 'dart:async';
 
-import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/model/item.dart';
+import 'package:sff/data/model/streamable.dart';
 
-class User {
-  User(this.id, this.name, this.wardrobe, this.avatar, this.currency);
-  final String id;
-  final String name;
-  final Avatar avatar;
-  final List<String> wardrobe;
-  final int currency;
-  static Future<User> fromJSON(Map<String, dynamic> json) async {
+class User extends Streamable<User> {
+  User(super.id, this._name, this._wardrobe, this._avatar, this._currency);
+  String _name;
+  Map<String, String?> _avatar;
+  List<String> _wardrobe;
+  int _currency;
+  String get name {
+    return _name;
+  }
+
+  Map<String, String?> get avatar {
+    return _avatar;
+  }
+
+  List<String> get wardrobe {
+    return _wardrobe;
+  }
+
+  int get currency {
+    return _currency;
+  }
+
+  static User fromJSON(Map<String, dynamic> json) {
+    Map<String, dynamic> avatar = json["avatar"];
+    return User(
+      json["_id"],
+      json["name"],
+      (json["wardrobe"] as List<dynamic>)
+          .map((element) => element as String)
+          .toList(),
+      avatar.map((key, value) => MapEntry(key, value as String?)),
+      json["currency"],
+    );
+  }
+
+  @override
+  bool processUpdatedJSON(Map<String, dynamic> json) {
+    List<String> newWardrobe =
+        (json["wardrobe"] as List<dynamic>).map((e) => e as String).toList();
+    Map<String, String> newAvatar = (json["avatar"] as Map<String, dynamic>)
+        .map((key, value) => MapEntry(key, value as String));
+    bool change = json["name"] != name ||
+        newWardrobe.length != wardrobe.length ||
+        !newWardrobe.every((element) => wardrobe.contains(element)) ||
+        newAvatar.length != avatar.length ||
+        !newAvatar.entries
+            .every((element) => element.value == avatar[element.key]) ||
+        json["currency"] != currency;
+    _name = json["name"];
+    _wardrobe = newWardrobe;
+    _avatar = newAvatar;
+    _currency = json["currency"];
+    return change;
+  }
+
+  Future<Avatar> getAvatar() async {
     List<Item> items = await first(data.getItemsStream());
     Map<String, Item> equippedItems = {};
-    Map<String, dynamic> avatar = json["avatar"];
     for (var entry in avatar.entries) {
       if (entry.value is String) {
         try {
@@ -25,15 +73,7 @@ class User {
         }
       }
     }
-    return User(
-      json["_id"],
-      json["name"],
-      (json["wardrobe"] as List<dynamic>)
-          .map((element) => element as String)
-          .toList(),
-      Avatar(equippedItems),
-      json["currency"],
-    );
+    return Avatar(equippedItems);
   }
 
   bool ownsItem(Item item) {

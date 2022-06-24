@@ -1,16 +1,31 @@
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/streamable.dart';
 import 'package:sff/data/model/ticket.dart';
 
-class Sprint {
-  final String name;
-  final List<String> ticketIds;
-  final DateTime start;
-  final DateTime end;
+class Sprint extends Streamable<Sprint> {
+  String _name;
+  List<String> _ticketIds;
+  DateTime _start;
+  DateTime _end;
 
-  const Sprint(this.name, this.ticketIds, this.start, this.end);
+  String get name {
+    return _name;
+  }
+  List<String> get ticketIds {
+    return _ticketIds;
+  }
+  DateTime get start {
+    return _start;
+  }
+  DateTime get end {
+    return _end;
+  }
+
+  Sprint(super.id, this._name, this._ticketIds, this._start, this._end);
 
   static Sprint fromJSON(Map<String, dynamic> json) {
     return Sprint(
+      json["_id"],
       json["name"],
       ((json["tickets"] ?? []) as List<dynamic>)
           .map((e) => e as String)
@@ -18,6 +33,23 @@ class Sprint {
       DateTime.fromMillisecondsSinceEpoch(json["startTime"]),
       DateTime.fromMillisecondsSinceEpoch(json["endTime"]),
     );
+  }
+
+  @override
+  bool processUpdatedJSON(Map<String, dynamic> json) {
+    String newName = json["name"];
+    List<String> newTickets = ((json["tickets"] ?? []) as List<dynamic>)
+        .map((e) => e as String)
+        .toList();
+    DateTime newStartTime =
+        DateTime.fromMillisecondsSinceEpoch(json["startTime"]);
+    DateTime newEndTime = DateTime.fromMillisecondsSinceEpoch(json["endTime"]);
+    bool change = newName != name || newTickets.length != ticketIds.length || !newTickets.every((element) => ticketIds.contains(element)) || newStartTime != start || newEndTime != end;
+    _name = newName;
+    _ticketIds = newTickets;
+    _start = newStartTime;
+    _end = newEndTime;
+    return change;
   }
 
   Future<int> calculateCurrentHealth() async {
@@ -33,7 +65,7 @@ class Sprint {
         .map((e) => e.storyPoints)
         .reduce((value, element) => value + element);
   }
-  
+
   Future<double> calculateHealthPercentage() async {
     List<Ticket> ticketArray = await first(data.getTicketsStream());
     final current = ticketArray

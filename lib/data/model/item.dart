@@ -6,14 +6,29 @@ import 'package:get_storage/get_storage.dart';
 import 'package:sff/data/api/authenticated_api.dart';
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/streamable.dart';
 
-class Item {
-  const Item(this.id, this.category, this.url);
-  final String id;
-  final String category;
-  final String url;
+class Item extends Streamable<Item> {
+  Item(super.id, this._category, this._url);
+  String _category;
+  String _url;
+
+  String get category {
+    return _category;
+  }
+  String get url {
+    return _url;
+  }
+
   static Item fromJSON(Map<String, dynamic> json) {
     return Item(json["_id"], json["category"], json["url"]);
+  }
+  @override
+  bool processUpdatedJSON(Map<String, dynamic> json) {
+    bool change = _category != json["category"] || _url != json["url"];
+    _category = json["category"];
+    _url = json["url"];
+    return change;
   }
 
   static clearCache() async {
@@ -43,7 +58,7 @@ class Item {
 
   Future<void> buy() async {
     await authAPI.post("db/items/buy/$id", null);
-    CachedAPI.getInstance().request("db/users").ignore();
+    CachedAPI.getInstance().reload("db/users");
   }
 
   @override

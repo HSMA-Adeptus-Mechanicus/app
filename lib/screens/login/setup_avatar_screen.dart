@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/model/user.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/screens/app_frame.dart';
 import 'package:sff/widgets/app_scaffold.dart';
@@ -17,14 +15,11 @@ class SetupAvatarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScaffold(
       settingsButton: false,
-      body: FutureBuilder<List<User>>(
-        future: first(data.getUsersStream()),
+      body: FutureBuilder<Avatar>(
+        future: data.getCurrentUser().then((user) => user.getAvatar()),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Avatar userAvatar = snapshot.data!
-                .firstWhere((element) =>
-                    element.id == UserAuthentication.getInstance().userId)
-                .avatar;
+            Avatar userAvatar = snapshot.data!;
             EditableAvatar avatar = EditableAvatar(userAvatar.equippedItems);
             return Column(
               children: [

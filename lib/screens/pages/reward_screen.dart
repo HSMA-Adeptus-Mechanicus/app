@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/widgets/pages/reward/add_new_item_to_inventory.dart';
@@ -9,12 +8,11 @@ class RewardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: data.getUsersStream(),
+    return StreamBuilder<User>(
+      stream: data.getCurrentUserStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          User user = (snapshot.data as List<User>).firstWhere(
-              (user) => UserAuthentication.getInstance().userId == user.id);
+          User user = snapshot.data!;
           return Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 13.0, vertical: 25.0),
