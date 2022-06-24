@@ -64,9 +64,7 @@ class EquipScreen extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
