@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
-import 'package:sff/widgets/pages/reward/add_new_item_to_inventory.dart';
+import 'package:sff/widgets/pages/reward/reward_chest.dart';
 
 class RewardScreen extends StatelessWidget {
   const RewardScreen({Key? key}) : super(key: key);
@@ -48,7 +48,7 @@ class RewardScreen extends StatelessWidget {
                   ),
                   const Expanded(
                     child: Center(
-                      child: RandomizerWidget(),
+                      child: RewardChest(),
                     ),
                   ),
                 ],
