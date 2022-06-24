@@ -35,7 +35,7 @@ class User extends Streamable<User> {
       json["_id"],
       json["name"],
       (json["wardrobe"] as List<dynamic>)
-          .map((element) => element as String)
+          .whereType<String>()
           .toList(),
       avatar.map((key, value) => MapEntry(key, value as String?)),
       json["currency"],
@@ -45,9 +45,9 @@ class User extends Streamable<User> {
   @override
   bool processUpdatedJSON(Map<String, dynamic> json) {
     List<String> newWardrobe =
-        (json["wardrobe"] as List<dynamic>).map((e) => e as String).toList();
-    Map<String, String> newAvatar = (json["avatar"] as Map<String, dynamic>)
-        .map((key, value) => MapEntry(key, value as String));
+        (json["wardrobe"] as List<dynamic>).whereType<String>().toList();
+    Map<String, String?> newAvatar = (json["avatar"] as Map<String, dynamic>)
+        .map((key, value) => MapEntry(key, value as String?));
     bool avatarChanged = newAvatar.length != avatar.length ||
         !newAvatar.entries
             .every((element) => element.value == avatar[element.key]);
