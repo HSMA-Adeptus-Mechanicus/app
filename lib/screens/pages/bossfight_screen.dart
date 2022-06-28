@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/sprint.dart';
+import 'package:sff/data/model/sprint.dart';
 import 'package:sff/widgets/pages/bossfight/boss.dart';
 import 'package:sff/widgets/pages/bossfight/bossfight_team.dart';
 
@@ -31,11 +31,17 @@ class Bossfight extends StatelessWidget {
           ),
           Align(
             alignment: const Alignment(0.8, -0.8),
-            child: StreamBuilder<List<Sprint>>(
-              stream: data.getSprintsStream(),
+            child: StreamBuilder<Sprint>(
+              stream: () async* {
+                Sprint sprint = (await data
+                        .getSprintsStream()
+                        .firstWhere((element) => element.isNotEmpty))
+                    .first;
+                yield* sprint.asStream();
+              }(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  final sprint = snapshot.data![0];
+                  final sprint = snapshot.data!;
                   return IntrinsicHeight(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +57,7 @@ class Bossfight extends StatelessWidget {
                 if (snapshot.hasError) {
                   return ErrorWidget(snapshot.error!);
                 }
-                return const SizedBox();
+                return const SizedBox.shrink();
               },
             ),
           ),

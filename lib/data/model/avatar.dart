@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:sff/data/api/authenticated_api.dart';
-import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/item.dart';
+import 'package:sff/data/model/item.dart';
+
+import 'item.dart';
 
 class Avatar {
   final Map<String, Item> equippedItems;
@@ -47,7 +47,7 @@ class EditableAvatar extends Avatar {
     changeController.add(this);
   }
 
-  removeItem(String category) {
+  void removeItem(String category) {
     if (requiredItemCategories.contains(category)) {
       return;
     }
@@ -55,7 +55,7 @@ class EditableAvatar extends Avatar {
     changeController.add(this);
   }
 
-  setTo(Map<String, Item> items) {
+  void setTo(Map<String, Item> items) {
     equippedItems.clear();
     equippedItems.addAll(items);
     changeController.add(this);
@@ -77,12 +77,6 @@ class EditableAvatar extends Avatar {
       onCancel: onCancel,
     );
     return controller.stream;
-  }
-
-  applyToCurrentUser() async {
-    await authAPI.post("db/avatar/equip",
-        equippedItems.map((key, value) => MapEntry(key, value.id)));
-    CachedAPI.getInstance().request("db/users").ignore();
   }
 
   bool equals(Avatar avatar) {

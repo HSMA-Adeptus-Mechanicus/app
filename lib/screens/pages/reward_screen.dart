@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
-import 'package:sff/widgets/pages/reward/add_new_item_to_inventory.dart';
+import 'package:sff/data/model/user.dart';
+import 'package:sff/widgets/pages/reward/reward_chest.dart';
 
 class RewardScreen extends StatelessWidget {
   const RewardScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: data.getUsersStream(),
+    return StreamBuilder<User>(
+      stream: data.getCurrentUserStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          User user = (snapshot.data as List<User>).firstWhere(
-              (user) => UserAuthentication.getInstance().userId == user.id);
+          User user = snapshot.data!;
           return Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 13.0, vertical: 25.0),
@@ -50,7 +48,7 @@ class RewardScreen extends StatelessWidget {
                   ),
                   const Expanded(
                     child: Center(
-                      child: RandomizerWidget(),
+                      child: RewardChest(),
                     ),
                   ),
                 ],

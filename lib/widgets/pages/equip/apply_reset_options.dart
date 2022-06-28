@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/api/user_authentication.dart';
-import 'package:sff/data/avatar.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/widgets/display_error.dart';
 
@@ -20,12 +20,12 @@ class ApplyResetOptionsShower extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           EditableAvatar editableAvatar = snapshot.data!;
-          return StreamBuilder<Avatar>(
-            stream: data
-                .getUsersStream()
-                .map((users) => users.firstWhere((element) =>
-                    element.id == UserAuthentication.getInstance().userId))
-                .map((user) => user.avatar),
+          return StreamBuilder<UserAndAvatar>(
+            stream: () async* {
+              yield* await data
+                  .getCurrentUser()
+                  .then((value) => value.getStreamWithAvatar());
+            }(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return ApplyResetOptions(
@@ -33,11 +33,11 @@ class ApplyResetOptionsShower extends StatelessWidget {
                   userAvatar: snapshot.data!,
                 );
               }
-              return Container();
+              return const SizedBox.shrink();
             },
           );
         }
-        return Container();
+        return const SizedBox.shrink();
       },
     );
   }
@@ -51,7 +51,7 @@ class ApplyResetOptions extends StatefulWidget {
   }) : super(key: key);
 
   final EditableAvatar editableAvatar;
-  final Avatar userAvatar;
+  final UserAndAvatar userAvatar;
 
   @override
   State<ApplyResetOptions> createState() => _ApplyResetOptionsState();
@@ -61,7 +61,7 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
   @override
   void dispose() {
     super.dispose();
-    if (!widget.editableAvatar.equals(widget.userAvatar)) {
+    if (!widget.editableAvatar.equals(widget.userAvatar.avatar)) {
       Future.microtask(() {
         showDialog(
           barrierDismissible: false,
@@ -76,8 +76,8 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.editableAvatar.equals(widget.userAvatar)) {
-      return Container();
+    if (widget.editableAvatar.equals(widget.userAvatar.avatar)) {
+      return const SizedBox.shrink();
     }
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -87,7 +87,8 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
           FloatingActionButton(
             backgroundColor: Theme.of(context).colorScheme.primary,
             onPressed: () async {
-              widget.editableAvatar.setTo(widget.userAvatar.equippedItems);
+              widget.editableAvatar
+                  .setTo(widget.userAvatar.avatar.equippedItems);
             },
             child: Icon(
               Icons.replay_sharp,
@@ -98,7 +99,7 @@ class _ApplyResetOptionsState extends State<ApplyResetOptions> {
             backgroundColor: Theme.of(context).colorScheme.primary,
             onPressed: () async {
               await showSavingDialog(
-                  widget.editableAvatar.applyToCurrentUser());
+                  widget.userAvatar.user.applyAvatar(widget.editableAvatar));
             },
             child: Icon(
               Icons.check,
@@ -134,7 +135,8 @@ class UnsavedChangesDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             Navigator.pop(context);
-            showSavingDialog(widget.editableAvatar.applyToCurrentUser());
+            showSavingDialog(
+                widget.userAvatar.user.applyAvatar(widget.editableAvatar));
           },
           child: const Text("Speichern"),
         ),
@@ -167,8 +169,6 @@ Future<T> showSavingDialog<T>(Future<T> future) async {
     );
     try {
       var result = await future;
-      // account for delay until the buttons disappear
-      await Future.delayed(const Duration(milliseconds: 300));
       return result;
     } finally {
       Navigator.pop(navigatorKey.currentContext!);
