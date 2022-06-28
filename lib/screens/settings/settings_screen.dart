@@ -1,7 +1,7 @@
 import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 import 'package:sff/widgets/display_error.dart';
-import 'package:sff/widgets/settings/edit_password.dart';
 import 'package:sff/widgets/settings/login_info.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/widgets/settings/password_confirm.dart';
@@ -58,20 +58,16 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 OutlinedButton(
                   onPressed: () {
-                    UserAuthentication.getInstance().logout();
+                    ProjectManager.getInstance().currentProject = null;
+                    Navigator.pop(context);
                   },
-                  child: const Text("Logout"),
+                  child: const Text("Projekt wechseln"),
                 ),
                 OutlinedButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) {
-                        return const EditPasswordDialog();
-                      },
-                    );
+                    UserAuthentication.getInstance().logout();
                   },
-                  child: const Text("Passwort ändern"),
+                  child: const Text("Logout"),
                 ),
                 OutlinedButton(
                   onPressed: () {

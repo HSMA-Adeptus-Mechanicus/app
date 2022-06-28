@@ -1,23 +1,21 @@
 import 'package:sff/data/model/streamable.dart';
 
-class Ticket extends Streamable<Ticket> {
+class Ticket extends StreamableObject<Ticket> {
   Ticket(
     super.id,
     this._name,
+    this._status,
     this._description,
     this._storyPoints,
-    this._duration,
-    this._done,
     this._rewardClaimed,
     this._assignee,
   );
   String _name;
+  String _status;
   String _description;
   int _storyPoints;
-  double _duration;
-  bool _done;
   bool _rewardClaimed;
-  String _assignee;
+  String? _assignee;
   String get name {
     return _name;
   }
@@ -30,19 +28,15 @@ class Ticket extends Streamable<Ticket> {
     return _storyPoints;
   }
 
-  double get duration {
-    return _duration;
-  }
-
   bool get done {
-    return _done;
+    return _status == "done";
   }
 
   bool get rewardClaimed {
     return _rewardClaimed;
   }
 
-  String get assignee {
+  String? get assignee {
     return _assignee;
   }
 
@@ -53,12 +47,11 @@ class Ticket extends Streamable<Ticket> {
   static Ticket fromJSON(Map<String, dynamic> json) {
     return Ticket(
       json["_id"],
+      json["status"],
       json["name"],
       json["description"],
       json["storyPoints"],
-      json["duration"].toDouble(),
-      json["done"],
-      json["rewardClaimed"],
+      json["rewardClaimed"] ?? false,
       json["assignee"],
     );
   }
@@ -66,18 +59,16 @@ class Ticket extends Streamable<Ticket> {
   @override
   bool processUpdatedJSON(Map<String, dynamic> json) {
     bool change = json["name"] != name ||
+        json["status"] != _status ||
         json["description"] != description ||
         json["storyPoints"] != storyPoints ||
-        json["duration"].toDouble() != duration ||
-        json["done"] != done ||
-        json["rewardClaimed"] != rewardClaimed ||
+        (json["rewardClaimed"] ?? false) != rewardClaimed ||
         json["assignee"] != assignee;
     _name = json["name"];
+    _status = json["status"];
     _description = json["description"];
     _storyPoints = json["storyPoints"];
-    _duration = json["duration"].toDouble();
-    _done = json["done"];
-    _rewardClaimed = json["rewardClaimed"];
+    _rewardClaimed = json["rewardClaimed"] ?? false;
     _assignee = json["assignee"];
     return change;
   }

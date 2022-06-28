@@ -1,13 +1,19 @@
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/navigation.dart';
-import 'package:sff/screens/app_frame.dart';
-import 'package:sff/screens/login/register_screen.dart';
+import 'package:sff/screens/project_selection.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:sff/widgets/display_error.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatelessWidget with WidgetsBindingObserver {
   const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      UserAuthentication.getInstance().completeAuthentication();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +26,31 @@ class LoginScreen extends StatelessWidget {
             LoginState state = snapshot.data!;
             if (state == LoginState.loggedIn) {
               Future.microtask(() {
-                navigateTopLevelToWidget(const AppFrame());
+                navigateTopLevelToWidget(const ProjectSelection());
               });
               return const Center(child: CircularProgressIndicator());
             } else if (state == LoginState.loggedOut) {
               return const LoginWidget();
+            } else if (state == LoginState.loggingIn) {
+              return Center(
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        UserAuthentication.getInstance()
+                            .completeAuthentication();
+                      },
+                      child: const Text("Finish"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        UserAuthentication.getInstance().cancelAuthentication();
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                  ],
+                ),
+              );
             }
           }
           return const Center(child: CircularProgressIndicator());
@@ -34,101 +60,33 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class LoginWidget extends StatefulWidget {
+class LoginWidget extends StatelessWidget {
   const LoginWidget({Key? key}) : super(key: key);
-
-  @override
-  State<LoginWidget> createState() => _LoginWidgetState();
-}
-
-class _LoginWidgetState extends State<LoginWidget> {
-  final _formKey = GlobalKey<FormState>();
-
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: IntrinsicHeight(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AutofillGroup(
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Benutzername",
-                        ),
-                        autofillHints: const [AutofillHints.username],
-                        controller: _usernameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Bitte Benutzername eingeben";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Passwort",
-                        ),
-                        autofillHints: const [AutofillHints.password],
-                        obscureText: true,
-                        controller: _passwordController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Bitte Passwort eingeben";
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      await displayError(() async {
-                        await UserAuthentication.getInstance().login(
-                            _usernameController.text, _passwordController.text);
-                      });
-                    }
-                  },
-                  child: const Text("Login"),
-                ),
-                const Divider(
-                  height: 30,
-                  color: Color.fromARGB(255, 197, 197, 197),
-                  indent: 20,
-                  endIndent: 20,
-                ),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                  onPressed: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text("Sign up"),
-                ),
-              ],
-            ),
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: ElevatedButton(
+          child: const Text("Login with Jira"),
+          onPressed: () async {
+            String token =
+                UserAuthentication.getInstance().startAuthentication();
+            const scopes = [
+              "read:jira-work",
+              "read:jira-user",
+              "read:sprint:jira-software",
+              "read:issue-details:jira",
+              "read:jql:jira",
+            ];
+
+            await launchUrl(
+              Uri.parse(
+                  "https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=XlvwG0C178rgOFlgQYhy5dxmgn6Lxu1p&scope=${scopes.join(" ")}&redirect_uri=https%3A%2F%2Fsffj-api.azurewebsites.net%2Fapi%2Fjira-auth&state=${Uri.encodeComponent(token)}&response_type=code&prompt=consent"),
+              mode: LaunchMode.externalApplication,
+            );
+          },
         ),
       ),
     );

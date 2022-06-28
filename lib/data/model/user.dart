@@ -6,10 +6,11 @@ import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/model/item.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/streamable.dart';
 import 'package:sff/data/model/ticket.dart';
 
-class User extends Streamable<User> {
+class User extends StreamableObject<User> {
   User(super.id, this._name, this._wardrobe, this._avatar, this._currency);
   String _name;
   Map<String, String?> _avatar;
@@ -87,8 +88,34 @@ class User extends Streamable<User> {
     return avatarFuture;
   }
 
+  Stream<List<Project>> getProjectsStream() async* {
+    Stream<List<Project>> projectsStream = data.getProjectsStream();
+    await for (List<Project> projects in projectsStream) {
+      yield projects.where((element) => element.team.contains(id)).toList();
+    }
+  }
+
   bool ownsItem(Item item) {
     return wardrobe.contains(item.id);
+  }
+
+  Future<void> changeName(String name) async {
+    if (id != UserAuthentication.getInstance().userId) {
+      throw Exception(
+          "Only the currently authenticated user can change its name");
+    }
+    String previous = _name;
+    _name = name;
+    updateStream();
+    try {
+      await authAPI.post("db/users/change-name", {"name": name});
+    } catch (e) {
+      _name = previous;
+      updateStream();
+      rethrow;
+    } finally {
+      CachedAPI.getInstance().reload("db/users");
+    }
   }
 
   Future<void> buy(Item item) async {

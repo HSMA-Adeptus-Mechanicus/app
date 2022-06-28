@@ -179,11 +179,16 @@ class TicketItem extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        StreamBuilder<User>(
-                            stream: data.getUserStream(_ticket.assignee),
+                        StreamBuilder<String>(
+                            stream: _ticket.assignee == null
+                                ? Stream<String>.fromFuture(
+                                    Future.value("unknown"))
+                                : data
+                                    .getUserStream(_ticket.assignee!)
+                                    .map((event) => event.name),
                             builder: (context, snapshot) {
                               return Text(
-                                snapshot.data?.name ?? "unknown",
+                                snapshot.data ?? "unknown",
                                 style: Theme.of(context).textTheme.titleMedium,
                               );
                             }),

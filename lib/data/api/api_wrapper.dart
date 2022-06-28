@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-const _apiBasePath = "https://sff-api.azurewebsites.net/api/";
+const _apiBasePath = "https://sffj-api.azurewebsites.net/api/";
 // const _apiBasePath = "http://localhost:7071/api/";
 
 const apiWrapper = _APIWrapper(_apiBasePath);

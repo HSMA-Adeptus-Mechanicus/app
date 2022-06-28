@@ -1,5 +1,6 @@
+import 'package:sff/data/data.dart';
 import 'package:sff/widgets/avatar.dart';
-import 'package:sff/widgets/settings/edit_username.dart';
+import 'package:sff/widgets/settings/edit_name.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter/material.dart';
 
@@ -29,8 +30,7 @@ class LoginInfo extends StatelessWidget {
                 children: [
                   Flexible(
                     child: StreamBuilder<String?>(
-                        stream: UserAuthentication.getInstance()
-                            .getUsernameStream(),
+                        stream: data.getCurrentUserStream().map((user) => user.name),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
@@ -54,7 +54,7 @@ class LoginInfo extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (context) {
-                          return const EditUsernameDialog();
+                          return const EditNameDialog();
                         },
                       );
                     },

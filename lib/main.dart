@@ -5,6 +5,7 @@ import 'package:sff/screens/app_frame.dart';
 import 'package:sff/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:sff/screens/project_selection.dart';
 import 'package:sff/screens/splash_screen.dart';
 
 void main() async {
@@ -112,21 +113,30 @@ class App extends StatelessWidget {
       navigatorKey: navigatorKey,
       home: Builder(builder: (context) {
         // TODO: refactor
-        UserAuthentication.getInstance()
-            .getChangeStateStream()
-            .where((stateChange) =>
-                stateChange.previous == LoginState.loggingOut &&
-                stateChange.state == LoginState.loggedOut)
-            .listen((stateChange) {
-          navigateTopLevelToWidget(const LoginScreen());
-        });
         () async {
           await initialized;
           if (UserAuthentication.getInstance().state == LoginState.loggedIn) {
-            navigateTopLevelToWidget(const AppFrame());
+            navigateTopLevelToWidget(const ProjectSelection());
           } else {
             navigateTopLevelToWidget(const LoginScreen());
           }
+
+          UserAuthentication.getInstance()
+              .getChangeStateStream()
+              .where((stateChange) =>
+                  stateChange.previous == LoginState.loggingOut &&
+                  stateChange.state == LoginState.loggedOut)
+              .listen((stateChange) {
+            navigateTopLevelToWidget(const LoginScreen());
+          });
+          UserAuthentication.getInstance()
+              .getChangeStateStream()
+              .where((stateChange) =>
+                  stateChange.previous == LoginState.loggingIn &&
+                  stateChange.state == LoginState.loggedIn)
+              .listen((stateChange) {
+            navigateTopLevelToWidget(const ProjectSelection());
+          });
         }();
         return const SplashScreen();
       }),

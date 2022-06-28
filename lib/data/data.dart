@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/model/item.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/sprint.dart';
 import 'package:sff/data/model/streamable.dart';
 import 'package:sff/data/model/ticket.dart';
@@ -44,9 +45,34 @@ class Data {
         .getStream();
   }
 
+  Stream<List<Project>> getProjectsStream() {
+    return _StreamListSupplier.getInstance("db/projects", Project.fromJSON)
+        .getStream();
+  }
+
   Stream<List<Sprint>> getSprintsStream() {
     return _StreamListSupplier.getInstance("db/sprints", Sprint.fromJSON)
         .getStream();
+  }
+
+  Future<Sprint> getCurrentSprint() async {
+    List<Sprint> sprints = await first(getSprintsStream());
+    Sprint sprint;
+    if (sprints.isEmpty) {
+      throw Exception("There are no sprints");
+    }
+    try {
+      sprint = sprints.firstWhere((element) => element.state == "active");
+    } catch (e) {
+      List<Sprint> sorted = sprints.where((e) => e.state == "future").toList();
+      if (sorted.isEmpty) {
+        throw Exception("There is no active of upcoming sprint");
+      }
+      sorted.sort((a, b) => a.start.compareTo(b.start));
+      sprint = sorted[0];
+    }
+    sprint.loadTickets();
+    return sprint;
   }
 
   Future<User> getUser(String id) async {
@@ -70,10 +96,10 @@ class Data {
 
 typedef ParseFunction<T> = T Function(Map<String, dynamic> data);
 
-class _StreamListSupplier<T extends Streamable<T>> {
+class _StreamListSupplier<T extends StreamableObject<T>> {
   static final Map<String, _StreamListSupplier> _streamSupplier = {};
 
-  static _StreamListSupplier<T> getInstance<T extends Streamable<T>>(
+  static _StreamListSupplier<T> getInstance<T extends StreamableObject<T>>(
       String path, ParseFunction<T> parse) {
     var existing = _streamSupplier[path];
     if (existing == null) {

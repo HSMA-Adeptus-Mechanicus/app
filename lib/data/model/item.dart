@@ -7,7 +7,7 @@ import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/streamable.dart';
 
-class Item extends Streamable<Item> {
+class Item extends StreamableObject<Item> {
   Item(super.id, this._category, this._url);
   String _category;
   String _url;

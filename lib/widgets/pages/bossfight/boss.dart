@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/sprint.dart';
 import 'package:sff/widgets/pages/bossfight/boss_health_bar.dart';
 
 class Boss extends StatelessWidget {
@@ -15,10 +16,12 @@ class Boss extends StatelessWidget {
           width: constraints.maxWidth,
           height: constraints.maxHeight,
           child: StreamBuilder<double>(
-            stream: data
-                .getSprintsStream()
-                .map((event) => event.first)
-                .asyncMap((event) async => event.calculateHealthPercentage()),
+            stream: () async* {
+              Sprint sprint = await data.getCurrentSprint();
+              yield* sprint
+                  .asStream()
+                  .asyncMap((event) => event.calculateHealthPercentage());
+            }(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final health = snapshot.data!;
@@ -28,8 +31,8 @@ class Boss extends StatelessWidget {
                   "assets/boss/Boss2_1.png",
                 ];
                 final bossImage = bossImages[(bossImages.length * health)
-                    .toInt()
-                    .clamp(0, bossImages.length - 1)];
+                    .clamp(0, bossImages.length - 1)
+                    .toInt()];
                 return Stack(
                   children: [
                     Align(

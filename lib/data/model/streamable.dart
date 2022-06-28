@@ -3,29 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 abstract class Streamable<T extends Streamable<T>> {
-  final String id;
   final StreamController<T> _controller = StreamController();
   late final Stream<T> _broadcastStream;
 
-  Streamable(this.id) {
+  Streamable() {
     _broadcastStream = _controller.stream.asBroadcastStream();
-  }
-
-  /// processes new json data and if it changed returns true
-  @protected
-  bool processUpdatedJSON(Map<String, dynamic> json);
-
-  void updateJSON(Map<String, dynamic> json) {
-    if (json["_id"] != id) {
-      throw Exception("The supplied JSON object is not a version of this object");
-    }
-    try {
-      if (processUpdatedJSON(json)) {
-        _controller.add(this as T);
-      }
-    } catch (e) {
-      // TODO: add debug warning
-    }
   }
 
   @protected
@@ -49,5 +31,30 @@ abstract class Streamable<T extends Streamable<T>> {
       onCancel: onCancel,
     );
     return controller.stream;
+  }
+}
+
+
+
+abstract class StreamableObject<T extends StreamableObject<T>> extends Streamable<T> {
+  final String id;
+
+  StreamableObject(this.id) : super();
+
+  /// processes new json data and if it changed returns true
+  @protected
+  bool processUpdatedJSON(Map<String, dynamic> json);
+
+  void updateJSON(Map<String, dynamic> json) {
+    if (json["_id"] != id) {
+      throw Exception("The supplied JSON object is not a version of this object");
+    }
+    try {
+      if (processUpdatedJSON(json)) {
+        updateStream();
+      }
+    } catch (e) {
+      // TODO: add debug warning
+    }
   }
 }

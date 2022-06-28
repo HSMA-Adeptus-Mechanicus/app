@@ -86,7 +86,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Image.asset("assets/logo/logo.png"),
       ),
       actions: [
-        ...(actions ?? []),
+        ...(actions ??
+            [
+              IconButton(
+                onPressed: () {
+                  UserAuthentication.getInstance().logout();
+                },
+                icon: const Icon(Icons.logout),
+              ),
+            ]),
       ],
     );
   }
