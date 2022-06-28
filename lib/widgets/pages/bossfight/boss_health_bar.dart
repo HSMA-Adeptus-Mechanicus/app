@@ -29,7 +29,7 @@ class BossHealthBar extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const SizedBox();
+        return const SizedBox.shrink();
       },
     );
   }

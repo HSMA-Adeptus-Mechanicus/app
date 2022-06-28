@@ -18,10 +18,7 @@ class Boss extends StatelessWidget {
             stream: data
                 .getSprintsStream()
                 .map((event) => event.first)
-                .asyncMap((event) async =>
-                    await (await first(data.getSprintsStream()))
-                        .first
-                        .calculateHealthPercentage()),
+                .asyncMap((event) async => event.calculateHealthPercentage()),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final health = snapshot.data!;
@@ -64,7 +61,7 @@ class Boss extends StatelessWidget {
                   ],
                 );
               }
-              return Container();
+              return const SizedBox.shrink();
             },
           ),
         );
