@@ -3,7 +3,6 @@ import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/navigation.dart';
-import 'package:sff/screens/app_frame.dart';
 import 'package:sff/screens/project_selection.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 import 'package:sff/widgets/avatar.dart';

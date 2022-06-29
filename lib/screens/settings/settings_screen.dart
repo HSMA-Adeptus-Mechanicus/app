@@ -14,42 +14,10 @@ class SettingsScreen extends StatelessWidget {
     return AppScaffold(
       settingsButton: false,
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const LoginInfo(),
           const SizedBox(height: 50),
-          Expanded(
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                textTheme: Theme.of(context).textTheme.copyWith(
-                  titleMedium: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white, fontSize: 20),
-                  bodySmall: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white.withAlpha(150)),
-                ),
-              ),
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  SwitchListTile(
-                    value: false,
-                    title: const Text("Benachrichtigungston"),
-                    subtitle: const Text("Standardklingelton"),
-                    onChanged: (value) {},
-                  ),
-                  SwitchListTile(
-                    value: false,
-                    title: const Text("Vibration"),
-                    subtitle: const Text("Standard"),
-                    onChanged: (value) {},
-                  ),
-                  SwitchListTile(
-                    value: false,
-                    title: const Text("Push-up-Nachrichten"),
-                    subtitle: const Text("immer anzeigen"),
-                    onChanged: (value) {},
-                  ),
-                ],
-              ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/navigation.dart';
-import 'package:sff/screens/app_frame.dart';
 import 'package:sff/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -128,14 +127,6 @@ class App extends StatelessWidget {
                   stateChange.state == LoginState.loggedOut)
               .listen((stateChange) {
             navigateTopLevelToWidget(const LoginScreen());
-          });
-          UserAuthentication.getInstance()
-              .getChangeStateStream()
-              .where((stateChange) =>
-                  stateChange.previous == LoginState.loggingIn &&
-                  stateChange.state == LoginState.loggedIn)
-              .listen((stateChange) {
-            navigateTopLevelToWidget(const ProjectSelection());
           });
         }();
         return const SplashScreen();

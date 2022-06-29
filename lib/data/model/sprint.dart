@@ -56,7 +56,7 @@ class Sprint extends StreamableObject<Sprint> {
     return change;
   }
 
-  void loadTickets() async {
+  Future<void> loadTickets() async {
     await authAPI.post("load-jira", {
       "resources": [
         {
@@ -67,7 +67,16 @@ class Sprint extends StreamableObject<Sprint> {
         },
       ],
     });
-    CachedAPI.getInstance().reload("db/sprints");
+    await CachedAPI.getInstance().request("db/tickets");
+  }
+
+  Stream<List<Ticket>> getTicketsStream() async* {
+    Stream<List<Ticket>> ticketsStream = data.getTicketsStream();
+    await for (List<Ticket> ticketObjects in ticketsStream) {
+      yield ticketObjects
+          .where((element) => ticketIds.contains(element.id))
+          .toList();
+    }
   }
 
   Future<int> calculateCurrentHealth() async {

@@ -43,7 +43,11 @@ class _ShakerState extends State<Shaker> with SingleTickerProviderStateMixin {
         .animate(controller)
       ..addStatusListener((status) {});
 
-    if (widget.shake) controller.repeat(reverse: true);
+    if (widget.shake) {
+      controller.repeat(reverse: true);
+    } else {
+      controller.reset();
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

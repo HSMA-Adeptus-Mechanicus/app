@@ -47,8 +47,8 @@ class Ticket extends StreamableObject<Ticket> {
   static Ticket fromJSON(Map<String, dynamic> json) {
     return Ticket(
       json["_id"],
-      json["status"],
       json["name"],
+      json["status"],
       json["description"],
       json["storyPoints"],
       json["rewardClaimed"] ?? false,

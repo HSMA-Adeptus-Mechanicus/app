@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sff/data/data.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/sprint.dart';
 import 'package:sff/widgets/pages/bossfight/boss_health_bar.dart';
 
@@ -17,7 +17,7 @@ class Boss extends StatelessWidget {
           height: constraints.maxHeight,
           child: StreamBuilder<double>(
             stream: () async* {
-              Sprint sprint = await data.getCurrentSprint();
+              Sprint sprint = await ProjectManager.getInstance().currentProject!.getCurrentSprint();
               yield* sprint
                   .asStream()
                   .asyncMap((event) => event.calculateHealthPercentage());

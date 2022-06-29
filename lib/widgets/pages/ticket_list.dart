@@ -1,6 +1,6 @@
-import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/data/model/user.dart';
@@ -28,7 +28,12 @@ class TicketList extends StatelessWidget {
             ),
       ),
       child: StreamBuilder<List<Ticket>>(
-        stream: data.getTicketsStream(),
+        stream: () async* {
+          yield* (await ProjectManager.getInstance()
+                  .currentProject!
+                  .getCurrentSprint())
+              .getTicketsStream();
+        }(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Ticket> tickets = snapshot.data!;
@@ -66,7 +71,10 @@ class TicketList extends StatelessWidget {
 
             return RefreshIndicator(
               onRefresh: () async {
-                await CachedAPI.getInstance().request("db/tickets");
+                await (await ProjectManager.getInstance()
+                        .currentProject!
+                        .getCurrentSprint())
+                    .loadTickets();
               },
               child: ListView.separated(
                 padding: const EdgeInsets.all(15),

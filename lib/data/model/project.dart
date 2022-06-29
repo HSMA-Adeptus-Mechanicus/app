@@ -57,7 +57,7 @@ class Project extends StreamableObject<Project> {
     return change;
   }
 
-  void loadSprints() async {
+  Future<void> loadSprints() async {
     await authAPI.post("load-jira", {
       "resources": [
         {
@@ -78,6 +78,29 @@ class Project extends StreamableObject<Project> {
           .where((element) => sprints.contains(element.id))
           .toList();
     }
+  }
+
+  Future<Sprint> getCurrentSprint() async {
+    // TODO: prevent infinite loading if the project does not have any sprints
+    List<Sprint> sprintObjects = await first(getSprintsStream());
+    sprintObjects.retainWhere((element) => sprints.contains(element.id));
+    Sprint sprint;
+    if (sprintObjects.isEmpty) {
+      throw Exception("There are no sprints");
+    }
+    try {
+      sprint = sprintObjects.firstWhere((element) => element.state == "active");
+    } catch (e) {
+      List<Sprint> sorted =
+          sprintObjects.where((e) => e.state == "future").toList();
+      if (sorted.isEmpty) {
+        throw Exception("There is no active of upcoming sprint");
+      }
+      sorted.sort((a, b) => a.start.compareTo(b.start));
+      sprint = sorted[0];
+    }
+    sprint.loadTickets();
+    return sprint;
   }
 }
 

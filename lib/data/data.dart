@@ -55,28 +55,8 @@ class Data {
         .getStream();
   }
 
-  Future<Sprint> getCurrentSprint() async {
-    List<Sprint> sprints = await first(getSprintsStream());
-    Sprint sprint;
-    if (sprints.isEmpty) {
-      throw Exception("There are no sprints");
-    }
-    try {
-      sprint = sprints.firstWhere((element) => element.state == "active");
-    } catch (e) {
-      List<Sprint> sorted = sprints.where((e) => e.state == "future").toList();
-      if (sorted.isEmpty) {
-        throw Exception("There is no active of upcoming sprint");
-      }
-      sorted.sort((a, b) => a.start.compareTo(b.start));
-      sprint = sorted[0];
-    }
-    sprint.loadTickets();
-    return sprint;
-  }
-
   Future<User> getUser(String id) async {
-    List<User> users = await first(data.getUsersStream());
+    List<User> users = await data.getUsersStream().firstWhere((element) => element.any((element) => element.id == id));
     return users.firstWhere((user) => user.id == id);
   }
 

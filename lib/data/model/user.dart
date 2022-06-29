@@ -11,8 +11,10 @@ import 'package:sff/data/model/streamable.dart';
 import 'package:sff/data/model/ticket.dart';
 
 class User extends StreamableObject<User> {
-  User(super.id, this._name, this._wardrobe, this._avatar, this._currency);
+  User(super.id, this._name, this._wardrobe, this._avatarSetup, this._avatar,
+      this._currency);
   String _name;
+  bool _avatarSetup;
   Map<String, String?> _avatar;
   List<String> _wardrobe;
   int _currency;
@@ -20,6 +22,10 @@ class User extends StreamableObject<User> {
 
   String get name {
     return _name;
+  }
+
+  bool get avatarSetup {
+    return _avatarSetup;
   }
 
   Map<String, String?> get avatar {
@@ -40,6 +46,7 @@ class User extends StreamableObject<User> {
       json["_id"],
       json["name"],
       (json["wardrobe"] as List<dynamic>).whereType<String>().toList(),
+      json["avatarSetup"] ?? true,
       avatar.map((key, value) => MapEntry(key, value as String?)),
       json["currency"],
     );
@@ -57,10 +64,12 @@ class User extends StreamableObject<User> {
     bool change = json["name"] != name ||
         newWardrobe.length != wardrobe.length ||
         !newWardrobe.every((element) => wardrobe.contains(element)) ||
+        _avatarSetup != (json["avatarSetup"] ?? true) ||
         avatarChanged ||
         json["currency"] != currency;
     _name = json["name"];
     _wardrobe = newWardrobe;
+    _avatarSetup = json["avatarSetup"] ?? true;
     _avatar = newAvatar;
     _currency = json["currency"];
     if (avatarChanged) {
@@ -108,7 +117,7 @@ class User extends StreamableObject<User> {
     _name = name;
     updateStream();
     try {
-      await authAPI.post("db/users/change-name", {"name": name});
+      await authAPI.patch("db/users/change-name", {"name": name});
     } catch (e) {
       _name = previous;
       updateStream();
@@ -169,7 +178,7 @@ class User extends StreamableObject<User> {
     _currency += ticket.rewardCurrency;
     updateStream();
     try {
-      await authAPI.patch("db/tickets/claim-reward/$id", null);
+      await authAPI.patch("db/tickets/claim-reward/${ticket.id}", null);
     } catch (e) {
       ticket.setClaimed(false);
       _currency -= ticket.rewardCurrency;

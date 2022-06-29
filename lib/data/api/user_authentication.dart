@@ -143,7 +143,7 @@ class UserAuthentication {
       );
       _userId = result["userId"];
       await _updateState(LoginState.loggedIn);
-    } on ErrorResponseException catch (e) {
+    } on ErrorResponseException {
       await _logoutClientSide();
     } catch (e) {
       // The server did not respond with a proper error
