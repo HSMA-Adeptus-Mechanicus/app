@@ -1,5 +1,6 @@
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/screens/pages/reward_screen.dart';
 import 'package:sff/screens/pages/equip_screen.dart';
 import 'package:sff/screens/pages/ticket_screen.dart';
@@ -53,26 +54,35 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
             label: "Home",
           ),
           createNavigationItem(
-              icon: "assets/icons/Navigation/quests_weiss.png",
-              label: "Quests",
-              indicatorStream: data.getTicketsStream().map(
-                    (event) => event.any((element) =>
+            icon: "assets/icons/Navigation/quests_weiss.png",
+            label: "Quests",
+            indicatorStream: () async* {
+              yield* (await ProjectManager.getInstance()
+                      .currentProject!
+                      .getCurrentSprint())
+                  .getAnyChangeTicketsStream()
+                  .map(
+                    (ticket) => ticket.any((element) =>
                         element.assignee ==
                             UserAuthentication.getInstance().userId &&
                         element.done &&
                         !element.rewardClaimed),
-                  )),
+                  );
+            }(),
+          ),
           createNavigationItem(
             icon: "assets/icons/Navigation/kleiderbuegel_weiss.png",
             label: "Inventar",
           ),
           createNavigationItem(
-              icon: "assets/icons/Navigation/schatzkiste_weiss.png",
-              label: "Belohnungen",
-              indicatorStream: data.getUsersStream().map((event) => event.any(
-                  (element) =>
-                      element.id == UserAuthentication.getInstance().userId &&
-                      element.currency >= 15))),
+            icon: "assets/icons/Navigation/schatzkiste_weiss.png",
+            label: "Belohnungen",
+            indicatorStream: () async* {
+              yield* data
+                  .getCurrentUserStream()
+                  .map((event) => event.currency >= 15);
+            }(),
+          ),
         ],
         currentIndex: _selectedIndex,
         onTap: (index) {
