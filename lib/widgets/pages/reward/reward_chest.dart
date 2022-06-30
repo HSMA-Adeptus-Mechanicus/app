@@ -5,45 +5,42 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/widgets/app_scaffold.dart';
+import 'package:sff/widgets/loading.dart';
 import 'package:sff/widgets/pages/reward/shaker.dart';
 
-class RewardChest extends StatefulWidget {
+class RewardChest extends StatelessWidget {
   const RewardChest({Key? key}) : super(key: key);
 
   @override
-  State<RewardChest> createState() => RandomizerWidgetGesture();
-}
-
-class RandomizerWidgetGesture extends State<RewardChest> {
-  @override
   Widget build(BuildContext context) {
     return StreamBuilder<User>(
-        stream: data.getCurrentUserStream(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            User user = snapshot.data!;
-            return GestureDetector(
-              onTap: () async {
-                if (user.currency >= 14) {
-                  navigateToWidget(
-                    NewItemScreen(user: user),
-                  );
-                } else {
-                  const snackBar =
-                      SnackBar(content: Text("You don't have enough coins!"));
-                  ScaffoldMessenger.of(navigatorKey.currentContext!)
-                      .showSnackBar(snackBar);
-                }
-              },
-              child: Shaker(
-                shake: user.currency >= 15,
-                child: Image.asset("assets/icons/Pixel/Schatzkiste1.png",
-                    filterQuality: FilterQuality.none, scale: 1 / 2),
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        });
+      stream: data.getCurrentUserStream(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          User user = snapshot.data!;
+          return GestureDetector(
+            onTap: () async {
+              if (user.currency >= 15) {
+                navigateToWidget(
+                  NewItemScreen(user: user),
+                );
+              } else {
+                const snackBar =
+                    SnackBar(content: Text("You don't have enough coins!"));
+                ScaffoldMessenger.of(navigatorKey.currentContext!)
+                    .showSnackBar(snackBar);
+              }
+            },
+            child: Shaker(
+              shake: user.currency >= 15,
+              child: Image.asset("assets/icons/Pixel/Schatzkiste1.png",
+                  filterQuality: FilterQuality.none, scale: 1 / 2),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
   }
 }
 
@@ -54,21 +51,20 @@ class NewItemScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool duplicate = false;
     return AppScaffold(
       body: FutureBuilder<Item>(
         future: () async {
           final item = await Item.itemRandomizer();
+          duplicate = user.ownsItem(item);
           user.buy(item);
           return item;
         }(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LoadingWidget();
           }
           final item = snapshot.data!;
-          final duplicate = user.ownsItem(item);
           return GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () async {

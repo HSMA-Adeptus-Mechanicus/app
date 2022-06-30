@@ -6,12 +6,15 @@ import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/model/item.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/streamable.dart';
 import 'package:sff/data/model/ticket.dart';
 
-class User extends Streamable<User> {
-  User(super.id, this._name, this._wardrobe, this._avatar, this._currency);
+class User extends StreamableObject<User> {
+  User(super.id, this._name, this._wardrobe, this._avatarSetup, this._avatar,
+      this._currency);
   String _name;
+  bool _avatarSetup;
   Map<String, String?> _avatar;
   List<String> _wardrobe;
   int _currency;
@@ -19,6 +22,10 @@ class User extends Streamable<User> {
 
   String get name {
     return _name;
+  }
+
+  bool get avatarSetup {
+    return _avatarSetup;
   }
 
   Map<String, String?> get avatar {
@@ -39,6 +46,7 @@ class User extends Streamable<User> {
       json["_id"],
       json["name"],
       (json["wardrobe"] as List<dynamic>).whereType<String>().toList(),
+      json["avatarSetup"] ?? true,
       avatar.map((key, value) => MapEntry(key, value as String?)),
       json["currency"],
     );
@@ -56,10 +64,12 @@ class User extends Streamable<User> {
     bool change = json["name"] != name ||
         newWardrobe.length != wardrobe.length ||
         !newWardrobe.every((element) => wardrobe.contains(element)) ||
+        _avatarSetup != (json["avatarSetup"] ?? true) ||
         avatarChanged ||
         json["currency"] != currency;
     _name = json["name"];
     _wardrobe = newWardrobe;
+    _avatarSetup = json["avatarSetup"] ?? true;
     _avatar = newAvatar;
     _currency = json["currency"];
     if (avatarChanged) {
@@ -87,8 +97,45 @@ class User extends Streamable<User> {
     return avatarFuture;
   }
 
+  Future<void> loadProjects() async {
+    await authAPI.post("load-jira", {
+      "resources": [
+        {
+          "type": "projects",
+        },
+      ],
+    });
+    await CachedAPI.getInstance().request("db/projects");
+  }
+
+  Stream<List<Project>> getProjectsStream() async* {
+    Stream<List<Project>> projectsStream = data.getProjectsStream();
+    await for (List<Project> projects in projectsStream) {
+      yield projects.where((element) => element.team.contains(id)).toList();
+    }
+  }
+
   bool ownsItem(Item item) {
     return wardrobe.contains(item.id);
+  }
+
+  Future<void> changeName(String name) async {
+    if (id != UserAuthentication.getInstance().userId) {
+      throw Exception(
+          "Only the currently authenticated user can change its name");
+    }
+    String previous = _name;
+    _name = name;
+    updateStream();
+    try {
+      await authAPI.patch("db/users/change-name", {"name": name});
+    } catch (e) {
+      _name = previous;
+      updateStream();
+      rethrow;
+    } finally {
+      CachedAPI.getInstance().reload("db/users");
+    }
   }
 
   Future<void> buy(Item item) async {
@@ -142,7 +189,7 @@ class User extends Streamable<User> {
     _currency += ticket.rewardCurrency;
     updateStream();
     try {
-      await authAPI.patch("db/tickets/claim-reward/$id", null);
+      await authAPI.patch("db/tickets/claim-reward/${ticket.id}", null);
     } catch (e) {
       ticket.setClaimed(false);
       _currency -= ticket.rewardCurrency;

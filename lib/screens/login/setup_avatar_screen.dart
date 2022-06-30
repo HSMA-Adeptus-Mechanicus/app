@@ -3,9 +3,10 @@ import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/navigation.dart';
-import 'package:sff/screens/app_frame.dart';
+import 'package:sff/screens/project_selection.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 import 'package:sff/widgets/avatar.dart';
+import 'package:sff/widgets/loading.dart';
 import 'package:sff/widgets/pages/equip/apply_reset_options.dart';
 import 'package:sff/widgets/pages/equip/avatar_selection.dart';
 
@@ -46,7 +47,7 @@ class SetupAvatarScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       await showSavingDialog(user.applyAvatar(avatar));
-                      navigateTopLevelToWidget(const AppFrame());
+                      navigateTopLevelToWidget(const ProjectSelection());
                     },
                     child: const Text("Fertig!"),
                   ),
@@ -57,7 +58,7 @@ class SetupAvatarScreen extends StatelessWidget {
           if (snapshot.hasError) {
             return ErrorWidget(snapshot.error!);
           }
-          return const Center(child: CircularProgressIndicator());
+          return const LoadingWidget(message: "Avatar wird geladen...");
         },
       ),
     );
