@@ -55,7 +55,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
           createNavigationItem(
               icon: "assets/icons/Navigation/quests_weiss.png",
               label: "Quests",
-              identicatorStream: data.getTicketsStream().map(
+              indicatorStream: data.getTicketsStream().map(
                     (event) => event.any((element) =>
                         element.assignee ==
                             UserAuthentication.getInstance().userId &&
@@ -69,7 +69,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
           createNavigationItem(
               icon: "assets/icons/Navigation/schatzkiste_weiss.png",
               label: "Belohnungen",
-              identicatorStream: data.getUsersStream().map((event) => event.any(
+              indicatorStream: data.getUsersStream().map((event) => event.any(
                   (element) =>
                       element.id == UserAuthentication.getInstance().userId &&
                       element.currency >= 15))),
@@ -92,18 +92,18 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
 BottomNavigationBarItem createNavigationItem(
     {required String icon,
     required String label,
-    Stream<bool>? identicatorStream}) {
+    Stream<bool>? indicatorStream}) {
   return BottomNavigationBarItem(
     icon: NavigationIcon(
       iconAsset: icon,
       active: false,
-      identicatorStream: identicatorStream,
+      indicatorStream: indicatorStream,
     ),
     label: label,
     activeIcon: NavigationIcon(
       iconAsset: icon,
       active: true,
-      identicatorStream: identicatorStream,
+      indicatorStream: indicatorStream,
     ),
   );
 }
@@ -111,12 +111,12 @@ BottomNavigationBarItem createNavigationItem(
 class NavigationIcon extends StatelessWidget {
   final bool active;
   final String iconAsset;
-  final Stream<bool>? identicatorStream;
+  final Stream<bool>? indicatorStream;
   const NavigationIcon(
       {Key? key,
       required this.iconAsset,
       required this.active,
-      this.identicatorStream})
+      this.indicatorStream})
       : super(key: key);
 
   @override
@@ -126,8 +126,7 @@ class NavigationIcon extends StatelessWidget {
       width: 32,
       child: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(6.0),
+          Center(
             child: Image.asset(
               active
                   ? iconAsset.replaceFirst(RegExp(r"weiss"), "orange")
@@ -137,7 +136,7 @@ class NavigationIcon extends StatelessWidget {
             ),
           ),
           StreamBuilder<bool>(
-            stream: identicatorStream,
+            stream: indicatorStream,
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data!) {
                 return Align(
