@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/utils/stable_sort.dart';
 import 'package:sff/widgets/border_card.dart';
+import 'package:sff/widgets/loading.dart';
 
 class TicketList extends StatelessWidget {
   final bool onlyOwnTickets;
@@ -95,9 +96,12 @@ class TicketList extends StatelessWidget {
             );
           }
           if (snapshot.hasError) {
-            return ErrorWidget(snapshot.error!);
+            return const Padding(
+              padding: EdgeInsets.all(30),
+              child: Text("Im moment ist kein Sprint vorhanden. Falls du dieses Projekt gerade zum ersten mal geöffnet hast, schaue später nochmal nach"),
+            );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const LoadingWidget(message: "Quests werden geladen...");
         },
       ),
     );

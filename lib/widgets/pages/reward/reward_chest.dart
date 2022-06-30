@@ -5,6 +5,7 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/widgets/app_scaffold.dart';
+import 'package:sff/widgets/loading.dart';
 import 'package:sff/widgets/pages/reward/shaker.dart';
 
 class RewardChest extends StatelessWidget {
@@ -61,9 +62,7 @@ class NewItemScreen extends StatelessWidget {
         }(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LoadingWidget();
           }
           final item = snapshot.data!;
           return GestureDetector(

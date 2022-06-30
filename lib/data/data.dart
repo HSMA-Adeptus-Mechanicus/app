@@ -118,7 +118,8 @@ class _StreamListSupplier<T extends StreamableObject<T>> {
   Stream<List<T>> _createStream(String apiPath, ParseFunction<T> parse) async* {
     Stream<dynamic> stream = CachedAPI.getInstance().getStream(apiPath);
     await for (List<dynamic> snapshot in stream) {
-      bool addedOrRemoved = false;
+      // if _dataList is null this first state should be yielded even if it is an empty list
+      bool addedOrRemoved = _dataList == null;
       bool anyChange = false;
       List<T> dataList = _dataList ??= [];
       dataList.retainWhere((element) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/item.dart';
+import 'package:sff/widgets/loading.dart';
 
 // order from back to front
 const categoryOrder = [
@@ -34,7 +35,7 @@ class UserAvatarWidget extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const Center(child: CircularProgressIndicator());
+        return const LoadingWidget();
       }),
     );
   }

@@ -4,6 +4,7 @@ import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/navigation.dart';
 import 'package:sff/widgets/display_error.dart';
+import 'package:sff/widgets/loading.dart';
 
 class ApplyResetOptionsShower extends StatelessWidget {
   const ApplyResetOptionsShower({
@@ -151,18 +152,10 @@ Future<T> showSavingDialog<T>(Future<T> future) async {
       barrierDismissible: false,
       context: navigatorKey.currentContext!,
       builder: (context) {
-        return Scaffold(
+        return const Scaffold(
           backgroundColor: Colors.transparent,
           body: SizedBox.expand(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Text("Speichern..."),
-                SizedBox(height: 50),
-                CircularProgressIndicator(),
-              ],
-            ),
+            child: LoadingWidget(message: "Speichern..."),
           ),
         );
       },

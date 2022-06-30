@@ -67,6 +67,7 @@ class Sprint extends StreamableObject<Sprint> {
         },
       ],
     });
+    await CachedAPI.getInstance().request("db/sprints");
     await CachedAPI.getInstance().request("db/tickets");
   }
 

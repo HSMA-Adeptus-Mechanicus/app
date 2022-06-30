@@ -7,6 +7,7 @@ import 'package:sff/data/model/user.dart';
 import 'package:sff/utils/image_tools.dart';
 import 'package:sff/utils/stable_sort.dart';
 import 'package:sff/utils/string_compare.dart';
+import 'package:sff/widgets/loading.dart';
 
 class ItemCategory {
   final String icon;
@@ -115,14 +116,14 @@ class _ItemSelection extends StatelessWidget {
               if (snapshot.hasError) {
                 return ErrorWidget(snapshot.error!);
               }
-              return const Center(child: CircularProgressIndicator());
+              return const LoadingWidget(message: "Items werden geladen...");
             },
           );
         }
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const Center(child: CircularProgressIndicator());
+        return const LoadingWidget(message: "Benutzer wird geladen...");
       },
     );
   }
@@ -162,7 +163,7 @@ class _ItemButton extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const Center(child: CircularProgressIndicator());
+        return const LoadingWidget();
       },
     );
 

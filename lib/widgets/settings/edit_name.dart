@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/widgets/display_error.dart';
+import 'package:sff/widgets/loading.dart';
 
 class EditNameDialog extends StatefulWidget {
   const EditNameDialog({super.key});
@@ -22,7 +23,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
       future: data.getCurrentUser(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const LoadingWidget();
         }
         User user = snapshot.data!;
         return AlertDialog(

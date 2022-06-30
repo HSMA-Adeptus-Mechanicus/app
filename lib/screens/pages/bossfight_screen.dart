@@ -52,7 +52,7 @@ class Bossfight extends StatelessWidget {
                   );
                 }
                 if (snapshot.hasError) {
-                  return ErrorWidget(snapshot.error!);
+                  return const Text("Es gibt aktuell keinen Sprint");
                 }
                 return const SizedBox.shrink();
               },

@@ -4,6 +4,7 @@ import 'package:sff/data/data.dart';
 import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
 import 'package:sff/widgets/fitted_text.dart';
+import 'package:sff/widgets/loading.dart';
 import 'package:sff/widgets/pages/equip/apply_reset_options.dart';
 import 'package:sff/widgets/pages/equip/avatar_selection.dart';
 import 'package:sff/widgets/pages/equip/equipment_selection.dart';
@@ -64,7 +65,7 @@ class EquipScreen extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const Center(child: CircularProgressIndicator());
+        return const LoadingWidget(message: "Avatar wird geladen...");
       },
     );
   }

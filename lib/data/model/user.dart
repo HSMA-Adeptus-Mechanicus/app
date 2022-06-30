@@ -97,6 +97,17 @@ class User extends StreamableObject<User> {
     return avatarFuture;
   }
 
+  Future<void> loadProjects() async {
+    await authAPI.post("load-jira", {
+      "resources": [
+        {
+          "type": "projects",
+        },
+      ],
+    });
+    await CachedAPI.getInstance().request("db/projects");
+  }
+
   Stream<List<Project>> getProjectsStream() async* {
     Stream<List<Project>> projectsStream = data.getProjectsStream();
     await for (List<Project> projects in projectsStream) {

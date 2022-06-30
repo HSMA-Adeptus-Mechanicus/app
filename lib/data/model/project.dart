@@ -68,6 +68,7 @@ class Project extends StreamableObject<Project> {
         },
       ],
     });
+    await CachedAPI.getInstance().request("db/projects");
     await CachedAPI.getInstance().request("db/sprints");
   }
 

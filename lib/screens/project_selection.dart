@@ -4,6 +4,7 @@ import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/screens/app_frame.dart';
 import 'package:sff/widgets/app_scaffold.dart';
+import 'package:sff/widgets/loading.dart';
 
 class ProjectSelection extends StatelessWidget {
   const ProjectSelection({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class ProjectSelection extends StatelessWidget {
         if (!snapshot.hasData) {
           return const AppScaffold(
             settingsButton: false,
-            body: Center(child: CircularProgressIndicator()),
+            body: LoadingWidget(),
           );
         }
         ProjectManager projectManager = snapshot.data!;
@@ -26,31 +27,41 @@ class ProjectSelection extends StatelessWidget {
               stream: data.getCurrentUserStream(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const LoadingWidget(message: "Benutzer wird geladen...");
                 }
+                User user = snapshot.data!;
+                user.loadProjects();
                 return StreamBuilder<List<Project>>(
-                  stream: snapshot.data!.getProjectsStream(),
+                  stream: user.getProjectsStream(),
                   builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return ErrorWidget(snapshot.error!);
+                    }
                     if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const LoadingWidget(message: "Projekte werden geladen...");
                     }
                     List<Project> projects = snapshot.data!;
-                    return ListView.separated(
-                      padding: const EdgeInsets.all(30),
-                      itemCount: projects.length,
-                      itemBuilder: (context, index) {
-                        return ElevatedButton(
-                          onPressed: () {
-                            ProjectManager.getInstance().currentProject =
-                                projects[index];
-                            projects[index].loadSprints();
-                          },
-                          child: Text(projects[index].name),
-                        );
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        await user.loadProjects();
                       },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(height: 20);
-                      },
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(30),
+                        itemCount: projects.length,
+                        itemBuilder: (context, index) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              ProjectManager.getInstance().currentProject =
+                                  projects[index];
+                              projects[index].loadSprints();
+                            },
+                            child: Text(projects[index].name),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(height: 20);
+                        },
+                      ),
                     );
                   },
                 );

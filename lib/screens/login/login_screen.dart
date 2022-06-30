@@ -1,3 +1,4 @@
+import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
@@ -6,6 +7,7 @@ import 'package:sff/screens/login/setup_avatar_screen.dart';
 import 'package:sff/screens/project_selection.dart';
 import 'package:sff/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:sff/widgets/loading.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -22,21 +24,26 @@ class LoginScreen extends StatelessWidget {
             LoginState state = snapshot.data!;
             if (state == LoginState.loggedIn) {
               Future.microtask(() async {
-                User user = await data.getCurrentUser();
-                if (user.avatarSetup) {
-                  navigateTopLevelToWidget(const ProjectSelection());
-                } else {
-                  navigateTopLevelToWidget(const SetupAvatarScreen());
+                try {
+                  User user = await data.getCurrentUser();
+                  if (user.avatarSetup) {
+                    navigateTopLevelToWidget(const ProjectSelection());
+                  } else {
+                    navigateTopLevelToWidget(const SetupAvatarScreen());
+                  }
+                } catch (e) {
+                  await CachedAPI.getInstance().request("db/users");
+                  await UserAuthentication.getInstance().checkLogin();
                 }
               });
-              return const Center(child: CircularProgressIndicator());
+              return const LoadingWidget(message: "Benutzer wird geladen...");
             } else if (state == LoginState.loggedOut) {
               return const LoginWidget();
             } else if (state == LoginState.loggingIn) {
               return const LoginExternal();
             }
           }
-          return const Center(child: CircularProgressIndicator());
+          return const LoadingWidget();
         },
       ),
     );
