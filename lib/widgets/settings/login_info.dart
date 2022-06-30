@@ -1,5 +1,7 @@
+import 'package:sff/data/data.dart';
 import 'package:sff/widgets/avatar.dart';
-import 'package:sff/widgets/settings/edit_username.dart';
+import 'package:sff/widgets/loading.dart';
+import 'package:sff/widgets/settings/edit_name.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:flutter/material.dart';
 
@@ -29,32 +31,31 @@ class LoginInfo extends StatelessWidget {
                 children: [
                   Flexible(
                     child: StreamBuilder<String?>(
-                        stream: UserAuthentication.getInstance()
-                            .getUsernameStream(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                              snapshot.data ?? "-",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onBackground),
-                            );
-                          }
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                      stream:
+                          data.getCurrentUserStream().map((user) => user.name),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                            snapshot.data ?? "-",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground),
                           );
-                        }),
+                        }
+                        return const LoadingWidget();
+                      },
+                    ),
                   ),
                   IconButton(
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (context) {
-                          return const EditUsernameDialog();
+                          return const EditNameDialog();
                         },
                       );
                     },

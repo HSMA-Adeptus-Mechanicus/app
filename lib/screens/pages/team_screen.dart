@@ -8,6 +8,7 @@ import 'package:sff/widgets/avatar.dart';
 import 'package:sff/widgets/border_card.dart';
 import 'package:sff/widgets/button_tab_bar.dart';
 import 'package:sff/widgets/fitted_text.dart';
+import 'package:sff/widgets/loading.dart';
 
 class TeamScreen extends StatelessWidget {
   const TeamScreen({Key? key}) : super(key: key);
@@ -73,7 +74,7 @@ class _Team extends StatelessWidget {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
         }
-        return const Center(child: CircularProgressIndicator());
+        return const LoadingWidget(message: "Team wird geladen...");
       },
     );
   }

@@ -8,15 +8,16 @@ class AuthenticatedAPI {
   const AuthenticatedAPI();
 
   String addTokenToPath(String path) {
-    if (!UserAuthentication.getInstance().authenticated) {
+    String? token = UserAuthentication.getInstance().token;
+    if (token == null) {
       throw Exception(
         "Unable to add authentication token to request because the user is not authenticated",
       );
     }
     if (RegExp(r"\?").firstMatch(path) != null) {
-      return "$path&token=${Uri.encodeComponent(UserAuthentication.getInstance().token!)}";
+      return "$path&token=${Uri.encodeComponent(token)}";
     }
-    return "$path?token=${Uri.encodeComponent(UserAuthentication.getInstance().token!)}";
+    return "$path?token=${Uri.encodeComponent(token)}";
   }
 
   Future<dynamic> get(String path) async {

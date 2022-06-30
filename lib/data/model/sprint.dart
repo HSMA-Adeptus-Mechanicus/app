@@ -1,10 +1,13 @@
+import 'package:sff/data/api/authenticated_api.dart';
+import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/streamable.dart';
 import 'package:sff/data/model/ticket.dart';
 
-class Sprint extends Streamable<Sprint> {
+class Sprint extends StreamableObject<Sprint> {
   String _name;
   List<String> _ticketIds;
+  String state;
   DateTime _start;
   DateTime _end;
 
@@ -21,12 +24,13 @@ class Sprint extends Streamable<Sprint> {
     return _end;
   }
 
-  Sprint(super.id, this._name, this._ticketIds, this._start, this._end);
+  Sprint(super.id, this._name, this.state, this._ticketIds, this._start, this._end);
 
   static Sprint fromJSON(Map<String, dynamic> json) {
     return Sprint(
       json["_id"],
       json["name"],
+      json["state"],
       ((json["tickets"] ?? []) as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -52,22 +56,54 @@ class Sprint extends Streamable<Sprint> {
     return change;
   }
 
+  Future<void> loadTickets() async {
+    await authAPI.post("load-jira", {
+      "resources": [
+        {
+          "type": "tickets",
+          "args": {
+            "sprintId": id,
+          },
+        },
+      ],
+    });
+    await CachedAPI.getInstance().request("db/sprints");
+    await CachedAPI.getInstance().request("db/tickets");
+  }
+
+  Stream<List<Ticket>> getTicketsStream() async* {
+    Stream<List<Ticket>> ticketsStream = data.getTicketsStream();
+    await for (List<Ticket> ticketObjects in ticketsStream) {
+      yield ticketObjects
+          .where((element) => ticketIds.contains(element.id))
+          .toList();
+    }
+  }
+  Stream<List<Ticket>> getAnyChangeTicketsStream() async* {
+    Stream<List<Ticket>> ticketsStream = data.getAnyChangeTicketsStream();
+    await for (List<Ticket> ticketObjects in ticketsStream) {
+      yield ticketObjects
+          .where((element) => ticketIds.contains(element.id))
+          .toList();
+    }
+  }
+
   Future<int> calculateCurrentHealth() async {
-    List<Ticket> ticketArray = await first(data.getTicketsStream());
+    List<Ticket> ticketArray = await first(getTicketsStream());
     return ticketArray
         .map((e) => e.done ? 0 : e.storyPoints)
         .reduce((value, element) => value + element);
   }
 
   Future<int> calculateMaxHealth() async {
-    List<Ticket> ticketArray = await first(data.getTicketsStream());
+    List<Ticket> ticketArray = await first(getTicketsStream());
     return ticketArray
         .map((e) => e.storyPoints)
         .reduce((value, element) => value + element);
   }
 
   Future<double> calculateHealthPercentage() async {
-    List<Ticket> ticketArray = await first(data.getTicketsStream());
+    List<Ticket> ticketArray = await first(getTicketsStream());
     final current = ticketArray
         .map((e) => e.done ? 0 : e.storyPoints)
         .reduce((value, element) => value + element);

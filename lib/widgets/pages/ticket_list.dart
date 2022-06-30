@@ -1,11 +1,12 @@
-import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/utils/stable_sort.dart';
 import 'package:sff/widgets/border_card.dart';
+import 'package:sff/widgets/loading.dart';
 
 class TicketList extends StatelessWidget {
   final bool onlyOwnTickets;
@@ -28,7 +29,12 @@ class TicketList extends StatelessWidget {
             ),
       ),
       child: StreamBuilder<List<Ticket>>(
-        stream: data.getTicketsStream(),
+        stream: () async* {
+          yield* (await ProjectManager.getInstance()
+                  .currentProject!
+                  .getCurrentSprint())
+              .getAnyChangeTicketsStream();
+        }(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Ticket> tickets = snapshot.data!;
@@ -66,7 +72,13 @@ class TicketList extends StatelessWidget {
 
             return RefreshIndicator(
               onRefresh: () async {
-                await CachedAPI.getInstance().request("db/tickets");
+                await ProjectManager.getInstance()
+                    .currentProject!
+                    .loadSprints();
+                await (await ProjectManager.getInstance()
+                        .currentProject!
+                        .getCurrentSprint())
+                    .loadTickets();
               },
               child: ListView.separated(
                 padding: const EdgeInsets.all(15),
@@ -84,9 +96,12 @@ class TicketList extends StatelessWidget {
             );
           }
           if (snapshot.hasError) {
-            return ErrorWidget(snapshot.error!);
+            return const Padding(
+              padding: EdgeInsets.all(30),
+              child: Text("Im moment ist kein Sprint vorhanden. Falls du dieses Projekt gerade zum ersten mal geöffnet hast, schaue später nochmal nach"),
+            );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const LoadingWidget(message: "Quests werden geladen...");
         },
       ),
     );
@@ -179,11 +194,16 @@ class TicketItem extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        StreamBuilder<User>(
-                            stream: data.getUserStream(_ticket.assignee),
+                        StreamBuilder<String>(
+                            stream: _ticket.assignee == null
+                                ? Stream<String>.fromFuture(
+                                    Future.value("unknown"))
+                                : data
+                                    .getUserStream(_ticket.assignee!)
+                                    .map((event) => event.name),
                             builder: (context, snapshot) {
                               return Text(
-                                snapshot.data?.name ?? "unknown",
+                                snapshot.data ?? "unknown",
                                 style: Theme.of(context).textTheme.titleMedium,
                               );
                             }),

@@ -21,51 +21,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     List<Widget>? actions;
     if (settingsButton && UserAuthentication.getInstance().authenticated) {
       actions = [
-        StreamBuilder<User>(
-          stream: data.getCurrentUserStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              User user = snapshot.data!;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    user.name,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          // color: Theme.of(context).cardColor,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                        ),
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 17,
-                        child: Image.asset("assets/icons/Pixel/Muenze.PNG"),
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        user.currency.toString(),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).cardColor,
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            }
-            if (snapshot.hasError) {
-              return ErrorWidget(snapshot.error!);
-            }
-            return const SizedBox.shrink();
-          },
-        ),
-        IconButton(
-          padding: EdgeInsets.zero,
-          icon: UserAvatarWidget(
-            userId: UserAuthentication.getInstance().userId!,
-          ),
+        TextButton(
+          style: TextButton.styleFrom(padding: EdgeInsets.zero),
           onPressed: () {
             Navigator.of(context).push<void>(
               MaterialPageRoute<void>(
@@ -75,6 +32,61 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             );
           },
+          child: Row(
+            children: [
+              StreamBuilder<User>(
+                stream: data.getCurrentUserStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    User user = snapshot.data!;
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          user.name,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    // color: Theme.of(context).cardColor,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color,
+                                  ),
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              height: 17,
+                              child:
+                                  Image.asset("assets/icons/Pixel/Muenze.PNG"),
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              user.currency.toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context).cardColor,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return ErrorWidget(snapshot.error!);
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              UserAvatarWidget(
+                userId: UserAuthentication.getInstance().userId!,
+              ),
+            ],
+          ),
         )
       ];
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
+import 'package:sff/widgets/loading.dart';
 import 'package:sff/widgets/pages/reward/reward_chest.dart';
 
 class RewardScreen extends StatelessWidget {
@@ -56,7 +57,7 @@ class RewardScreen extends StatelessWidget {
             ),
           );
         }
-        return const Center(child: CircularProgressIndicator());
+        return const LoadingWidget(message: "Benutzer wird geladen...");
       },
     );
   }

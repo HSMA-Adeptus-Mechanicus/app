@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 import 'package:get_storage/get_storage.dart';
+import 'package:sff/data/api/authenticated_api.dart';
 
 import 'api_wrapper.dart';
 
 enum LoginState {
-  registering,
   loggedIn,
   loggingIn,
   loggedOut,
@@ -29,7 +31,6 @@ class UserAuthentication {
 
   UserAuthentication() {
     _stateBroadcastStream = _streamController.stream.asBroadcastStream();
-    _usernameBroadcastStream = _stateBroadcastStream.map((event) => _username,);
     loadStorage();
   }
 
@@ -39,13 +40,6 @@ class UserAuthentication {
       var data = _storage.read<Map<String, dynamic>>("token");
       if (data!["token"] is String) {
         _token = data["token"];
-        if (data["expirationTime"] is int) {
-          _expirationTime =
-              DateTime.fromMillisecondsSinceEpoch(data["expirationTime"]);
-        }
-        if (data["username"] is String) {
-          _username = data["username"];
-        }
         if (data["userId"] is String) {
           _userId = data["userId"];
         }
@@ -59,25 +53,18 @@ class UserAuthentication {
   final GetStorage _storage = GetStorage("login");
 
   LoginState _state = LoginState.loggingIn;
-  String? _username;
   String? _token;
-  DateTime? _expirationTime;
   String? _userId;
 
   final StreamController<LoginState> _streamController = StreamController();
   late final Stream<LoginState> _stateBroadcastStream;
-  late final Stream<String?> _usernameBroadcastStream;
 
   bool get authenticated {
-    return _token != null;
+    return state == LoginState.loggedIn && _token != null;
   }
 
   LoginState get state {
     return _state;
-  }
-
-  String? get username {
-    return _username;
   }
 
   String? get userId {
@@ -88,49 +75,35 @@ class UserAuthentication {
     return _token;
   }
 
-  DateTime? get expirationTime {
-    return _expirationTime;
+  String startAuthentication() {
+    if (authenticated) {
+      throw Exception("Already authenticated");
+    }
+    _updateState(LoginState.loggingIn);
+
+    Random random = Random.secure();
+    String token =
+        base64Encode(List<int>.generate(32, (index) => random.nextInt(1 << 8)));
+    _token = token;
+    return token;
   }
 
-  /// Create a new account with the given username and password
-  register(String username, String password) async {
-    if (_state != LoginState.loggedOut) {
-      throw Exception("Unable to register while not logged out");
+  Future<void> completeAuthentication() async {
+    if (state != LoginState.loggingIn || _token == null) {
+      throw Exception("To complete, authentication has to be in progress");
     }
-    await _updateState(LoginState.registering);
-    try {
-      await apiWrapper.post(
-        "auth/register",
-        {
-          "username": username,
-          "password": password,
-        },
-      );
-    } finally {
-      await _updateState(LoginState.loggedOut);
-    }
-    await login(username, password);
-  }
-
-  /// Uses the username and password to get an authentication token to authenticate api requests
-  login(String username, String password) async {
-    await _updateState(LoginState.loggingIn);
-    try {
-      Map<String, dynamic> result = await apiWrapper.get(
-        "auth/login?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}",
-      );
-      _username = username;
-      _userId = result["userId"];
-      _token = result["token"];
-      _expirationTime = DateTime.fromMillisecondsSinceEpoch(
-        result["expirationTime"] * 1000,
-        isUtc: true,
-      );
-    } catch (e) {
-      await _logoutClientSide();
-      rethrow;
-    }
+    Map<String, dynamic> result = await apiWrapper.get(
+      "auth/check-token?token=${Uri.encodeComponent(_token!)}",
+    );
+    _userId = result["userId"];
     await _updateState(LoginState.loggedIn);
+  }
+
+  Future<void> cancelAuthentication() async {
+    if (state != LoginState.loggingIn) {
+      throw Exception("Can not cancel authentication that is not in progress");
+    }
+    await _logoutClientSide();
   }
 
   refreshToken() async {
@@ -144,13 +117,8 @@ class UserAuthentication {
       Map<String, dynamic> result = await apiWrapper.get(
         "/auth/refresh-token?token=${Uri.encodeComponent(_token!)}",
       );
-      _username = username;
       _userId = result["userId"];
       _token = result["token"];
-      _expirationTime = DateTime.fromMillisecondsSinceEpoch(
-        result["expirationTime"] * 1000,
-        isUtc: true,
-      );
       await _updateState(LoginState.loggedIn);
 
       apiWrapper
@@ -165,7 +133,7 @@ class UserAuthentication {
   // TODO: Add automatic token refreshing (and token refreshing in general)
   /// Confirm that the current authentication token is valid
   checkLogin() async {
-    if (!authenticated) {
+    if (_token == null) {
       _updateState(LoginState.loggedOut);
       return;
     }
@@ -173,12 +141,7 @@ class UserAuthentication {
       Map<String, dynamic> result = await apiWrapper.get(
         "/auth/check-token?token=${Uri.encodeComponent(_token!)}",
       );
-      _username = result["username"];
       _userId = result["userId"];
-      _expirationTime = DateTime.fromMillisecondsSinceEpoch(
-        result["expirationTime"] * 1000,
-        isUtc: true,
-      );
       await _updateState(LoginState.loggedIn);
     } on ErrorResponseException {
       await _logoutClientSide();
@@ -210,72 +173,20 @@ class UserAuthentication {
 
   _logoutClientSide() async {
     _token = null;
-    _username = null;
     _userId = null;
-    _expirationTime = null;
     await _updateState(LoginState.loggedOut);
   }
 
-  editPassword(String password, String newPassword) async {
-    if (_username == null) {
-      throw Exception("Unable to edit password when not logged in");
-    }
+  deleteAccount() async {
     await _updateState(LoginState.loggingOut);
     try {
-      await apiWrapper.patch(
-        "auth/edit-password?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
-        {"password": newPassword},
+      await authAPI.delete(
+        "auth/delete-account",
       );
       await _logoutClientSide();
     } finally {
       await checkLogin();
     }
-  }
-
-  editUsername(String password, String newUsername) async {
-    if (_username == null) {
-      throw Exception("Unable to edit username when not logged in");
-    }
-    await apiWrapper.patch(
-      "auth/edit-username?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
-      {"username": newUsername},
-    );
-    _username = newUsername;
-    _updateState(LoginState.loggedIn);
-  }
-
-  deleteAccount(String password) async {
-    await _updateState(LoginState.loggingOut);
-    if (_username == null) {
-      throw Exception("Unable to edit username when not logged in");
-    }
-    try {
-      await apiWrapper.delete(
-        "auth/delete-account?username=${Uri.encodeComponent(_username!)}&password=${Uri.encodeComponent(password)}",
-      );
-      await _logoutClientSide();
-    } finally {
-      await checkLogin();
-    }
-  }
-
-  /// Providing a stream that fires an event when the username changes with the current username
-  Stream<String?> getUsernameStream() {
-    late StreamController<String?> controller;
-    onListen() {
-      controller.add(username);
-      controller.addStream(_usernameBroadcastStream);
-    }
-
-    onCancel() {
-      controller.close();
-    }
-
-    controller = StreamController(
-      onListen: onListen,
-      onCancel: onCancel,
-    );
-    return controller.stream;
   }
 
   /// Providing a stream that fires an event when the login status changes with the current login state
@@ -333,8 +244,6 @@ class UserAuthentication {
     } else {
       await _storage.write("token", {
         "token": _token,
-        "expirationTime": expirationTime?.millisecondsSinceEpoch,
-        "username": _username,
         "userId": _userId,
       });
     }
