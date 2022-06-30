@@ -1,6 +1,6 @@
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:sff/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/widgets/avatar.dart';
@@ -22,12 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (settingsButton && UserAuthentication.getInstance().authenticated) {
       actions = [
         StreamBuilder<User>(
-          stream: data.getUsersStream().map(
-                (event) => event.firstWhere(
-                  (element) =>
-                      element.id == UserAuthentication.getInstance().userId,
-                ),
-              ),
+          stream: data.getCurrentUserStream(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               User user = snapshot.data!;
@@ -63,7 +58,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (snapshot.hasError) {
               return ErrorWidget(snapshot.error!);
             }
-            return Container();
+            return const SizedBox.shrink();
           },
         ),
         IconButton(

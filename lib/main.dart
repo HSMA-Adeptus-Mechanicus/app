@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/navigation.dart';
+import 'package:sff/screens/app_frame.dart';
 import 'package:sff/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -17,7 +18,14 @@ void main() async {
 
 class App extends StatelessWidget {
   final Future initialized = Future.wait([
-    GetStorage.init(),
+    () async {
+      await GetStorage.init();
+      await UserAuthentication.getInstance().getStateStream().firstWhere(
+          (element) =>
+              element == LoginState.loggedIn ||
+              element == LoginState.loggedOut);
+    }(),
+    // minimum loading screen time
     Future.delayed(const Duration(milliseconds: 3000)),
   ]);
 
@@ -114,7 +122,11 @@ class App extends StatelessWidget {
         });
         () async {
           await initialized;
-          navigateTopLevelToWidget(const LoginScreen());
+          if (UserAuthentication.getInstance().state == LoginState.loggedIn) {
+            navigateTopLevelToWidget(const AppFrame());
+          } else {
+            navigateTopLevelToWidget(const LoginScreen());
+          }
         }();
         return const SplashScreen();
       }),

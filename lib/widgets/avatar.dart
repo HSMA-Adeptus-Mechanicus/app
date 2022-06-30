@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:sff/data/avatar.dart';
+import 'package:sff/data/model/avatar.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/item.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/item.dart';
 
 // order from back to front
 const categoryOrder = [
@@ -26,14 +25,11 @@ class UserAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<User>>(
-      stream: data.getUsersStream(),
+    return StreamBuilder<Avatar>(
+      stream: data.getUserStream(userId).asyncMap((event) => event.getAvatar()),
       builder: ((context, snapshot) {
         if (snapshot.hasData) {
-          User user = snapshot.data!.firstWhere(
-            (user) => user.id == userId,
-          );
-          return AvatarWidget(avatar: user.avatar);
+          return AvatarWidget(avatar: snapshot.data!);
         }
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
@@ -51,14 +47,11 @@ class AvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Item> equippedItems = avatar.equipped.toList();
-    equippedItems.sort(
-      (a, b) =>
-          categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category),
-    );
+    Map<String, Item> equippedItems = avatar.equippedItems;
+    final sortedItems = categoryOrder.map((category) => equippedItems[category]).whereType<Item>();
 
     return Stack(
-      children: equippedItems
+      children: sortedItems
           .map(
             (item) => FutureBuilder<Uint8List>(
                 future: item.getImageData(),

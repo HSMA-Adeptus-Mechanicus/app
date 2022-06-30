@@ -1,5 +1,7 @@
+import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/data.dart';
-import 'package:sff/data/user.dart';
+import 'package:sff/data/model/avatar.dart';
+import 'package:sff/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/screens/pages/bossfight_screen.dart';
 import 'package:sff/widgets/avatar.dart';
@@ -48,19 +50,24 @@ class _Team extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<User> users = snapshot.data!;
-          return GridView.builder(
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(20),
-            itemCount: users.length,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 300,
-              childAspectRatio: 2 / 3,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20,
-            ),
-            itemBuilder: (context, index) {
-              return UserItem(users[index]);
+          return RefreshIndicator(
+            onRefresh: () async {
+              await CachedAPI.getInstance().request("db/users");
             },
+            child: GridView.builder(
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.all(20),
+              itemCount: users.length,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 300,
+                childAspectRatio: 2 / 3,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+              ),
+              itemBuilder: (context, index) {
+                return UserItem(users[index]);
+              },
+            ),
           );
         }
         if (snapshot.hasError) {
@@ -82,21 +89,33 @@ class UserItem extends StatelessWidget {
     return BorderCard(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(_user.name),
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: AvatarWidget(avatar: _user.avatar),
-              ),
-            ),
-          ],
+        child: StreamBuilder<User>(
+          stream: _user.asStream(),
+          builder: (context, snapshot) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(_user.name),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: FutureBuilder<Avatar>(
+                        future: _user.getAvatar(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return AvatarWidget(avatar: snapshot.data!);
+                          }
+                          return const SizedBox.shrink();
+                        }),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
