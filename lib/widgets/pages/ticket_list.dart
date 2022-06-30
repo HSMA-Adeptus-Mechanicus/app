@@ -32,7 +32,7 @@ class TicketList extends StatelessWidget {
           yield* (await ProjectManager.getInstance()
                   .currentProject!
                   .getCurrentSprint())
-              .getTicketsStream();
+              .getAnyChangeTicketsStream();
         }(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -71,6 +71,9 @@ class TicketList extends StatelessWidget {
 
             return RefreshIndicator(
               onRefresh: () async {
+                await ProjectManager.getInstance()
+                    .currentProject!
+                    .loadSprints();
                 await (await ProjectManager.getInstance()
                         .currentProject!
                         .getCurrentSprint())

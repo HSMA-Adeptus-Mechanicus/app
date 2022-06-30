@@ -45,16 +45,19 @@ abstract class StreamableObject<T extends StreamableObject<T>> extends Streamabl
   @protected
   bool processUpdatedJSON(Map<String, dynamic> json);
 
-  void updateJSON(Map<String, dynamic> json) {
+  /// updates the object based on the json and returns true if anything changed
+  bool updateJSON(Map<String, dynamic> json) {
     if (json["_id"] != id) {
       throw Exception("The supplied JSON object is not a version of this object");
     }
     try {
       if (processUpdatedJSON(json)) {
         updateStream();
+        return true;
       }
     } catch (e) {
       // TODO: add debug warning
     }
+    return false;
   }
 }

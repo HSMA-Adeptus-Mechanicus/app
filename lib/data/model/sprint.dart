@@ -78,6 +78,14 @@ class Sprint extends StreamableObject<Sprint> {
           .toList();
     }
   }
+  Stream<List<Ticket>> getAnyChangeTicketsStream() async* {
+    Stream<List<Ticket>> ticketsStream = data.getAnyChangeTicketsStream();
+    await for (List<Ticket> ticketObjects in ticketsStream) {
+      yield ticketObjects
+          .where((element) => ticketIds.contains(element.id))
+          .toList();
+    }
+  }
 
   Future<int> calculateCurrentHealth() async {
     List<Ticket> ticketArray = await first(data.getTicketsStream());

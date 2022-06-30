@@ -94,7 +94,7 @@ class Project extends StreamableObject<Project> {
       List<Sprint> sorted =
           sprintObjects.where((e) => e.state == "future").toList();
       if (sorted.isEmpty) {
-        throw Exception("There is no active of upcoming sprint");
+        throw Exception("There is no active or upcoming sprint");
       }
       sorted.sort((a, b) => a.start.compareTo(b.start));
       sprint = sorted[0];

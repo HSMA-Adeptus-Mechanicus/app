@@ -35,6 +35,11 @@ class Data {
         .getStream();
   }
 
+  Stream<List<Ticket>> getAnyChangeTicketsStream() {
+    return _StreamListSupplier.getInstance("db/tickets", Ticket.fromJSON)
+        .getAnyChangeStream();
+  }
+
   Stream<List<User>> getUsersStream() {
     return _StreamListSupplier.getInstance("db/users", User.fromJSON)
         .getStream();
@@ -56,8 +61,14 @@ class Data {
   }
 
   Future<User> getUser(String id) async {
-    List<User> users = await data.getUsersStream().firstWhere((element) => element.any((element) => element.id == id));
-    return users.firstWhere((user) => user.id == id);
+    List<User> users = await first(data.getUsersStream());
+    try {
+      return users.firstWhere((element) => element.id == id);
+    } catch (e) {
+      await CachedAPI.getInstance().request("db/users");
+      List<User> users = await first(data.getUsersStream());
+      return users.firstWhere((user) => user.id == id);
+    }
   }
 
   Stream<User> getUserStream(String id) async* {
@@ -97,14 +108,18 @@ class _StreamListSupplier<T extends StreamableObject<T>> {
 
   List<T>? _dataList;
   late final Stream<List<T>> _broadcastStream;
+  final StreamController<List<T>> _anyChangeController = StreamController();
+  late final Stream<List<T>> _anyChangeBroadcastStream;
 
   _StreamListSupplier(String apiPath, ParseFunction<T> parse) {
     _broadcastStream = _createStream(apiPath, parse).asBroadcastStream();
+    _anyChangeBroadcastStream = _anyChangeController.stream.asBroadcastStream();
   }
   Stream<List<T>> _createStream(String apiPath, ParseFunction<T> parse) async* {
     Stream<dynamic> stream = CachedAPI.getInstance().getStream(apiPath);
     await for (List<dynamic> snapshot in stream) {
       bool addedOrRemoved = false;
+      bool anyChange = false;
       List<T> dataList = _dataList ??= [];
       dataList.retainWhere((element) {
         bool result = snapshot.any((json) => json["_id"] == element.id);
@@ -115,12 +130,16 @@ class _StreamListSupplier<T extends StreamableObject<T>> {
         try {
           final element =
               dataList.firstWhere((element) => element.id == json["_id"]);
-          element.updateJSON(json);
+          if (element.updateJSON(json)) {
+            anyChange = true;
+          }
         } catch (e) {
           dataList.add(parse(json));
           addedOrRemoved = true;
         }
       }
+      anyChange = anyChange || addedOrRemoved;
+      _anyChangeController.add(dataList);
       if (addedOrRemoved) {
         yield dataList;
       }
@@ -135,6 +154,28 @@ class _StreamListSupplier<T extends StreamableObject<T>> {
         controller.add(dataList);
       }
       controller.addStream(_broadcastStream);
+    }
+
+    onCancel() {
+      controller.close();
+    }
+
+    controller = StreamController(
+      onListen: onListen,
+      onCancel: onCancel,
+    );
+    return controller.stream;
+  }
+
+  /// Fires an event even if the list itself does not change but only the elements in it.
+  Stream<List<T>> getAnyChangeStream() {
+    late StreamController<List<T>> controller;
+    onListen() {
+      final dataList = _dataList;
+      if (dataList != null) {
+        controller.add(dataList);
+      }
+      controller.addStream(_anyChangeBroadcastStream);
     }
 
     onCancel() {

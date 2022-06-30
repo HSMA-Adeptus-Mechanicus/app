@@ -32,18 +32,20 @@ class _EditNameDialogState extends State<EditNameDialog> {
             child: AutofillGroup(
               child: IntrinsicHeight(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(user.name),
+                    Text("Aktueller Name: ${user.name}"),
+                    const SizedBox(height: 10),
                     TextFormField(
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: "Neuer Benutzername",
+                        labelText: "Neuer Name",
                       ),
                       autofillHints: const [AutofillHints.nickname],
                       controller: _nameController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Bitte Benutzername eingeben";
+                          return "Bitte Namen eingeben";
                         }
                         return null;
                       },

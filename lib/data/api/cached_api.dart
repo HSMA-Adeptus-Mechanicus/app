@@ -113,7 +113,7 @@ class CachedAPI {
     return result["data"];
   }
 
-  Set<String> requestsInProgress = {};
+  Map<String, Future<dynamic>> requestsInProgress = {};
 
   /// triggers a reload of the path if the data is outdated but ignoring the result
   void reloadIfOutdated(String path) {
@@ -127,16 +127,23 @@ class CachedAPI {
 
   /// Requests the data from the API and caches it.
   Future<dynamic> request(String path) async {
-    if (requestsInProgress.contains(path)) {
-      throw Exception(
-          "Concurrent requests to the same data ($path) are not allowed");
+    if (requestsInProgress.containsKey(path)) {
+      return requestsInProgress[path];
     }
-    requestsInProgress.add(path);
     try {
-      final value = await authAPI.get(path);
-      await _storage.write(
-          path, {"data": value, "time": DateTime.now().millisecondsSinceEpoch});
-      return value;
+      Future<dynamic> resultPromise = () async {
+        try {
+          final value = await authAPI.get(path);
+          await _storage.write(path,
+              {"data": value, "time": DateTime.now().millisecondsSinceEpoch});
+          return value;
+        } finally {
+          requestsInProgress.remove(path);
+        }
+      }();
+      requestsInProgress[path] = resultPromise;
+      dynamic result = await resultPromise;
+      return result;
     } finally {
       requestsInProgress.remove(path);
     }
