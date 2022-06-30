@@ -24,7 +24,7 @@ class Victory extends StatelessWidget {
           return FutureBuilder(
             future: sprint.calculateCurrentHealth(),
             builder: (context, snapshot) {
-              if (0 == 0 && _resetter == true) {
+              if (snapshot.data == 0 && _resetter == true) {
                 Future.microtask(() {
                   _showMyDialog();
                   _resetter = false;

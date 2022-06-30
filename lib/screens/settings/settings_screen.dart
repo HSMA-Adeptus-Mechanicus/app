@@ -19,7 +19,7 @@ class SettingsScreen extends StatelessWidget {
           const LoginInfo(),
           const SizedBox(height: 50),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
