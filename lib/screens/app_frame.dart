@@ -111,8 +111,8 @@ BottomNavigationBarItem createNavigationItem(
 class NavigationIcon extends StatelessWidget {
   final bool active;
   final String iconAsset;
-  Stream<bool>? identicatorStream;
-  NavigationIcon(
+  final Stream<bool>? identicatorStream;
+  const NavigationIcon(
       {Key? key,
       required this.iconAsset,
       required this.active,
