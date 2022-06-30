@@ -14,10 +14,11 @@ class SettingsScreen extends StatelessWidget {
     return AppScaffold(
       settingsButton: false,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+          const Spacer(flex: 1),
           const LoginInfo(),
-          const SizedBox(height: 50),
+          const Spacer(flex: 6),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

@@ -25,8 +25,13 @@ class RewardChest extends StatelessWidget {
                   NewItemScreen(user: user),
                 );
               } else {
-                const snackBar =
-                    SnackBar(content: Text("You don't have enough coins!"));
+                var snackBar = SnackBar(
+                  content: Text(
+                    "Du hast nicht genügend Münzen!",
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
+                  ),
+                  backgroundColor: Theme.of(context).cardColor,
+                );
                 ScaffoldMessenger.of(navigatorKey.currentContext!)
                     .showSnackBar(snackBar);
               }
