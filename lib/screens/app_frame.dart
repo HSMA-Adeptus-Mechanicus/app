@@ -1,3 +1,5 @@
+import 'package:sff/data/api/user_authentication.dart';
+import 'package:sff/data/data.dart';
 import 'package:sff/screens/pages/reward_screen.dart';
 import 'package:sff/screens/pages/equip_screen.dart';
 import 'package:sff/screens/pages/ticket_screen.dart';
@@ -51,17 +53,26 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
             label: "Home",
           ),
           createNavigationItem(
-            icon: "assets/icons/Navigation/quests_weiss.png",
-            label: "Quests",
-          ),
+              icon: "assets/icons/Navigation/quests_weiss.png",
+              label: "Quests",
+              indicatorStream: data.getTicketsStream().map(
+                    (event) => event.any((element) =>
+                        element.assignee ==
+                            UserAuthentication.getInstance().userId &&
+                        element.done &&
+                        !element.rewardClaimed),
+                  )),
           createNavigationItem(
             icon: "assets/icons/Navigation/kleiderbuegel_weiss.png",
             label: "Inventar",
           ),
           createNavigationItem(
-            icon: "assets/icons/Navigation/schatzkiste_weiss.png",
-            label: "Belohnungen",
-          ),
+              icon: "assets/icons/Navigation/schatzkiste_weiss.png",
+              label: "Belohnungen",
+              indicatorStream: data.getUsersStream().map((event) => event.any(
+                  (element) =>
+                      element.id == UserAuthentication.getInstance().userId &&
+                      element.currency >= 15))),
         ],
         currentIndex: _selectedIndex,
         onTap: (index) {
@@ -76,25 +87,75 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
   }
 }
 
+//boolStream ob ein Punkt angezeigt werden soll, oder nicht
+//Punkt mit Stack und Positioned
 BottomNavigationBarItem createNavigationItem(
-    {required String icon, required String label}) {
+    {required String icon,
+    required String label,
+    Stream<bool>? indicatorStream}) {
   return BottomNavigationBarItem(
-    icon: Padding(
-      padding: const EdgeInsets.all(6),
-      child: Image.asset(
-        icon,
-        fit: BoxFit.scaleDown,
-        height: 20,
-      ),
+    icon: NavigationIcon(
+      iconAsset: icon,
+      active: false,
+      indicatorStream: indicatorStream,
     ),
     label: label,
-    activeIcon: Padding(
-      padding: const EdgeInsets.all(6),
-      child: Image.asset(
-        icon.replaceFirst(RegExp(r"weiss"), "orange"),
-        fit: BoxFit.scaleDown,
-        height: 20,
-      ),
+    activeIcon: NavigationIcon(
+      iconAsset: icon,
+      active: true,
+      indicatorStream: indicatorStream,
     ),
   );
+}
+
+class NavigationIcon extends StatelessWidget {
+  final bool active;
+  final String iconAsset;
+  final Stream<bool>? indicatorStream;
+  const NavigationIcon(
+      {Key? key,
+      required this.iconAsset,
+      required this.active,
+      this.indicatorStream})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 32,
+      width: 32,
+      child: Stack(
+        children: [
+          Center(
+            child: Image.asset(
+              active
+                  ? iconAsset.replaceFirst(RegExp(r"weiss"), "orange")
+                  : iconAsset,
+              fit: BoxFit.scaleDown,
+              height: 20,
+            ),
+          ),
+          StreamBuilder<bool>(
+            stream: indicatorStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data!) {
+                return Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    height: 10.0,
+                    width: 10.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Colors.red,
+                    ),
+                  ),
+                );
+              }
+              return Container();
+            },
+          )
+        ],
+      ),
+    );
+  }
 }
