@@ -4,6 +4,7 @@ import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/screens/app_frame.dart';
 import 'package:sff/widgets/app_scaffold.dart';
+import 'package:sff/widgets/border_card.dart';
 import 'package:sff/widgets/loading.dart';
 
 class ProjectSelection extends StatelessWidget {
@@ -27,7 +28,8 @@ class ProjectSelection extends StatelessWidget {
               stream: data.getCurrentUserStream(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const LoadingWidget(message: "Benutzer wird geladen...");
+                  return const LoadingWidget(
+                      message: "Benutzer wird geladen...");
                 }
                 User user = snapshot.data!;
                 user.loadProjects();
@@ -38,29 +40,65 @@ class ProjectSelection extends StatelessWidget {
                       return ErrorWidget(snapshot.error!);
                     }
                     if (!snapshot.hasData) {
-                      return const LoadingWidget(message: "Projekte werden geladen...");
+                      return const LoadingWidget(
+                          message: "Projekte werden geladen...");
                     }
                     List<Project> projects = snapshot.data!;
                     return RefreshIndicator(
                       onRefresh: () async {
                         await user.loadProjects();
                       },
-                      child: ListView.separated(
-                        padding: const EdgeInsets.all(30),
-                        itemCount: projects.length,
-                        itemBuilder: (context, index) {
-                          return ElevatedButton(
-                            onPressed: () {
-                              ProjectManager.getInstance().currentProject =
-                                  projects[index];
-                              projects[index].loadSprints();
-                            },
-                            child: Text(projects[index].name),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(height: 20);
-                        },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 30, horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Wähle hier dein Projekt aus."),
+                            const SizedBox(height: 30),
+                            Expanded(
+                              child: ListView.separated(
+                                itemCount: projects.length,
+                                itemBuilder: (context, index) {
+                                  return BorderCard(
+                                    child: TextButton(
+                                      style: ButtonStyle(
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        alignment: Alignment.centerLeft,
+                                        padding: MaterialStateProperty.all<
+                                                EdgeInsets>(
+                                            const EdgeInsets.all(20)),
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(0),
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        ProjectManager.getInstance()
+                                            .currentProject = projects[index];
+                                        projects[index].loadSprints();
+                                      },
+                                      child: Text(
+                                        projects[index].name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .copyWith(color: Colors.black),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return const SizedBox(height: 10);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

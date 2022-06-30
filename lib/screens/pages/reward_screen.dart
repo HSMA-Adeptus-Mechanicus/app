@@ -20,6 +20,7 @@ class RewardScreen extends StatelessWidget {
             child: Align(
               alignment: Alignment.topLeft,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
                     children: [
