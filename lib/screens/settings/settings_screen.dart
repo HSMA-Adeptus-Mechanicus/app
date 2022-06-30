@@ -4,7 +4,7 @@ import 'package:sff/widgets/app_scaffold.dart';
 import 'package:sff/widgets/display_error.dart';
 import 'package:sff/widgets/settings/login_info.dart';
 import 'package:flutter/material.dart';
-import 'package:sff/widgets/settings/password_confirm.dart';
+import 'package:sff/widgets/settings/confirm_delete.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -42,12 +42,11 @@ class SettingsScreen extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (dialogContext) {
-                        return PasswordConfirm(
-                          action: "Account löschen",
-                          callback: (password) async {
+                        return Confirm(
+                          callback: () async {
                             displayError(() async {
                               await UserAuthentication.getInstance()
-                                  .deleteAccount(password);
+                                  .deleteAccount();
                             });
                           },
                         );

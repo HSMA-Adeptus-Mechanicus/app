@@ -89,21 +89,21 @@ class Sprint extends StreamableObject<Sprint> {
   }
 
   Future<int> calculateCurrentHealth() async {
-    List<Ticket> ticketArray = await first(data.getTicketsStream());
+    List<Ticket> ticketArray = await first(getTicketsStream());
     return ticketArray
         .map((e) => e.done ? 0 : e.storyPoints)
         .reduce((value, element) => value + element);
   }
 
   Future<int> calculateMaxHealth() async {
-    List<Ticket> ticketArray = await first(data.getTicketsStream());
+    List<Ticket> ticketArray = await first(getTicketsStream());
     return ticketArray
         .map((e) => e.storyPoints)
         .reduce((value, element) => value + element);
   }
 
   Future<double> calculateHealthPercentage() async {
-    List<Ticket> ticketArray = await first(data.getTicketsStream());
+    List<Ticket> ticketArray = await first(getTicketsStream());
     final current = ticketArray
         .map((e) => e.done ? 0 : e.storyPoints)
         .reduce((value, element) => value + element);

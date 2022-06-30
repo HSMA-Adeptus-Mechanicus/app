@@ -177,7 +177,7 @@ class UserAuthentication {
     await _updateState(LoginState.loggedOut);
   }
 
-  deleteAccount(String password) async {
+  deleteAccount() async {
     await _updateState(LoginState.loggingOut);
     try {
       await authAPI.delete(
