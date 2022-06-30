@@ -6,6 +6,7 @@ import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/sprint.dart';
 import 'package:sff/widgets/pages/bossfight/boss.dart';
 import 'package:sff/widgets/pages/bossfight/bossfight_team.dart';
+import 'package:sff/widgets/pages/bossfight/victory_screen.dart';
 
 class Bossfight extends StatelessWidget {
   const Bossfight({
@@ -17,6 +18,7 @@ class Bossfight extends StatelessWidget {
     return ClipRect(
       child: Stack(
         children: [
+          const Victory(),
           CustomPaint(
             painter: VersusPainter(),
             child: const Center(
