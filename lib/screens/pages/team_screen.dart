@@ -1,6 +1,7 @@
 import 'package:sff/data/api/cached_api.dart';
-import 'package:sff/data/data.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/model/avatar.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/screens/pages/bossfight_screen.dart';
@@ -47,12 +48,20 @@ class _Team extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<User>>(
-      stream: data.getUsersStream(),
+      stream: () async* {
+        yield* (await ProjectManager.getInstance())
+            .currentProject!
+            .getTeamStream();
+      }(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<User> users = snapshot.data!;
           return RefreshIndicator(
             onRefresh: () async {
+              await users
+                  .firstWhere((user) =>
+                      user.id == UserAuthentication.getInstance().userId)
+                  .loadProjects();
               await CachedAPI.getInstance().request("db/users");
             },
             child: GridView.builder(

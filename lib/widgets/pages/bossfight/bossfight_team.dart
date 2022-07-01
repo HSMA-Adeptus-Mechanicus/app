@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sff/data/api/user_authentication.dart';
-import 'package:sff/data/data.dart';
 import 'package:sff/data/model/avatar.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/widgets/avatar.dart';
 
@@ -15,7 +15,11 @@ class BossfightTeam extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<User>>(
-      stream: data.getUsersStream(),
+      stream: () async* {
+        yield* (await ProjectManager.getInstance())
+            .currentProject!
+            .getTeamStream();
+      }(),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           List<User> users = snapshot.data!;
