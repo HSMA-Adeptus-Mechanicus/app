@@ -5,6 +5,7 @@ import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/sprint.dart';
 import 'package:sff/data/model/streamable.dart';
+import 'package:sff/data/model/user.dart';
 
 class Project extends StreamableObject<Project> {
   Project(super.id, this._name, this._avatarUrl, this._sprints, this._team);
@@ -59,6 +60,14 @@ class Project extends StreamableObject<Project> {
     return change;
   }
 
+  Stream<List<User>> getTeamStream() async* {
+    data.getCurrentUser().then((user) => user.loadProjects());
+    Stream<Project> projectStream = asStream();
+    await for (Project project in projectStream) {
+      yield (await first(data.getUsersStream())).where((user) => project.team.contains(user.id)).toList();
+    }
+  }
+
   Future<void> loadSprints() async {
     await authAPI.post("load-jira", {
       "resources": [
@@ -84,7 +93,6 @@ class Project extends StreamableObject<Project> {
   }
 
   Future<Sprint> getCurrentSprint() async {
-    // TODO: prevent infinite loading if the project does not have any sprints
     List<Sprint> sprintObjects = await first(getSprintsStream());
     sprintObjects.retainWhere((element) => sprints.contains(element.id));
     Sprint sprint;
