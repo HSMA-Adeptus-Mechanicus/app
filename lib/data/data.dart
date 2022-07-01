@@ -9,7 +9,7 @@ import 'package:sff/data/model/ticket.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/data/api/user_authentication.dart';
 
-const data = Data();
+final data = Data.getInstance();
 
 // TODO: Delete once it has been solved
 /// This is a workaround for stream.first that should (hopefully)
@@ -28,6 +28,13 @@ Future<T> first<T>(Stream<T> stream) {
 }
 
 class Data {
+  static Data? _data;
+  static Data getInstance() {
+    final data = _data ?? const Data();
+    _data = data;
+    return data;
+  }
+
   const Data();
 
   Stream<List<Ticket>> getTicketsStream() {
@@ -55,14 +62,19 @@ class Data {
         .getStream();
   }
 
+  Stream<List<Project>> getAnyChangeProjectsStream() {
+    return _StreamListSupplier.getInstance("db/projects", Project.fromJSON)
+        .getAnyChangeStream();
+  }
+
   Stream<List<Sprint>> getSprintsStream() {
     return _StreamListSupplier.getInstance("db/sprints", Sprint.fromJSON)
         .getStream();
   }
 
   Future<User> getUser(String id) async {
-    List<User> users = await first(data.getUsersStream());
     try {
+      List<User> users = await first(data.getUsersStream());
       return users.firstWhere((element) => element.id == id);
     } catch (e) {
       await CachedAPI.getInstance().request("db/users");
@@ -113,11 +125,14 @@ class _StreamListSupplier<T extends StreamableObject<T>> {
 
   _StreamListSupplier(String apiPath, ParseFunction<T> parse) {
     _broadcastStream = _createStream(apiPath, parse).asBroadcastStream();
+    // start stream up TODO: figure out why this helps (without it the projects do not load when starting the app logged in)
+    _broadcastStream.listen((event) {});
     _anyChangeBroadcastStream = _anyChangeController.stream.asBroadcastStream();
   }
   Stream<List<T>> _createStream(String apiPath, ParseFunction<T> parse) async* {
     Stream<dynamic> stream = CachedAPI.getInstance().getStream(apiPath);
-    await for (List<dynamic> snapshot in stream) {
+    await for (dynamic snapshot in stream) {
+      if (snapshot is! List<dynamic>) continue;
       // if _dataList is null this first state should be yielded even if it is an empty list
       bool addedOrRemoved = _dataList == null;
       bool anyChange = false;

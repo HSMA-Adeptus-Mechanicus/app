@@ -17,7 +17,7 @@ class Boss extends StatelessWidget {
           height: constraints.maxHeight,
           child: StreamBuilder<double>(
             stream: () async* {
-              Sprint sprint = await ProjectManager.getInstance().currentProject!.getCurrentSprint();
+              Sprint sprint = await (await ProjectManager.getInstance()).currentProject!.getCurrentSprint();
               yield* sprint
                   .asStream()
                   .asyncMap((event) => event.calculateHealthPercentage());

@@ -57,7 +57,7 @@ class _AppFrameState extends State<AppFrame> with TickerProviderStateMixin {
             icon: "assets/icons/Navigation/quests_weiss.png",
             label: "Quests",
             indicatorStream: () async* {
-              yield* (await ProjectManager.getInstance()
+              yield* (await (await ProjectManager.getInstance())
                       .currentProject!
                       .getCurrentSprint())
                   .getAnyChangeTicketsStream()

@@ -109,7 +109,8 @@ class User extends StreamableObject<User> {
   }
 
   Stream<List<Project>> getProjectsStream() async* {
-    Stream<List<Project>> projectsStream = data.getProjectsStream();
+    // The team of a project could change which would change if the project is part of this users projects
+    Stream<List<Project>> projectsStream = data.getAnyChangeProjectsStream();
     await for (List<Project> projects in projectsStream) {
       yield projects.where((element) => element.team.contains(id)).toList();
     }

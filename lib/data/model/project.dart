@@ -1,5 +1,7 @@
+import 'package:get_storage/get_storage.dart';
 import 'package:sff/data/api/authenticated_api.dart';
 import 'package:sff/data/api/cached_api.dart';
+import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/sprint.dart';
 import 'package:sff/data/model/streamable.dart';
@@ -106,23 +108,56 @@ class Project extends StreamableObject<Project> {
 }
 
 class ProjectManager extends Streamable<ProjectManager> {
-  static final ProjectManager _projectManager = ProjectManager();
+  static ProjectManager? _projectManager;
 
-  static ProjectManager getInstance() {
-    return _projectManager;
+  static Future<ProjectManager> getInstance() async {
+    final projectManager = _projectManager ??= ProjectManager();
+    return projectManager;
   }
 
   static Stream<ProjectManager> getStream() {
-    return _projectManager.asStream();
+    return () async* {
+      yield* (await getInstance()).asStream();
+    }();
   }
+
+  ProjectManager() {
+    _loadStorage();
+    UserAuthentication.getInstance()
+        .getStateStream()
+        .where((event) => event == LoginState.loggedOut)
+        .listen((event) {
+      currentProject = null;
+    });
+  }
+
+  _loadStorage() async {
+    await _projectStorage.initStorage;
+    final projectId = _projectStorage.read<String>("project");
+    try {
+      final project = (await first(data.getProjectsStream()))
+          .firstWhere((element) => element.id == projectId);
+      _currentProject = project;
+      updateStream();
+    } catch (e) {
+      // If the project cannot be found just don't set the project and let the user choose a new one
+    }
+  }
+
+  final GetStorage _projectStorage = GetStorage("CurrentProject");
 
   Project? _currentProject;
   Project? get currentProject {
     return _currentProject;
   }
 
+  Future<void> get initialized {
+    return _projectStorage.initStorage;
+  }
+
   set currentProject(Project? project) {
     _currentProject = project;
+    _projectStorage.write("project", _currentProject?.id);
     updateStream();
   }
 }
