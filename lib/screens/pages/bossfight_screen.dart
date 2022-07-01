@@ -35,7 +35,7 @@ class Bossfight extends StatelessWidget {
             alignment: const Alignment(0.8, -0.8),
             child: StreamBuilder<Sprint>(
               stream: () async* {
-                Sprint sprint = await ProjectManager.getInstance().currentProject!.getCurrentSprint();
+                Sprint sprint = await (await ProjectManager.getInstance()).currentProject!.getCurrentSprint();
                 yield* sprint.asStream();
               }(),
               builder: (context, snapshot) {

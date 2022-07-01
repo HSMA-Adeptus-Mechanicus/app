@@ -30,7 +30,7 @@ class TicketList extends StatelessWidget {
       ),
       child: StreamBuilder<List<Ticket>>(
         stream: () async* {
-          yield* (await ProjectManager.getInstance()
+          yield* (await (await ProjectManager.getInstance())
                   .currentProject!
                   .getCurrentSprint())
               .getAnyChangeTicketsStream();
@@ -72,10 +72,10 @@ class TicketList extends StatelessWidget {
 
             return RefreshIndicator(
               onRefresh: () async {
-                await ProjectManager.getInstance()
+                await (await ProjectManager.getInstance())
                     .currentProject!
                     .loadSprints();
-                await (await ProjectManager.getInstance()
+                await (await (await ProjectManager.getInstance())
                         .currentProject!
                         .getCurrentSprint())
                     .loadTickets();
@@ -98,7 +98,8 @@ class TicketList extends StatelessWidget {
           if (snapshot.hasError) {
             return const Padding(
               padding: EdgeInsets.all(30),
-              child: Text("Im moment ist kein Sprint vorhanden. Falls du dieses Projekt gerade zum ersten mal geöffnet hast, schaue später nochmal nach"),
+              child: Text(
+                  "Im moment ist kein Sprint vorhanden. Falls du dieses Projekt gerade zum ersten mal geöffnet hast, schaue später nochmal nach"),
             );
           }
           return const LoadingWidget(message: "Quests werden geladen...");

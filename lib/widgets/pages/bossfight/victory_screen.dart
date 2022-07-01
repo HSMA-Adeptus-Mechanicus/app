@@ -13,7 +13,7 @@ class Victory extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<Sprint>(
       stream: () async* {
-        Sprint sprint = await ProjectManager.getInstance()
+        Sprint sprint = await (await ProjectManager.getInstance())
             .currentProject!
             .getCurrentSprint();
         yield* sprint.asStream();
@@ -82,8 +82,7 @@ class VictoryDialog extends StatelessWidget {
                   SizedBox(height: 20),
                   Text(
                     "Dein Team und Du haben den Boss bezwungen.\nWoo!",
-                    style: TextStyle(
-                    ),
+                    style: TextStyle(),
                   ),
                 ],
               ),

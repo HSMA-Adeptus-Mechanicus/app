@@ -78,8 +78,9 @@ class ProjectSelection extends StatelessWidget {
                                         ),
                                       ),
                                       onPressed: () {
-                                        ProjectManager.getInstance()
-                                            .currentProject = projects[index];
+                                        ProjectManager.getInstance().then(
+                                            (value) => value.currentProject =
+                                                projects[index]);
                                         projects[index].loadSprints();
                                       },
                                       child: Text(

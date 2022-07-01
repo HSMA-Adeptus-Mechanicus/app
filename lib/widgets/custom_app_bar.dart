@@ -1,9 +1,11 @@
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
+import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/user.dart';
 import 'package:sff/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:sff/widgets/avatar.dart';
+import 'package:sff/widgets/fitted_text.dart';
 
 final Size prefSize = AppBar().preferredSize;
 
@@ -47,7 +49,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           user.name,
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    // color: Theme.of(context).cardColor,
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodySmall
@@ -94,7 +95,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       // TODO: adjust look of back button
       title: SizedBox(
-        height: 45,
+        height: 40,
         child: Image.asset("assets/logo/logo.png"),
       ),
       actions: [
