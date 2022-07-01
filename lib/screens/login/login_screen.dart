@@ -1,4 +1,3 @@
-import 'package:sff/data/api/cached_api.dart';
 import 'package:sff/data/api/user_authentication.dart';
 import 'package:sff/data/data.dart';
 import 'package:sff/data/model/user.dart';
@@ -32,7 +31,6 @@ class LoginScreen extends StatelessWidget {
                     navigateTopLevelToWidget(const SetupAvatarScreen());
                   }
                 } catch (e) {
-                  await CachedAPI.getInstance().request("db/users");
                   await UserAuthentication.getInstance().checkLogin();
                 }
               });
