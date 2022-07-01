@@ -45,29 +45,14 @@ class TicketList extends StatelessWidget {
                       UserAuthentication.getInstance().userId)
                   .toList();
             }
+            stableSort<Ticket>(
+                tickets, (a, b) => (!a.done ? 0 : 1) - (!b.done ? 0 : 1));
             if (onlyOwnTickets) {
               stableSort<Ticket>(
                   tickets,
-                  (a, b) => !a.done && b.done
-                      ? 1
-                      : a.done && !b.done
-                          ? -1
-                          : 0);
-              stableSort<Ticket>(
-                  tickets,
-                  (a, b) => a.rewardClaimed && !b.rewardClaimed
-                      ? 1
-                      : !a.rewardClaimed && b.rewardClaimed
-                          ? -1
-                          : 0);
-            } else {
-              stableSort<Ticket>(
-                  tickets,
-                  (a, b) => a.done && !b.done
-                      ? 1
-                      : !a.done && b.done
-                          ? -1
-                          : 0);
+                  (a, b) =>
+                      (!a.rewardClaimed && a.done ? 0 : 1) -
+                      (!b.rewardClaimed && b.done ? 0 : 1));
             }
 
             return RefreshIndicator(
