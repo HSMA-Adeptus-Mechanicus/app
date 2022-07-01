@@ -28,7 +28,7 @@ class SetupAvatarScreen extends StatelessWidget {
               children: [
                 const Padding(
                   padding: EdgeInsets.all(30),
-                  child: Text("Passe hier noch deinen Avatar an."),
+                  child: Text("Passe hier noch Deinen Avatar an."),
                 ),
                 Expanded(
                   child: StreamBuilder<Avatar>(

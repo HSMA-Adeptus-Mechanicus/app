@@ -87,7 +87,7 @@ class _LoginExternalState extends State<LoginExternal>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text(
-              "Logge dich durch den Browser in Jira ein. Wenn du dich eingeloggt hast und es nicht weiter geht tippe auf 'Weiter'."),
+              "Logge Dich durch den Browser in Jira ein. Wenn Du Dich eingeloggt hast und es nicht weiter geht tippe auf 'Weiter'."),
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () {

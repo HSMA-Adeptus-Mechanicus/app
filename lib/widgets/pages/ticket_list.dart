@@ -99,7 +99,7 @@ class TicketList extends StatelessWidget {
             return const Padding(
               padding: EdgeInsets.all(30),
               child: Text(
-                  "Im moment ist kein Sprint vorhanden. Falls du dieses Projekt gerade zum ersten mal geöffnet hast, schaue später nochmal nach"),
+                  "Im moment ist kein Sprint vorhanden. Falls Du dieses Projekt gerade zum ersten mal geöffnet hast, schaue später nochmal nach"),
             );
           }
           return const LoadingWidget(message: "Quests werden geladen...");

@@ -18,7 +18,7 @@ class _ConfirmState extends State<Confirm> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Account löschen"),
-      content: const Text("Wenn sie ihren Account löschen verlieren sie jeglichen fortschritt in Scrum for Fun."),
+      content: const Text("Wenn Du Deinen Account löschst, verlierst Du jeglichen Fortschritt in Scrum for Fun."),
       actions: [
         TextButton(
           onPressed: () {
