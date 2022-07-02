@@ -108,7 +108,7 @@ class NewItemScreen extends StatelessWidget {
                               child: Padding(
                                 padding: EdgeInsets.all(40.0),
                                 child: Text(
-                                  "Oh! Du hast das Item leider schon. Hier hast du eine Münze wieder.",
+                                  "Oh! Du hast das Item leider schon. Hier hast Du eine Münze wieder.",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.white,

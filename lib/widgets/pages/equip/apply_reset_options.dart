@@ -125,7 +125,7 @@ class UnsavedChangesDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Änderungen Speichern?"),
-      content: const Text("Wollen Sie die Änderungen am Avatar speichern?"),
+      content: const Text("Willst Du die Änderungen am Avatar speichern?"),
       actions: [
         TextButton(
           onPressed: () {

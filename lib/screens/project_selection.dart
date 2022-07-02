@@ -54,7 +54,7 @@ class ProjectSelection extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Wähle hier dein Projekt aus."),
+                            const Text("Wähle hier Dein Projekt aus."),
                             const SizedBox(height: 30),
                             Expanded(
                               child: ListView.separated(
