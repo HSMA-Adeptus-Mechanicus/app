@@ -35,18 +35,8 @@ class BossfightTeam extends StatelessWidget {
             users[centerIndex] = temp;
           }
 
-          List<Widget> avatars = users
-              .map((user) => StreamBuilder<Avatar>(
-                    stream:
-                        user.asStream().asyncMap((user) => user.getAvatar()),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return AvatarWidget(avatar: snapshot.data!);
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ))
-              .toList();
+          List<Widget> avatars =
+              users.map((user) => UserAvatarWidget(key: UniqueKey(), userId: user.id)).toList();
 
           return LayoutBuilder(
             builder: (context, constraints) {

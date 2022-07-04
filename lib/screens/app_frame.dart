@@ -103,17 +103,18 @@ BottomNavigationBarItem createNavigationItem(
     {required String icon,
     required String label,
     Stream<bool>? indicatorStream}) {
+  Stream<bool>? broadcastStream = indicatorStream?.asBroadcastStream();
   return BottomNavigationBarItem(
     icon: NavigationIcon(
       iconAsset: icon,
       active: false,
-      indicatorStream: indicatorStream,
+      indicatorStream: broadcastStream,
     ),
     label: label,
     activeIcon: NavigationIcon(
       iconAsset: icon,
       active: true,
-      indicatorStream: indicatorStream,
+      indicatorStream: broadcastStream,
     ),
   );
 }
