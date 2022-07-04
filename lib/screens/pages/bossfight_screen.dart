@@ -31,39 +31,122 @@ class Bossfight extends StatelessWidget {
               ),
             ),
           ),
-          Align(
-            alignment: const Alignment(0.8, -0.8),
-            child: StreamBuilder<Sprint>(
-              stream: () async* {
-                Sprint sprint = await (await ProjectManager.getInstance()).currentProject!.getCurrentSprint();
-                yield* sprint.asStream();
-              }(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final sprint = snapshot.data!;
-                  return IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            "Sprintanfang ${DateFormat("dd.MM.").format(sprint.start)}"),
-                        Text(
-                            "Sprintende ${DateFormat("dd.MM.").format(sprint.end)}"),
-                      ],
+          StreamBuilder<Sprint>(
+            stream: () async* {
+              Sprint sprint = await (await ProjectManager.getInstance())
+                  .currentProject!
+                  .getCurrentSprint();
+              yield* sprint.asStream();
+            }(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final sprint = snapshot.data!;
+                return Stack(
+                  children: [
+                    Align(
+                      alignment: const Alignment(0.8, -0.8),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                "Sprintanfang ${DateFormat("dd.MM.").format(sprint.start)}"),
+                            Text(
+                                "Sprintende ${DateFormat("dd.MM.").format(sprint.end)}"),
+                          ],
+                        ),
+                      ),
                     ),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return const Text("Es gibt aktuell keinen Sprint");
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+                    Align(
+                      alignment: const Alignment(0.9, 0),
+                      child: IntrinsicHeight(
+                        child: RemainingSprintTimer(sprint: sprint),
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
           const Boss(),
           const BossfightTeam(),
         ],
       ),
+    );
+  }
+}
+
+class RemainingSprintTimer extends StatefulWidget {
+  const RemainingSprintTimer({
+    Key? key,
+    required this.sprint,
+  }) : super(key: key);
+
+  final Sprint sprint;
+
+  @override
+  State<RemainingSprintTimer> createState() => _RemainingSprintTimerState();
+}
+
+class _RemainingSprintTimerState extends State<RemainingSprintTimer>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController animationController;
+
+  @override
+  void initState() {
+    animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+      animationBehavior: AnimationBehavior.preserve,
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // timeLeft = const Duration(minutes: 10, seconds: 59);
+    animationController.repeat(reverse: true);
+    final colorAnimation = Tween(begin: 0.0, end: 1.0)
+        .chain(CurveTween(curve: Curves.easeInOut))
+        .animate(animationController);
+    return AnimatedBuilder(
+      animation: colorAnimation,
+      builder: (context, _) {
+        var timeLeft = widget.sprint.end.difference(DateTime.now());
+        final timeLeftString =
+            "${timeLeft.inHours.toString().padLeft(2, "0")}:${timeLeft.inMinutes.remainder(60).toString().padLeft(2, "0")}:${timeLeft.inSeconds.remainder(60).toString().padLeft(2, "0")}";
+        int brightness = (colorAnimation.value * 255).toInt();
+        return ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            timeLeft < const Duration(minutes: 10)
+                ? Color.fromARGB(255, 255, brightness, brightness)
+                : Colors.white,
+            BlendMode.modulate,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: Image.asset(
+                  "assets/icons/Pixel/Sanduhr.PNG",
+                  filterQuality: FilterQuality.none,
+                  scale: 1 / 10,
+                ),
+              ),
+              Text(timeLeftString),
+            ],
+          ),
+        );
+      },
     );
   }
 }
