@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sff/data/model/project.dart';
 import 'package:sff/data/model/sprint.dart';
+import 'package:sff/data/model/ticket.dart';
 import 'package:sff/widgets/pages/bossfight/boss.dart';
 import 'package:sff/widgets/pages/bossfight/bossfight_team.dart';
 import 'package:sff/widgets/pages/bossfight/victory_screen.dart';
@@ -111,43 +112,50 @@ class _RemainingSprintTimerState extends State<RemainingSprintTimer>
 
   @override
   Widget build(BuildContext context) {
-    // timeLeft = const Duration(minutes: 10, seconds: 59);
     animationController.repeat(reverse: true);
     final colorAnimation = Tween(begin: 0.0, end: 1.0)
         .chain(CurveTween(curve: Curves.easeInOut))
         .animate(animationController);
-    return AnimatedBuilder(
-      animation: colorAnimation,
-      builder: (context, _) {
-        var timeLeft = widget.sprint.end.difference(DateTime.now());
-        final timeLeftString =
-            "${timeLeft.inHours.toString().padLeft(2, "0")}:${timeLeft.inMinutes.remainder(60).toString().padLeft(2, "0")}:${timeLeft.inSeconds.remainder(60).toString().padLeft(2, "0")}";
-        int brightness = (colorAnimation.value * 255).toInt();
-        return ColorFiltered(
-          colorFilter: ColorFilter.mode(
-            timeLeft < const Duration(minutes: 10)
-                ? Color.fromARGB(255, 255, brightness, brightness)
-                : Colors.white,
-            BlendMode.modulate,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 40,
-                width: 40,
-                child: Image.asset(
-                  "assets/icons/Pixel/Sanduhr.PNG",
-                  filterQuality: FilterQuality.none,
-                  scale: 1 / 10,
+    return StreamBuilder<List<Ticket>>(
+        stream: widget.sprint.getTicketsStream(),
+        builder: (context, snapshot) {
+          bool allTicketsDone =
+              snapshot.data?.every((ticket) => ticket.done) ?? false;
+          return AnimatedBuilder(
+            animation: colorAnimation,
+            builder: (context, _) {
+              var timeLeft = widget.sprint.end.difference(DateTime.now());
+              final timeLeftString =
+                  "${timeLeft < const Duration() ? "-" : ""}${timeLeft.inHours.abs().toString().padLeft(2, "0")}:${timeLeft.inMinutes.abs().remainder(60).toString().padLeft(2, "0")}:${timeLeft.inSeconds.abs().remainder(60).toString().padLeft(2, "0")}";
+              int brightness = (colorAnimation.value * 255).toInt();
+              return ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  allTicketsDone
+                      ? const Color.fromARGB(150, 255, 255, 255)
+                      : timeLeft < const Duration(hours: 1)
+                          ? Color.fromARGB(255, 255, brightness, brightness)
+                          : Colors.white,
+                  BlendMode.modulate,
                 ),
-              ),
-              Text(timeLeftString),
-            ],
-          ),
-        );
-      },
-    );
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: Image.asset(
+                        "assets/icons/Pixel/Sanduhr.PNG",
+                        filterQuality: FilterQuality.none,
+                        scale: 1 / 10,
+                      ),
+                    ),
+                    Text(timeLeftString),
+                  ],
+                ),
+              );
+            },
+          );
+        });
   }
 }
 
